@@ -1,0 +1,36 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getQuestion } from '#lib/content/course.js';
+</script>
+
+### Links and Anchors
+
+The term **anchor** specifically refers to the `<a>` element's ability to mark a precise location in a webpage that can be jumped to, like bookmarking a spot within the same document. [MDN: Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links)
+
+#### Nesting anchors
+
+Which of these are valid HTML?
+
+```html
+<p>Here is a <a href="page.html">link</a> in text.</p>
+<span class="inline"><a href="page.html">click here</a></span>
+<a href="page.html"><span class="highlight">styled link</span></a>
+<h1><a href="/home">Welcome to our page!</a></h1>
+<a href="/index.html"><img src="pic.jpg" alt="image"></a>
+```
+
+<ExerciseCard question={getQuestion('nesting-anchors')} />
+
+#### Hyperlinks and tabs
+
+Where will this link open?
+
+```html
+<a href="https://en.wikipedia.org/wiki/HTML" target="_blank">here</a>
+```
+
+<ExerciseCard question={getQuestion('link-target-blank')} />
+
+<ExerciseCard question={getQuestion('link-title-accessibility')} />
+
+<ExerciseCard question={getQuestion('buttons-vs-anchors')} />

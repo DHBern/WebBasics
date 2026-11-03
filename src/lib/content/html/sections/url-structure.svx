@@ -1,0 +1,16 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getCourseItem, getQuestion } from '#lib/content/course.js';
+</script>
+
+### URL Structure
+
+Let's start with how you access a website in the browser: the URL.
+
+<ExerciseCard question={getQuestion('url-parts')} />
+
+#### URL Encoding
+
+About whitespace and other unusual characters: link a URI converter.
+
+<ExerciseCard question={getCourseItem('url-encoding')} />

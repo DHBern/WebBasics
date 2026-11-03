@@ -1,0 +1,60 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getQuestion } from '#lib/content/course.js';
+</script>
+
+### Basic Syntax (Elements and Attributes)
+
+#### Sort HTML parts into the correct order
+
+<pre><code class="language-html">&lt;p class="intro"&gt;Hello!&lt;/p&gt;</code></pre>
+
+<ExerciseCard question={getQuestion('html-parts')} />
+
+#### Indentation
+
+Compare these three code snippets:
+
+```html
+<html><body><p>Why should I care about formatting?</p></body></html>
+```
+
+```html
+<html>
+<body>
+<p>
+Why should I care about formatting?
+</p>
+</body>
+</html>
+```
+
+```html
+<html>
+	<body>
+		<p>Why should I care about formatting?</p>
+	</body>
+</html>
+```
+
+<ExerciseCard question={getQuestion('html-indentation')} />
+
+#### Closing tags and void elements
+
+What goes wrong here?
+
+```html
+<img src="../img/icon.jpeg" alt="Icon"></img>
+```
+
+<ExerciseCard question={getQuestion('img-void-element')} />
+
+What went wrong with these overlapping tags?
+
+```html
+<p>I didn't expect to find the <em>next-door neighbor's <strong>cat</em></strong> here!</p>
+```
+
+<ExerciseCard question={getQuestion('overlapping-tags')} />
+
+**Further Reading:** [Elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [Attributes (MDN)](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)

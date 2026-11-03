@@ -1,0 +1,31 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getQuestion } from '#lib/content/course.js';
+</script>
+
+### Images
+
+#### Relative vs. absolute paths
+
+You are linking an image from `/about/team/teachers/andrea/index.html`. Which paths work?
+
+<ExerciseCard question={getQuestion('image-relative-absolute-paths')} />
+
+#### Image title and alt text
+
+```html
+<img
+  src="images/dinosaur.jpg"
+  alt="The head and torso of a dinosaur skeleton; it has a large head with long sharp teeth"
+  width="400"
+  height="341"
+  title="A T-Rex on display in the Manchester University Museum">
+```
+
+<ExerciseCard question={getQuestion('image-alt-title')} />
+
+#### Image dimensions
+
+<ExerciseCard question={getQuestion('image-dimensions')} />
+
+**Further Reading:** [MDN: Images](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_images) · [Bonus: Audio and video](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_video_and_audio)

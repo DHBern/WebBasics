@@ -1,0 +1,10 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getQuestion } from '#lib/content/course.js';
+</script>
+
+### Comments
+
+<ExerciseCard question={getQuestion('valid-html-comments')} />
+
+<ExerciseCard question={getQuestion('comment-visibility')} />
