@@ -1,0 +1,8 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getQuestion } from '#lib/content/course.js';
+</script>
+
+### Lists and Tables
+
+<ExerciseCard question={getQuestion('list-table-elements')} />

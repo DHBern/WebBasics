@@ -1,0 +1,23 @@
+# Repetitorium HTML
+
+## Table of Content
+
+- [URL Structure](/courses/html/url-structure/)
+- [Comments](/courses/html/comments/)
+- [Basic Syntax (Elements and Attributes)](/courses/html/basic-syntax/)
+- [Webpage Structure](/courses/html/webpage-structure/)
+- [Semantic HTML](/courses/html/semantic-html/)
+- [Formatting Text (Headings, paragraphs, strong, emphasis)](/courses/html/formatting-text/)
+- [Lists and Tables](/courses/html/lists-tables/)
+- [Links and Anchors](/courses/html/links/)
+- [Images](/courses/html/images/)
+- [Forms and Buttons](/courses/html/forms-buttons/)
+- [Embeddings (iframe)](/courses/html/embeddings/)
+
+## Exercises
+
+The following exercises are intended to repeat what you've just learnt in the introductory videos as well as deepen your knowledge about the whys of important HTML and CSS concepts.
+
+It is a deliberate choice that some of the following exercise questions go beyond what was covered in the introductory videos. But worry not! After you've answered, you will be provided with a quick explanation, which is an integral part of the curriculum of this course. So please take some time to solve the question on your own and then carefully read the explanations given.
+
+<a href="/courses/html/url-structure/">Begin HTML Questions</a>

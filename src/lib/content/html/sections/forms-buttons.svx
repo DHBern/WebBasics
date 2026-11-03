@@ -1,0 +1,52 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getQuestion } from '#lib/content/course.js';
+</script>
+
+### Forms and Buttons
+
+#### Terminology
+
+<ExerciseCard question={getQuestion('form-control-terminology')} />
+
+#### Submitting a form
+
+<ExerciseCard question={getQuestion('form-needs-server')} />
+
+<ExerciseCard question={getQuestion('form-submit-behavior')} />
+
+#### Attribute without value
+
+Compare `<button disabled=true>` and `<button disabled>`.
+
+<ExerciseCard question={getQuestion('boolean-disabled')} />
+
+#### Labels and inputs
+
+Which of the two codes is better?
+
+```html
+<form>
+  <label for="uid">User ID</label>
+  <input type="text" id="uid" name="uid">
+  <label for="pwd">Password</label>
+  <input type="password" id="pwd" name="pwd">
+  <button>Log in</button>
+</form>
+```
+
+```html
+<form>
+  <label>User ID
+    <input type="text" name="uid"></label>
+  </label>
+  <label for="pwd">Password
+    <input type="password" name="pwd">
+  </label>
+  <button>Log in</button>
+</form>
+```
+
+<ExerciseCard question={getQuestion('label-input-association')} />
+
+**Further Reading:** [MDN: Forms and buttons](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_forms)

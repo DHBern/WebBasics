@@ -1,0 +1,16 @@
+<script>
+	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import { getQuestion } from '#lib/content/course.js';
+</script>
+
+### Webpage Structure
+
+<ExerciseCard question={getQuestion('head-header-nav')} />
+
+#### Sort elements inside the body
+
+The original exercise asks you to place body elements in a basic website layout and head elements in the invisible part of the document. Build the nested structure; CSS can place an `<aside>` next to `<main>`.
+
+<ExerciseCard question={getQuestion('body-element-tree')} />
+
+**Further Reading:** [MDN: Structuring documents](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents) · [MDN: Website metadata](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Webpage_metadata)
