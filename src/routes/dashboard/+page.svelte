@@ -17,6 +17,8 @@
 		text: string;
 		attempts: number;
 		wrong: number;
+		checked: number;
+		correctOption: boolean;
 	};
 
 	type QuestionMetric = {
@@ -220,10 +222,18 @@
 				for (const item of itemAnswers) {
 					let itemMetric = metric.items.find((candidate) => candidate.id === item.id);
 					if (!itemMetric) {
-						itemMetric = { id: item.id, text: item.text, attempts: 0, wrong: 0 };
+						itemMetric = {
+							id: item.id,
+							text: item.text,
+							attempts: 0,
+							wrong: 0,
+							checked: 0,
+							correctOption: 'selected' in item && item.correct
+						};
 						metric.items.push(itemMetric);
 					}
 					itemMetric.attempts++;
+					if ('selected' in item && item.selected) itemMetric.checked++;
 					if ('selected' in item && item.correct !== item.selected) itemMetric.wrong++;
 					if ('selectedTargetId' in item && !item.correct) itemMetric.wrong++;
 				}
@@ -340,15 +350,20 @@
 								<span class="text-right text-slate-500">{metric.attempts} tries</span>
 							</summary>
 							<div class="border-t border-slate-200 bg-slate-50 px-4 py-4">
-								<h3 class="text-sm font-semibold">Option / item errors</h3>
+								<h3 class="text-sm font-semibold">{metric.type === 'multiple-choice' ? 'Option selections' : 'Item errors'}</h3>
 								{#if metric.items.length}
 									<ul class="mt-3 space-y-2">
 										{#each metric.items as item (item.id)}
-											<li class="grid grid-cols-[minmax(0,1fr)_5rem_6rem_5rem] gap-3 text-sm">
-												<span>{item.text}</span>
-												<span class="text-right font-semibold">{item.wrong} wrong</span>
-												<span class="text-right">{((item.wrong / item.attempts) * 100).toFixed(1)}%</span>
-												<span class="text-right text-slate-500">{item.attempts} tries</span>
+											<li class="flex flex-wrap items-center justify-between gap-3 rounded-lg p-2 text-sm" class:bg-emerald-100={item.correctOption}>
+												<span class:font-bold={item.correctOption} class:text-emerald-900={item.correctOption}>
+													{item.text}
+													{#if item.correctOption}<span class="ml-1 text-xs">(Correct answer)</span>{/if}
+												</span>
+												{#if metric.type === 'multiple-choice'}
+													<span class="font-semibold">{item.checked} checked / {item.attempts - item.checked} unchecked</span>
+												{:else}
+													<span>{item.wrong} wrong · {((item.wrong / item.attempts) * 100).toFixed(1)}% · {item.attempts} tries</span>
+												{/if}
 											</li>
 										{/each}
 									</ul>

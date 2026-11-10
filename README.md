@@ -24,6 +24,9 @@ the current browser's local storage. At the end of HTML Questions, students can
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
 files locally in the browser; it does not upload or retain them.
 
+MCQ options in the dashboard show checked/unchecked counts, with correct choices
+highlighted in bold and green. Sort items retain their error counts and rates.
+
 The SHA-256 checksum detects accidental file corruption only. Because the app
 has no server or private signing key, it cannot prevent deliberate edits to a
 submission. Content gaps and corrections from the supplied source are tracked
