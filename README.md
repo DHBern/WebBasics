@@ -24,8 +24,12 @@ the current browser's local storage. At the end of HTML Questions, students can
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
 files locally in the browser; it does not upload or retain them.
 
-MCQ options in the dashboard show checked/unchecked counts, with correct choices
-highlighted in bold and green. Sort items retain their error counts and rates.
+The dashboard groups submissions by course and question ID across revisions.
+Revision breakdowns retain the exported wording, options, and original grading;
+MCQ options show checked/unchecked counts, with correct choices highlighted.
+Revisions that differ from the current course are flagged as outdated and show
+their JSON export timestamp (or export date range), not the answer time.
+Questions no longer in the course remain analyzable from their exported data.
 
 The SHA-256 checksum detects accidental file corruption only. Because the app
 has no server or private signing key, it cannot prevent deliberate edits to a
@@ -36,6 +40,7 @@ in [`CONTENT_ISSUES.md`](CONTENT_ISSUES.md).
 
 ```sh
 npm run check
+node --experimental-strip-types --test tests/analysis.test.mjs
 npm run build
 npm run preview
 ```
