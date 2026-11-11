@@ -7,7 +7,7 @@
 		{ text: '<button ', color: '#6366f1' },
 		{ text: 'class', color: '#4f46e5' },
 		{ text: '=', color: '#334155' },
-		{ text: '"button--external"', color: '#b45309' },
+		{ text: '"link--external text_large"', color: '#b45309' },
 		{ text: ' ', color: '#334155' },
 		{ text: 'style', color: '#4f46e5' },
 		{ text: '=', color: '#334155' },

@@ -226,7 +226,7 @@ export const htmlSections: CourseSection[] = [
 			dragAndDrop(
 				'html-parts',
 				'Parts of an HTML element',
-				'Place each label at the matching bracket in the HTML example. Identify the button element, its `class` and `style` attributes, and its `disabled` boolean attribute. The smaller brackets mark attribute names and values; `disabled` has no value here. Scroll horizontally if needed to see the whole example.',
+				'Place each label at the matching bracket in the HTML example. Identify the button element, its `class` and `style` attributes, and its `disabled` boolean attribute. The `class` attribute contains two class names. The smaller brackets mark attribute names and values; `disabled` has no value here. Scroll horizontally if needed to see the whole example.',
 				[
 					{ id: 'element', text: 'Element' },
 					{ id: 'opening-tag', text: 'Opening tag' },
@@ -266,7 +266,7 @@ export const htmlSections: CourseSection[] = [
 					content: 'content-slot',
 					'closing-tag': 'closing-slot'
 				},
-				'An element includes its opening tag, content, and closing tag. The class-attribute assigns class names: `button--external` is a BEM modifier of the `button` block. The style-attribute contains CSS declarations. These two attributes have quoted values. The boolean attribute `disabled` needs no value: its presence disables the button; omitting it leaves the button enabled. Writing `disabled="false"` would still disable it.'
+				'In this example, the **element** consists of the opening tag, the content (`Click me`), and the closing tag. Attributes belong in the opening tag and provide additional information or settings.\n\nThe **`class` attribute** assigns class names, which CSS can use to select elements. Here, its value contains two class names: `link--external` and `text_large`. A space separates them; hyphens (`-`) and underscores (`_`) can be part of a class name. The name `link--external` follows a naming convention called **BEM**, where `--` indicates a variant. This convention helps people organize their code; HTML does not require it. Despite its name, the class does not make this button a link.\n\nThe **`style` attribute** contains CSS declarations applied directly to this element. In `border: 2px solid black;`, `border` is the property, and `2px solid black` is its value.\n\n**`disabled` is a boolean attribute:** its presence disables the button; leaving it out leaves the button enabled. A useful trap to remember: even `disabled="false"` disables the button—its presence, not the text of its value, is what matters.'
 			),
 			mcq(
 				'img-void-element',
