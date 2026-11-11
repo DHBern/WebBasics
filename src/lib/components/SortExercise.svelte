@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
-	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
+	import { renderMarkdown } from '#lib/content/markdown.js';
 	import type { SortItem, SortQuestion, SubmittedAnswer } from '#lib/content/types.js';
 	import { questionRevision } from '#lib/content/course.js';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
+	import ExercisePrompt from './ExercisePrompt.svelte';
 
 	let { question }: { question: SortQuestion } = $props();
 	let orderedItems = $state<SortItem[]>([]);
@@ -121,9 +122,7 @@
 </script>
 
 <section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
-	<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
-		{@html renderInline(question.prompt)}
-	</h3>
+	<ExercisePrompt id={question.id} prompt={question.prompt} />
 	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
 			{@html renderMarkdown(block)}

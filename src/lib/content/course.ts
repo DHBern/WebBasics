@@ -25,9 +25,10 @@ function hasMcqDescription(
 
 export const mcq = (
 	id: string,
-	prompt: string,
+	prompt: string | string[],
 	...args: McqArguments
 ): MultipleChoiceQuestion => {
+	prompt = Array.isArray(prompt) ? prompt.join('\n\n') : prompt;
 	if (hasMcqDescription(args)) {
 		const [description, options, feedback, bonusId] = args;
 		return { id, prompt, type: 'multiple-choice', description: typeof description === 'string' ? [description] : description, options, feedback, bonusId };
@@ -38,12 +39,12 @@ export const mcq = (
 
 export const input = (
 	id: string,
-	prompt: string,
+	prompt: string | string[],
 	description?: string | string[],
 	feedback?: Feedback,
 	bonusId?: string
 ): InputQuestion => ({
-	id, prompt, type: 'input',
+	id, prompt: Array.isArray(prompt) ? prompt.join('\n\n') : prompt, type: 'input',
 	description: typeof description === 'string' ? [description] : description,
 	feedback, bonusId
 });
@@ -134,12 +135,13 @@ function hasPlacementFeedback(args: PlacementArguments): args is [Feedback, stri
 
 export const dragAndDrop = (
 	id: string,
-	prompt: string,
+	prompt: string | string[],
 	instructions: string | string[],
 	items: SortItem[],
 	targets: SortTarget[],
 	...args: PlacementArguments
 ) => {
+	prompt = Array.isArray(prompt) ? prompt.join('\n\n') : prompt;
 	if (hasPlacementFeedback(args)) {
 		const [feedback, bonusId] = args;
 		const answerKey = sortAnswerKeys[id];
@@ -152,14 +154,17 @@ export const dragAndDrop = (
 
 export const sort = (
 	id: string,
-	prompt: string,
+	prompt: string | string[],
 	instructions: string | string[],
 	items: SortItem[],
 	targets: SortTarget[],
 	answerKey: Record<string, string>,
 	feedback?: Feedback,
 	bonusId?: string
-) => ({ id, prompt, type: 'sort' as const, instructions, items, targets, answerKey, feedback, bonusId });
+) => ({
+	id, prompt: Array.isArray(prompt) ? prompt.join('\n\n') : prompt,
+	type: 'sort' as const, instructions, items, targets, answerKey, feedback, bonusId
+});
 
 export function isPlacementCorrect(question: PlacementQuestion, itemId: string, targetId: string): boolean {
 	const expected = question.answerKey[itemId];

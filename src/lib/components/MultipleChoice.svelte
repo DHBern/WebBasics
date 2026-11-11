@@ -4,6 +4,7 @@
 	import { questionRevision } from '#lib/content/course.js';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
+	import ExercisePrompt from './ExercisePrompt.svelte';
 
 	let { question }: { question: MultipleChoiceQuestion } = $props();
 	let draftSelectedIds = $state<string[]>([]);
@@ -43,9 +44,7 @@
 </script>
 
 <section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
-		<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
-			{@html renderInline(question.prompt)}
-		</h3>
+		<ExercisePrompt id={question.id} prompt={question.prompt} />
 
 		{#if question.description?.length}
 			<div class="exercise-description prose max-w-none">

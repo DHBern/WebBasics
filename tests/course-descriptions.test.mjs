@@ -111,3 +111,24 @@ test('all exercise types preserve Markdown bodies, feedback and linked bonuses',
 		}
 	}
 });
+
+test('all exercise types accept paragraph and code-block arrays as the question argument', () => {
+	const prompt = ['First paragraph.', '```html\n<p>Code</p>\n```', 'Last paragraph.'];
+	const items = [{ id: 'item', text: 'Item' }];
+	const targets = [{ id: 'target', label: 'Target' }];
+	const key = { item: 'target' };
+	const questions = [
+		dragAndDrop('d', prompt, 'Instructions', items, targets, key),
+		sort('s', prompt, 'Instructions', items, targets, key),
+		input('i', prompt),
+		mcq('m', prompt, [{ id: 'a', text: 'A', correct: true }])
+	];
+	for (const question of questions) {
+		assert.equal(question.prompt, prompt.join('\n\n'));
+		const html = renderMarkdown(question.prompt);
+		assert.match(html, /<p>First paragraph\.<\/p>/);
+		assert.match(html, /<pre><code class="language-html">&lt;p&gt;Code&lt;\/p&gt;/);
+		assert.match(html, /<p>Last paragraph\.<\/p>/);
+		assert.notEqual(questionRevision(question), questionRevision({ ...question, prompt: 'Changed' }));
+	}
+});

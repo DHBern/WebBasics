@@ -34,6 +34,12 @@ For `dragAndDrop(...)` and `sort(...)`, the third argument is the instructions
 body; items, targets, and the answer key follow it as before. These bodies render
 before the interactive controls and are retained in exported submissions.
 
+The second argument (the question/title) also accepts an array of Markdown blocks,
+for example `sort('id', ['First paragraph', '```html\n<h1>Example</h1>\n```',
+'Another paragraph'], 'Instructions', items, targets, answerKey, feedback, 'bonus-id')`.
+Multiline questions render as block Markdown rather than inside a heading.
+Existing single-line titles remain headings.
+
 Feedback accepts a Markdown string (including multiple paragraphs and fenced
 code) or an array of Markdown blocks. Exercises can optionally link to a
 separately defined bonus exercise by passing its ID as their final argument,
@@ -96,6 +102,7 @@ in [`CONTENT_ISSUES.md`](CONTENT_ISSUES.md).
 
 ```sh
 npm run check
+npx tsc --ignoreConfig --noEmit --strict --target es2022 --module esnext --moduleResolution bundler --allowImportingTsExtensions tests/course-types.ts
 node --experimental-strip-types --test tests/*.test.mjs
 npm run build
 npm run preview

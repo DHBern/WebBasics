@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
+	import { renderMarkdown } from '#lib/content/markdown.js';
 	import type { DragAndDropQuestion, SortItem, SubmittedAnswer } from '#lib/content/types.js';
 	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
@@ -7,6 +7,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
+	import ExercisePrompt from './ExercisePrompt.svelte';
 
 	let { question }: { question: DragAndDropQuestion } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
@@ -189,9 +190,7 @@
 {/snippet}
 
 <section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
-	<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
-		{@html renderInline(question.prompt)}
-	</h3>
+	<ExercisePrompt id={question.id} prompt={question.prompt} />
 	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
 			{@html renderMarkdown(block)}
