@@ -32,6 +32,19 @@ Answers are saved in the current browser's local storage. At the end of HTML Que
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
 files locally in the browser; it does not upload or retain them.
 
+Drag-and-drop and sorting exercises allow unlimited practice with **Try again**.
+Only the first submitted attempt is saved in browser local storage and included
+in the JSON export, even if a later practice attempt is correct. Practice feedback
+is temporary; reopening the course restores the first attempt. **Reset progress**
+clears saved attempts. As before, revising a question invalidates its saved answer.
+Multiple-choice questions still allow only one submission.
+**Try again** and **Remove all** sit directly below the exercise, before feedback.
+**Remove all** returns every item to the item pool in its original shuffled order,
+including when starting another practice attempt. Dropping an item outside all
+destinations also returns it to that pool. Neither operation clears saved results;
+only **Reset progress** (or a question revision) does that. Sorting exercises
+retain their initially shuffled heading list and provide a pool for returned items.
+
 Drag-and-drop and sorting exercises use the MIT-licensed `svelte-dnd-action`
 library for visible drag previews, touch input, and keyboard dragging. Press
 Space to pick up/drop, arrow keys to reorder, and Tab to move between areas.

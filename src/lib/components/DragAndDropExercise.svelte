@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
 	import type { DragAndDropQuestion, SortItem, SubmittedAnswer } from '#lib/content/types.js';
-	import { dndzone, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
+	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
 	import { onMount, untrack } from 'svelte';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
@@ -14,10 +14,21 @@
 	let shuffleReady = $state(false);
 	let zones = $state<Record<string, SortItem[]>>({});
 	let submitError = $state('');
-	let saved = $derived($progress.answers[question.id]);
+	let dragging = $state(false);
+	let practicing = $state(false);
+	let practiceAnswer = $state<SubmittedAnswer>();
+	let firstAttempt = $derived($progress.answers[question.id]);
+	let saved = $derived(firstAttempt ? (practicing ? practiceAnswer : firstAttempt) : undefined);
 	let placements = $derived(saved?.placements ?? draftPlacements);
 	let changed = $derived($progress.changeNotices.includes(question.id));
 	const multiTargetIds = new Set(['block', 'inline', 'table-category', 'list-category', 'both-category', 'neither-category', 'invisible-target']);
+
+	$effect(() => {
+		if (!firstAttempt) {
+			practicing = false;
+			practiceAnswer = undefined;
+		}
+	});
 
 	$effect(() => {
 		saved;
@@ -65,12 +76,13 @@
 
 	function consider(event: CustomEvent<DndEvent<SortItem>>, targetId: string) {
 		zones = { ...zones, [targetId]: event.detail.items };
+		dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED;
 	}
 
 	function finalize(event: CustomEvent<DndEvent<SortItem>>, targetId: string) {
-		if (!saved && event.detail.info.trigger === TRIGGERS.DROPPED_INTO_ZONE) {
+		if (!saved && [TRIGGERS.DROPPED_INTO_ZONE, TRIGGERS.DROPPED_OUTSIDE_OF_ANY].includes(event.detail.info.trigger)) {
 			const itemId = event.detail.info.id;
-			if (targetId === 'pool') {
+			if (targetId === 'pool' || event.detail.info.trigger === TRIGGERS.DROPPED_OUTSIDE_OF_ANY) {
 				const next = { ...draftPlacements };
 				delete next[itemId];
 				draftPlacements = next;
@@ -79,10 +91,11 @@
 			}
 		}
 		syncZones();
+		dragging = event.detail.info.source === SOURCES.KEYBOARD;
 	}
 
 	function submit() {
-		if (saved) return;
+		if (saved || dragging) return;
 		const complete = Object.keys(question.answerKey).every((itemId) => placements[itemId]);
 		if (!complete) {
 			submitError = 'Place every required item before submitting.';
@@ -100,12 +113,29 @@
 			isCorrect
 		};
 		try {
-			saveAnswer(answer);
+			if (!firstAttempt) saveAnswer(answer);
+			else practiceAnswer = answer;
 			clearChangeNotice(question.id);
 			submitError = '';
 		} catch (error) {
 			submitError = error instanceof Error ? error.message : 'Your answer could not be saved.';
 		}
+	}
+
+	function tryAgain() {
+		draftPlacements = { ...saved?.placements };
+		selectedItemId = '';
+		submitError = '';
+		practicing = true;
+		practiceAnswer = undefined;
+	}
+
+	function removeAll() {
+		if (saved) tryAgain();
+		draftPlacements = {};
+		selectedItemId = '';
+		submitError = '';
+		syncZones();
 	}
 </script>
 
@@ -193,7 +223,7 @@
 						</button>
 				{/each}
 			</div>
-			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination. To drag with the keyboard, press Space, use the arrow keys or Tab, then press Space to drop.</p>
+			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination. Drop outside a destination to return an item here. To drag with the keyboard, press Space, use the arrow keys or Tab, then press Space to drop.</p>
 		</div>
 
 		{#if question.id === 'url-parts'}
@@ -264,8 +294,15 @@
 		{/if}
 	{/if}
 
+	<div class="mt-5 flex flex-wrap gap-2">
+		{#if saved}
+			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
+		{/if}
+		<button class="button-secondary" disabled={dragging || !shuffleReady} onclick={removeAll}>Remove all</button>
+	</div>
+
 	{#if !saved}
-		<button class="button-primary mt-5" onclick={submit}>Submit answer</button>
+		<button class="button-primary mt-5" disabled={dragging} onclick={submit}>Submit answer</button>
 	{:else}
 		<p class="mt-3 text-sm font-semibold" class:text-emerald-800={saved.isCorrect} class:text-rose-800={!saved.isCorrect}>
 			{saved.isCorrect ? 'Correct' : 'Not quite'}
@@ -275,6 +312,12 @@
 				{@html renderMarkdown(question.feedback)}
 			</div>
 		{/if}
+	{/if}
+
+	{#if firstAttempt}
+		<p class="mt-3 text-xs text-slate-500">
+			Your first attempt has been saved for the JSON export so we can discuss it during our consultation hour. Feel free to practise as often as you like afterwards.
+		</p>
 	{/if}
 
 	{#if submitError}
