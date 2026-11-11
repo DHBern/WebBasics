@@ -123,6 +123,10 @@ a {
 	accent-color: #c2410c;
 }
 
+.answer-option code {
+	white-space: pre-wrap;
+}
+
 .answer-correct {
 	border-color: #86efac !important;
 	background: #f0fdf4 !important;
@@ -614,6 +618,19 @@ a {
 	background: #fffbeb;
 	padding: 0.75rem 0.9rem;
 	color: #78350f;
+}
+
+.exercise-feedback .feedback-bonus {
+	border: 1px solid #fcd34d;
+	border-left: 4px solid #f59e0b;
+	border-radius: 0.65rem;
+	background: #fffbeb;
+	padding: 0.9rem;
+	color: #78350f;
+}
+
+.exercise-feedback .feedback-bonus p {
+	margin: 0.5rem 0;
 }
 
 .feedback-content ul,

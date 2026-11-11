@@ -30,7 +30,9 @@ function isSubmittedAnswer(value: unknown): value is SubmittedAnswer {
 		(value.selectedOptionIds === undefined || isStringArray(value.selectedOptionIds)) &&
 		(value.placements === undefined ||
 			(isRecord(value.placements) &&
-				Object.values(value.placements).every((targetId) => typeof targetId === 'string')))
+				Object.values(value.placements).every((targetId) => typeof targetId === 'string'))) &&
+		(value.bonusResponse === undefined || typeof value.bonusResponse === 'string') &&
+		(value.bonusSubmittedAt === undefined || typeof value.bonusSubmittedAt === 'string')
 	);
 }
 
@@ -101,6 +103,34 @@ export function saveAnswer(answer: SubmittedAnswer) {
 	const next: SavedProgress = {
 		...current,
 		answers: { ...current.answers, [answer.questionId]: answer }
+	};
+	persist(next);
+	progress.set(next);
+}
+
+export function saveBonusResponse(questionId: string, response: string) {
+	if (!response.trim()) {
+		throw new Error('Enter a response before submitting.');
+	}
+	const question = getQuestion(questionId);
+	if (!question?.bonusPrompt) {
+		throw new Error('This question does not have a bonus response.');
+	}
+	const current = get(progress);
+	const answer = current.answers[questionId];
+	if (!answer) {
+		throw new Error('Answer the question before submitting its bonus response.');
+	}
+	const next: SavedProgress = {
+		...current,
+		answers: {
+			...current.answers,
+			[questionId]: {
+				...answer,
+				bonusResponse: response,
+				bonusSubmittedAt: new Date().toISOString()
+			}
+		}
 	};
 	persist(next);
 	progress.set(next);

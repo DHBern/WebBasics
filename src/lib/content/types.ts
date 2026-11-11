@@ -21,6 +21,7 @@ type QuestionBase = {
 	id: string;
 	prompt: string;
 	feedback?: string;
+	bonusPrompt?: string;
 };
 
 export type MultipleChoiceQuestion = QuestionBase & {
@@ -77,6 +78,8 @@ export type SubmittedAnswer = {
 	type: Question['type'];
 	selectedOptionIds?: string[];
 	placements?: Record<string, string>;
+	bonusResponse?: string;
+	bonusSubmittedAt?: string;
 	isCorrect: boolean;
 };
 
@@ -120,6 +123,11 @@ export type SubmissionPayload = {
 			selectedTargetId: string | null;
 			correct: boolean;
 		}>;
+		bonusResponse?: {
+			prompt: string;
+			response: string;
+			submittedAt: string;
+		};
 		isCorrect: boolean;
 	}>;
 };

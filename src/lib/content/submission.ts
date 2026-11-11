@@ -31,7 +31,16 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 				sectionTitle: section.title,
 				question: question.prompt,
 				type: question.type,
-				isCorrect: submitted.isCorrect
+				isCorrect: submitted.isCorrect,
+				...(question.bonusPrompt && submitted.bonusResponse
+					? {
+							bonusResponse: {
+								prompt: question.bonusPrompt,
+								response: submitted.bonusResponse,
+								submittedAt: submitted.bonusSubmittedAt ?? submitted.submittedAt
+							}
+						}
+					: {})
 			};
 			if (question.type === 'multiple-choice') {
 				const selected = new Set(submitted.selectedOptionIds ?? []);

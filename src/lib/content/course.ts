@@ -12,8 +12,9 @@ const mcq = (
 	id: string,
 	prompt: string,
 	options: MultipleChoiceQuestion['options'],
-	feedback?: string
-): MultipleChoiceQuestion => ({ id, prompt, type: 'multiple-choice', options, feedback });
+	feedback?: string,
+	bonusPrompt?: string
+): MultipleChoiceQuestion => ({ id, prompt, type: 'multiple-choice', options, feedback, bonusPrompt });
 
 const option = (id: string, text: string, correct: boolean) => ({ id, text, correct });
 
@@ -177,18 +178,24 @@ export const htmlSections: CourseSection[] = [
 				'valid-html-comments',
 				'What are valid ways to wrap a comment in HTML?',
 				[
-					option('html-comment', '`<!-- ... -->`', true),
-					option('multiline-html-comment', '`<!-- [multiline] -->`', true),
+					option('html-comment', '`<!-- A comment -->`', true),
+					option('multiline-html-comment', '`<!-- A multiline comment -->`', true),
 					option('slash-comment', '`// ...`', false),
 					option('c-comment', '`/* ... */`', false)
 				],
-				'Answers 1 and 2 are correct HTML comments. Answers 3 and 4 are used for comments in CSS or JavaScript (3 is for single lines and 4 for multiple lines). [MDN: CSS comments](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Syntax/Comments)'
+				'Answers 1 and 2 use the HTML comment delimiters `<!--` and `-->`; HTML comments can span more than one line, for example:\n\n```html\n<!--\n  This comment spans more than one line.\n-->\n```\n\n`//` is used for single-line JavaScript comments, while `/* ... */` is used for comments in CSS and JavaScript. None of these comment forms is displayed as page content.'
 			),
 			mcq(
 				'comment-visibility',
-				'“Comments in HTML are invisible to the user.”',
-				[option('yes', 'Yes', false), option('no', 'No', true)],
-				'No: all of your HTML comments remain visible in the source code of your website. Comments are not displayed in the rendered page.\n\nTry it out! Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for commented code. Press Ctrl+U (Cmd+U on macOS), then search for `<!--`.\n\n**Report your findings:** [...]'
+				'Given `<p>Visible text</p><!-- internal note -->`, which statement is correct?',
+				[
+					option('both-visible', 'The browser displays “Visible text” and “internal note.”', false),
+					option('rendered-and-source', 'The browser displays “Visible text”; the comment remains in the page source but is not rendered.', true),
+					option('comment-removed', 'The browser removes the comment from the HTML source.', false),
+					option('text-hidden', 'The comment hides the paragraph from the browser.', false)
+				],
+				'The paragraph text is rendered on the page, but the comment is not. The comment remains in the HTML source and can be read by anyone who inspects that source; do not put passwords or other secrets in comments.',
+				'Open Wikipedia page source (Ctrl+U on Windows/Linux, Cmd+Option+U on macOS) and search for `<!--`. In the field below, paste or describe one comment you find and briefly note whether it appears on the rendered page.'
 			)
 		]
 	},
@@ -675,7 +682,8 @@ export function questionRevision(question: Question): string {
 			? {
 					id: question.id,
 					prompt: question.prompt,
-					options: question.options.map(({ id, text, correct }) => ({ id, text, correct }))
+					options: question.options.map(({ id, text, correct }) => ({ id, text, correct })),
+					bonusPrompt: question.bonusPrompt
 				}
 			: {
 					id: question.id,

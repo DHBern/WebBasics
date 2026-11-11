@@ -94,5 +94,5 @@
 </section>
 
 {#if saved && question.feedback}
-	<ExerciseFeedback feedback={question.feedback} id={question.id} />
+	<ExerciseFeedback feedback={question.feedback} id={question.id} bonusPrompt={question.bonusPrompt} />
 {/if}

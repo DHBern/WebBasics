@@ -19,6 +19,7 @@ type RevisionMetric = {
 	attempts: number;
 	wrong: number;
 	items: ItemMetric[];
+	bonusResponses: Array<{ prompt: string; response: string; submittedAt: string }>;
 };
 
 export type QuestionMetric = {
@@ -61,7 +62,8 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 					lastExportedAt: exportedAt,
 					attempts: 0,
 					wrong: 0,
-					items: []
+					items: [],
+					bonusResponses: []
 				};
 				metric.versions.push(version);
 			}
@@ -73,6 +75,7 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 				metric.wrong++;
 				version.wrong++;
 			}
+			if (answer.bonusResponse) version.bonusResponses.push(answer.bonusResponse);
 
 			const itemAnswers = answer.type === 'multiple-choice' ? answer.options : answer.items;
 			for (const item of itemAnswers ?? []) {

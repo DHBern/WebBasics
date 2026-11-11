@@ -47,6 +47,16 @@
 		}
 
 		if (
+			value.bonusResponse !== undefined &&
+			(!isObject(value.bonusResponse) ||
+				typeof value.bonusResponse.prompt !== 'string' ||
+				typeof value.bonusResponse.response !== 'string' ||
+				typeof value.bonusResponse.submittedAt !== 'string' ||
+				!Number.isFinite(Date.parse(value.bonusResponse.submittedAt)))
+		) {
+			return false;
+		}
+		if (
 			value.options !== undefined &&
 			(!Array.isArray(value.options) ||
 				!value.options.every(
@@ -266,8 +276,8 @@
 		<section class="mt-8">
 			<div class="flex flex-wrap items-end justify-between gap-3">
 				<div>
-					<h2 class="text-2xl font-bold">Question and option errors</h2>
-					<p class="mt-1 text-sm text-slate-600">Results are grouped by question ID within each course, with separate revision breakdowns. Each revision keeps its original grading and options. Dates refer to JSON exports, not answer times.</p>
+					<h2 class="text-2xl font-bold">Question results and Bonus responses</h2>
+					<p class="mt-1 text-sm text-slate-600">Results are grouped by question ID within each course, with separate revision breakdowns. Each revision keeps its original grading, options, and any submitted Bonus text responses. Dates refer to JSON exports, not answer times.</p>
 				</div>
 				<label class="text-sm font-medium">
 					Rank by
@@ -337,6 +347,18 @@
 										</ul>
 									{:else}
 										<p class="mt-2 text-sm text-slate-600">This question has no individually analyzable choices/items.</p>
+									{/if}
+									{#if version.bonusResponses.length}
+										<h4 class="mt-5 text-sm font-semibold">Bonus text responses</h4>
+										<ul class="mt-2 space-y-2">
+											{#each version.bonusResponses as bonus, index (`${bonus.submittedAt}-${index}`)}
+												<li class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+													<p class="font-semibold">{bonus.prompt}</p>
+													<p class="mt-1 whitespace-pre-wrap">{bonus.response}</p>
+													<p class="mt-2 text-xs text-slate-600">Submitted: {bonus.submittedAt}</p>
+												</li>
+											{/each}
+										</ul>
 									{/if}
 								</div>
 							{/each}
