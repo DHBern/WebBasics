@@ -32,7 +32,7 @@ export type MultipleChoiceQuestion = QuestionBase & {
 
 export type DragAndDropQuestion = QuestionBase & {
 	type: 'drag-n-drop';
-	instructions: string;
+	instructions: string | string[];
 	items: SortItem[];
 	targets: SortTarget[];
 	answerKey: Record<string, string>;
@@ -40,7 +40,7 @@ export type DragAndDropQuestion = QuestionBase & {
 
 export type SortQuestion = QuestionBase & {
 	type: 'sort';
-	instructions: string;
+	instructions: string | string[];
 	items: SortItem[];
 	targets: SortTarget[];
 	answerKey: Record<string, string>;

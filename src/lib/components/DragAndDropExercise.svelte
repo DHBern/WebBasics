@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderInline } from '#lib/content/markdown.js';
+	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
 	import type { DragAndDropQuestion, SortItem, SubmittedAnswer } from '#lib/content/types.js';
 	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
@@ -192,7 +192,11 @@
 	<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
 		{@html renderInline(question.prompt)}
 	</h3>
-	<p class="mt-2 text-sm text-slate-600">{question.instructions}</p>
+	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
+		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
+			{@html renderMarkdown(block)}
+		{/each}
+	</div>
 	{#if changed}
 		<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
 			This question changed since your last visit, so your previous answer was cleared. Please answer the updated question.

@@ -13,14 +13,14 @@ type Feedback = Question['feedback'];
 
 type McqArguments =
 	| [options: MultipleChoiceQuestion['options'], feedback?: Feedback, bonusId?: string]
-	| [description: string[], options: MultipleChoiceQuestion['options'], feedback?: Feedback, bonusId?: string];
+	| [description: string | string[], options: MultipleChoiceQuestion['options'], feedback?: Feedback, bonusId?: string];
 
 function hasMcqDescription(
 	args: McqArguments
-): args is [string[], MultipleChoiceQuestion['options'], Feedback?, string?] {
-	return args[0].length
+): args is [string | string[], MultipleChoiceQuestion['options'], Feedback?, string?] {
+	return typeof args[0] === 'string' || (args[0].length
 		? typeof args[0][0] === 'string'
-		: Array.isArray(args[1]) && args[1].every((item) => typeof item !== 'string');
+		: Array.isArray(args[1]) && args[1].every((item) => typeof item !== 'string'));
 }
 
 export const mcq = (
@@ -30,7 +30,7 @@ export const mcq = (
 ): MultipleChoiceQuestion => {
 	if (hasMcqDescription(args)) {
 		const [description, options, feedback, bonusId] = args;
-		return { id, prompt, type: 'multiple-choice', description, options, feedback, bonusId };
+		return { id, prompt, type: 'multiple-choice', description: typeof description === 'string' ? [description] : description, options, feedback, bonusId };
 	}
 	const [options, feedback, bonusId] = args;
 	return { id, prompt, type: 'multiple-choice', options, feedback, bonusId };
@@ -39,10 +39,14 @@ export const mcq = (
 export const input = (
 	id: string,
 	prompt: string,
-	description?: string[],
+	description?: string | string[],
 	feedback?: Feedback,
 	bonusId?: string
-): InputQuestion => ({ id, prompt, type: 'input', description, feedback, bonusId });
+): InputQuestion => ({
+	id, prompt, type: 'input',
+	description: typeof description === 'string' ? [description] : description,
+	feedback, bonusId
+});
 
 const option = (id: string, text: string, correct: boolean) => ({ id, text, correct });
 
@@ -131,7 +135,7 @@ function hasPlacementFeedback(args: PlacementArguments): args is [Feedback, stri
 export const dragAndDrop = (
 	id: string,
 	prompt: string,
-	instructions: string,
+	instructions: string | string[],
 	items: SortItem[],
 	targets: SortTarget[],
 	...args: PlacementArguments
@@ -149,7 +153,7 @@ export const dragAndDrop = (
 export const sort = (
 	id: string,
 	prompt: string,
-	instructions: string,
+	instructions: string | string[],
 	items: SortItem[],
 	targets: SortTarget[],
 	answerKey: Record<string, string>,
@@ -246,7 +250,7 @@ export const htmlSections: CourseSection[] = [
 			),
 			input(
 				'comment-visibility-bonus',
-				'Let's inspect a Wikipedia page',
+				"Let's inspect a Wikipedia page",
 				'Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.'
 			)
 		]

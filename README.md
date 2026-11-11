@@ -26,6 +26,14 @@ is rendered inside the exercise, before the options. Existing calls without a
 description remain supported. Description changes invalidate saved answers,
 and descriptions are included in exported submissions.
 
+All exercise bodies support a Markdown string with blank lines and fenced code
+blocks, or an array of Markdown blocks. Keep the title short and put the body in
+the third argument: `input('id', 'Title', ['First paragraph', '```html\n<p>Code</p>\n```',
+'Last paragraph'], ['Feedback paragraph', '```html\n<p>Explanation</p>\n```'], 'bonus-id')`.
+For `dragAndDrop(...)` and `sort(...)`, the third argument is the instructions
+body; items, targets, and the answer key follow it as before. These bodies render
+before the interactive controls and are retained in exported submissions.
+
 Feedback accepts a Markdown string (including multiple paragraphs and fenced
 code) or an array of Markdown blocks. Exercises can optionally link to a
 separately defined bonus exercise by passing its ID as their final argument,

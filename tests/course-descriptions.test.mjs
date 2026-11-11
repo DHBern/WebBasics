@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { getQuestion, legacyCommentVisibilityRevision, mcq, input, sort, dragAndDrop, questionRevision, requiredQuestionList, bonusQuestionIds } from '../src/lib/content/course.ts';
-import { renderInline, renderMarkdown } from '../src/lib/content/markdown.ts';
+import { getQuestion, mcq, input, sort, dragAndDrop, questionRevision, requiredQuestionList, bonusQuestionIds } from '../src/lib/content/course.ts';
+import { renderMarkdown } from '../src/lib/content/markdown.ts';
 import { analyzeSubmissions } from '../src/lib/content/analysis.ts';
 
 test('MCQ descriptions retain ordered paragraphs and code blocks inside the question', () => {
@@ -69,21 +69,45 @@ test('analysis preserves the exported description for historical revisions', () 
 	assert.deepEqual(metric.versions[0].description, description);
 });
 
-test('comment visibility retains the original choices and a clickable Wikipedia bonus link', () => {
+test('comment visibility links to a standalone input with the edited Markdown body', () => {
 	const question = getQuestion('comment-visibility');
-	assert.equal(question.prompt, '“Comments in HTML are invisible to the user.”');
-	assert.deepEqual(question.options.map(({ text, correct }) => ({ text, correct })), [
-		{ text: 'Yes', correct: false },
-		{ text: 'No', correct: true }
-	]);
 	assert.equal(question.bonusId, 'comment-visibility-bonus');
 	const bonus = getQuestion(question.bonusId);
 	assert.equal(bonus.type, 'input');
-	assert.match(renderInline(bonus.prompt), /<a href="https:\/\/www\.wikipedia\.org\/">Wikipedia<\/a>/);
-	assert.equal(legacyCommentVisibilityRevision(question, bonus), '9bdc5394');
+	assert.ok(Array.isArray(bonus.description));
+	assert.match(bonus.description.map(renderMarkdown).join(''), /<a href="https:\/\/www\.wikipedia\.org\/">Wikipedia<\/a>/);
 	assert.ok(bonusQuestionIds.has(bonus.id));
 	assert.ok(!requiredQuestionList.some((item) => item.id === bonus.id));
 	const ordinary = mcq('other', 'Title', [{ id: 'a', text: 'A', correct: true }]);
 	assert.equal(ordinary.bonusId, undefined);
 	assert.equal(questionRevision({ ...question, bonusId: undefined }), questionRevision(question));
+});
+
+test('all exercise types preserve Markdown bodies, feedback and linked bonuses', () => {
+	const blocks = ['First paragraph.', '```html\n<p>Code</p>\n```', 'Last paragraph.'];
+	const feedback = ['Feedback paragraph.', '```html\n<!-- Explanation -->\n```'];
+	const items = [{ id: 'item', text: 'Item' }];
+	const targets = [{ id: 'target', label: 'Target' }];
+	const key = { item: 'target' };
+	for (const body of [blocks, blocks.join('\n\n')]) {
+		const exercises = [
+			mcq('m', 'Title', body, [{ id: 'a', text: 'A', correct: true }], feedback, 'bonus'),
+			input('i', 'Title', body, feedback, 'bonus'),
+			dragAndDrop('d', 'Title', body, items, targets, key, feedback, 'bonus'),
+			sort('s', 'Title', body, items, targets, key, feedback, 'bonus')
+		];
+		for (const exercise of exercises) {
+			const description = exercise.description ?? exercise.instructions;
+			const html = (Array.isArray(description) ? description : [description]).map(renderMarkdown).join('');
+			assert.match(html, /<p>First paragraph\.<\/p>/);
+			assert.match(html, /<pre><code class="language-html">&lt;p&gt;Code&lt;\/p&gt;/);
+			assert.match(html, /<p>Last paragraph\.<\/p>/);
+			assert.deepEqual(exercise.feedback, feedback);
+			assert.equal(exercise.bonusId, 'bonus');
+			const changed = exercise.type === 'multiple-choice' || exercise.type === 'input'
+				? { ...exercise, description: ['Changed'] }
+				: { ...exercise, instructions: ['Changed'] };
+			assert.notEqual(questionRevision(changed), questionRevision(exercise));
+		}
+	}
 });

@@ -64,6 +64,7 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 			const placements = submitted.placements ?? {};
 			return {
 				...base,
+				description: Array.isArray(question.instructions) ? question.instructions : [question.instructions],
 				response: { placements },
 				correctResponse: { placements: question.answerKey },
 				items: question.items.map((item) => ({
