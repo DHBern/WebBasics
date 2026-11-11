@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
+	import { renderInline } from '#lib/content/markdown.js';
 	import type { DragAndDropQuestion, SortItem, SubmittedAnswer } from '#lib/content/types.js';
 	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
 	import { onMount, untrack } from 'svelte';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
+	import ExerciseFeedback from './ExerciseFeedback.svelte';
 
 	let { question }: { question: DragAndDropQuestion } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
@@ -307,11 +308,6 @@
 		<p class="mt-3 text-sm font-semibold" class:text-emerald-800={saved.isCorrect} class:text-rose-800={!saved.isCorrect}>
 			{saved.isCorrect ? 'Correct' : 'Not quite'}
 		</p>
-		{#if question.feedback}
-			<div class="feedback-content prose mt-3 max-w-none">
-				{@html renderMarkdown(question.feedback)}
-			</div>
-		{/if}
 	{/if}
 
 	{#if firstAttempt}
@@ -324,3 +320,6 @@
 		<p class="mt-3 text-sm text-rose-800" role="alert">{submitError}</p>
 	{/if}
 </section>
+{#if saved && question.feedback}
+	<ExerciseFeedback feedback={question.feedback} id={question.id} />
+{/if}

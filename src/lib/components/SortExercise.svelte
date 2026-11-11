@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
-	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
+	import { renderInline } from '#lib/content/markdown.js';
 	import type { SortItem, SortQuestion, SubmittedAnswer } from '#lib/content/types.js';
 	import { questionRevision } from '#lib/content/course.js';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
+	import ExerciseFeedback from './ExerciseFeedback.svelte';
 
 	let { question }: { question: SortQuestion } = $props();
 	let orderedItems = $state<SortItem[]>([]);
@@ -205,11 +206,6 @@
 		<p class="mt-3 text-sm font-semibold" class:text-emerald-800={saved.isCorrect} class:text-rose-800={!saved.isCorrect}>
 			{saved.isCorrect ? 'Correct' : 'Not quite'}
 		</p>
-		{#if question.feedback}
-			<div class="feedback-content prose mt-3 max-w-none">
-				{@html renderMarkdown(question.feedback)}
-			</div>
-		{/if}
 	{/if}
 
 	{#if firstAttempt}
@@ -222,3 +218,6 @@
 		<p class="mt-3 text-sm text-rose-800" role="alert">{submitError}</p>
 	{/if}
 </section>
+{#if saved && question.feedback}
+	<ExerciseFeedback feedback={question.feedback} id={question.id} />
+{/if}
