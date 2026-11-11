@@ -7,7 +7,7 @@
 
 #### Place HTML parts at the matching brackets
 
-<pre><code class="language-html">&lt;p class="intro"&gt;Hello!&lt;/p&gt;</code></pre>
+<pre><code class="language-html">&lt;button class="button--external" style="border: 2px solid black;" disabled&gt;Click me&lt;/button&gt;</code></pre>
 
 <ExerciseCard question={getQuestion('html-parts')} />
 
