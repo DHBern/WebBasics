@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
-	import { renderInline } from '#lib/content/markdown.js';
+	import { renderMarkdown } from '#lib/content/markdown.js';
 	import type { SortItem, SortQuestion, SubmittedAnswer } from '#lib/content/types.js';
 	import { questionRevision } from '#lib/content/course.js';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
+	import ExercisePrompt from './ExercisePrompt.svelte';
 
 	let { question }: { question: SortQuestion } = $props();
 	let orderedItems = $state<SortItem[]>([]);
@@ -121,10 +122,12 @@
 </script>
 
 <section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
-	<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
-		{@html renderInline(question.prompt)}
-	</h3>
-	<p class="mt-2 text-sm text-slate-600">{question.instructions}</p>
+	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
+		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
+			{@html renderMarkdown(block)}
+		{/each}
+	</div>
 	<p class="mt-2 text-xs text-slate-500">Drag to reorder or move between areas. With the keyboard, press Space to pick up an item, use arrow keys to reorder or Tab to change area, then press Space to drop.</p>
 	{#if changed}
 		<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
@@ -218,6 +221,6 @@
 		<p class="mt-3 text-sm text-rose-800" role="alert">{submitError}</p>
 	{/if}
 </section>
-{#if saved && question.feedback}
-	<ExerciseFeedback feedback={question.feedback} id={question.id} />
+{#if saved && (question.feedback || question.bonusId)}
+	<ExerciseFeedback feedback={question.feedback} id={question.id} bonusId={question.bonusId} />
 {/if}

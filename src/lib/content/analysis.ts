@@ -13,12 +13,15 @@ type RevisionMetric = {
 	revision: string;
 	sectionTitle: string;
 	question: string;
+	description?: string[];
 	type: SubmissionPayload['answers'][number]['type'];
 	firstExportedAt: string;
 	lastExportedAt: string;
 	attempts: number;
 	wrong: number;
 	items: ItemMetric[];
+	bonusResponses: Array<{ prompt: string; response: string; submittedAt: string }>;
+	textResponses: Array<{ response: string; submittedAt: string }>;
 };
 
 export type QuestionMetric = {
@@ -27,6 +30,7 @@ export type QuestionMetric = {
 	questionId: string;
 	attempts: number;
 	wrong: number;
+	gradedAttempts: number;
 	versions: RevisionMetric[];
 };
 
@@ -44,6 +48,7 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 					questionId: answer.questionId,
 					attempts: 0,
 					wrong: 0,
+					gradedAttempts: 0,
 					versions: []
 				};
 				grouped.set(key, metric);
@@ -56,12 +61,15 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 					revision: answer.questionRevision,
 					sectionTitle: answer.sectionTitle,
 					question: answer.question,
+					description: answer.description,
 					type: answer.type,
 					firstExportedAt: exportedAt,
 					lastExportedAt: exportedAt,
 					attempts: 0,
 					wrong: 0,
-					items: []
+					items: [],
+					bonusResponses: [],
+					textResponses: []
 				};
 				metric.versions.push(version);
 			}
@@ -69,9 +77,17 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 			if (exportedAt > version.lastExportedAt) version.lastExportedAt = exportedAt;
 			metric.attempts++;
 			version.attempts++;
-			if (!answer.isCorrect) {
+			if (answer.isCorrect !== null) metric.gradedAttempts++;
+			if (answer.isCorrect === false) {
 				metric.wrong++;
 				version.wrong++;
+			}
+			if (answer.bonusResponse) version.bonusResponses.push(answer.bonusResponse);
+			if (answer.type === 'input' && answer.response.text !== undefined) {
+				version.textResponses.push({
+					response: answer.response.text,
+					submittedAt: answer.response.submittedAt ?? exportedAt
+				});
 			}
 
 			const itemAnswers = answer.type === 'multiple-choice' ? answer.options : answer.items;

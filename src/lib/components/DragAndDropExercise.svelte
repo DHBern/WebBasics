@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderInline } from '#lib/content/markdown.js';
+	import { renderMarkdown } from '#lib/content/markdown.js';
 	import type { DragAndDropQuestion, SortItem, SubmittedAnswer } from '#lib/content/types.js';
 	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
@@ -7,6 +7,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
+	import ExercisePrompt from './ExercisePrompt.svelte';
 
 	let { question }: { question: DragAndDropQuestion } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
@@ -189,10 +190,12 @@
 {/snippet}
 
 <section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
-	<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
-		{@html renderInline(question.prompt)}
-	</h3>
-	<p class="mt-2 text-sm text-slate-600">{question.instructions}</p>
+	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
+		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
+			{@html renderMarkdown(block)}
+		{/each}
+	</div>
 	{#if changed}
 		<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
 			This question changed since your last visit, so your previous answer was cleared. Please answer the updated question.
@@ -320,6 +323,6 @@
 		<p class="mt-3 text-sm text-rose-800" role="alert">{submitError}</p>
 	{/if}
 </section>
-{#if saved && question.feedback}
-	<ExerciseFeedback feedback={question.feedback} id={question.id} />
+{#if saved && (question.feedback || question.bonusId)}
+	<ExerciseFeedback feedback={question.feedback} id={question.id} bonusId={question.bonusId} />
 {/if}

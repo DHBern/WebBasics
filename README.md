@@ -15,9 +15,47 @@ npm run dev
 
 Edit `src/routes/+page.svelte` to change the course picker. The HTML welcome
 page and section content are mdsvex files under `src/lib/content/html/`; fenced
-code is syntax-highlighted by mdsvex. Question IDs, answer keys, feedback, and
+code is syntax-highlighted by mdsvex. Exercise Markdown uses Prism for supported
+code languages, with the same dark syntax theme as lessons. Use fenced `html`
+blocks for HTML examples; unhighlighted code also has a readable foreground.
+Question IDs, answer keys, feedback, and
 drag-sort targets are defined in `src/lib/content/course.ts`. Keep question IDs
 stable when reordering content.
+
+For multiple-choice questions, an optional array of Markdown blocks can be
+placed between the title and options: `mcq('id', 'Title', ['Question text',
+'```html\n<p>Example</p>\n```'], [option(...)], 'Feedback')`. Each array item
+is rendered inside the exercise, before the options. Existing calls without a
+description remain supported. Description changes invalidate saved answers,
+and descriptions are included in exported submissions.
+
+All exercise bodies support a Markdown string with blank lines and fenced code
+blocks, or an array of Markdown blocks. Keep the title short and put the body in
+the third argument: `input('id', 'Title', ['First paragraph', '```html\n<p>Code</p>\n```',
+'Last paragraph'], ['Feedback paragraph', '```html\n<p>Explanation</p>\n```'], 'bonus-id')`.
+For `dragAndDrop(...)` and `sort(...)`, the third argument is the instructions
+body; items, targets, and the answer key follow it as before. These bodies render
+before the interactive controls and are retained in exported submissions.
+
+The second argument (the question/title) also accepts an array of Markdown blocks,
+for example `sort('id', ['First paragraph', '```html\n<h1>Example</h1>\n```',
+'Another paragraph'], 'Instructions', items, targets, answerKey, feedback, 'bonus-id')`.
+Multiline questions render as block Markdown rather than inside a heading.
+Existing single-line titles remain headings.
+
+Feedback accepts a Markdown string (including multiple paragraphs and fenced
+code) or an array of Markdown blocks. Exercises can optionally link to a
+separately defined bonus exercise by passing its ID as their final argument,
+for example `mcq('id', 'Title', [option(...)], 'Feedback', 'bonus-id')`.
+Omitting the ID means there is no linked bonus. Define the bonus in the section's
+question list using `input(...)`, `mcq(...)`, or a placement exercise with that
+ID; it appears after the parent is answered and is not required for completion.
+Use `undefined` for omitted optional arguments before the bonus ID. `sort(...)`,
+`dragAndDrop(...)`, and `input(...)` also take the bonus ID as their final argument.
+Text input answers are ungraded, saved separately, and included in exports only
+when submitted. **Edit answer** reopens a submitted input response; **Save answer**
+replaces it, and JSON exports use the latest saved response. Unsaved edits do not
+change the exported answer. Previously saved comment bonus responses are migrated.
 
 The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
 uses SVG text, brackets, and HTML dropzones inside
@@ -67,7 +105,8 @@ in [`CONTENT_ISSUES.md`](CONTENT_ISSUES.md).
 
 ```sh
 npm run check
-node --experimental-strip-types --test tests/analysis.test.mjs
+npx tsc --ignoreConfig --noEmit --strict --target es2022 --module esnext --moduleResolution bundler --allowImportingTsExtensions tests/course-types.ts
+node --experimental-strip-types --test tests/*.test.mjs
 npm run build
 npm run preview
 ```

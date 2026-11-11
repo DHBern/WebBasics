@@ -106,3 +106,38 @@ test('retains sort-item error counts and separates courses sharing a question ID
 	assert.equal(metrics[0].versions[0].items[0].correctOption, false);
 	assert.equal(metrics[1].wrong, 0);
 });
+
+test('preserves submitted bonus text responses in the question revision metrics', () => {
+	const response = {
+		prompt: 'Inspect Wikipedia page source.',
+		response: '<!-- A comment -->',
+		submittedAt: '2026-11-11T12:00:00Z'
+	};
+	const [metric] = analyzeSubmissions([
+		payload('2026-11-11T12:01:00Z', [answer({ bonusResponse: response })])
+	]);
+	assert.equal(metric.attempts, 1);
+	assert.deepEqual(metric.versions[0].bonusResponses, [response]);
+});
+
+test('keeps standalone input responses ungraded across exercise type changes', () => {
+	const input = answer({
+		type: 'input',
+		questionRevision: 'input-revision',
+		response: { text: '<!-- A comment -->', submittedAt: '2026-11-11T12:00:00Z' },
+		correctResponse: {},
+		options: undefined,
+		isCorrect: null
+	});
+	const [metric] = analyzeSubmissions([
+		payload('2026-11-11T12:01:00Z', [input]),
+		payload('2026-11-11T12:02:00Z', [answer({ isCorrect: false })])
+	]);
+	assert.equal(metric.attempts, 2);
+	assert.equal(metric.gradedAttempts, 1);
+	assert.equal(metric.wrong, 1);
+	assert.deepEqual(metric.versions.find((version) => version.type === 'input').textResponses, [{
+		response: '<!-- A comment -->',
+		submittedAt: '2026-11-11T12:00:00Z'
+	}]);
+});

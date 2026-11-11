@@ -21,17 +21,19 @@ export type SortTarget = {
 type QuestionBase = {
 	id: string;
 	prompt: string;
-	feedback?: string;
+	feedback?: string | string[];
+	bonusId?: string;
 };
 
 export type MultipleChoiceQuestion = QuestionBase & {
 	type: 'multiple-choice';
+	description?: string[];
 	options: Option[];
 };
 
 export type DragAndDropQuestion = QuestionBase & {
 	type: 'drag-n-drop';
-	instructions: string;
+	instructions: string | string[];
 	items: SortItem[];
 	targets: SortTarget[];
 	answerKey: Record<string, string>;
@@ -39,14 +41,19 @@ export type DragAndDropQuestion = QuestionBase & {
 
 export type SortQuestion = QuestionBase & {
 	type: 'sort';
-	instructions: string;
+	instructions: string | string[];
 	items: SortItem[];
 	targets: SortTarget[];
 	answerKey: Record<string, string>;
 };
 
+export type InputQuestion = QuestionBase & {
+	type: 'input';
+	description?: string[];
+};
+
 export type PlacementQuestion = DragAndDropQuestion | SortQuestion;
-export type Question = MultipleChoiceQuestion | PlacementQuestion;
+export type Question = MultipleChoiceQuestion | PlacementQuestion | InputQuestion;
 
 export type LessonBlock = {
 	id: string;
@@ -78,7 +85,10 @@ export type SubmittedAnswer = {
 	type: Question['type'];
 	selectedOptionIds?: string[];
 	placements?: Record<string, string>;
-	isCorrect: boolean;
+	textResponse?: string;
+	bonusResponse?: string;
+	bonusSubmittedAt?: string;
+	isCorrect: boolean | null;
 };
 
 export type SavedProgress = {
@@ -99,10 +109,13 @@ export type SubmissionPayload = {
 		sectionId: string;
 		sectionTitle: string;
 		question: string;
+		description?: string[];
 		type: Question['type'];
 		response: {
 			selectedOptionIds?: string[];
 			placements?: Record<string, string>;
+			text?: string;
+			submittedAt?: string;
 		};
 		correctResponse: {
 			selectedOptionIds?: string[];
@@ -121,7 +134,12 @@ export type SubmissionPayload = {
 			selectedTargetId: string | null;
 			correct: boolean;
 		}>;
-		isCorrect: boolean;
+		bonusResponse?: {
+			prompt: string;
+			response: string;
+			submittedAt: string;
+		};
+		isCorrect: boolean | null;
 	}>;
 };
 
