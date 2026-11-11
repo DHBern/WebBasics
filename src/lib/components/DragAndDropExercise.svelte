@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
-	import type { DragAndDropQuestion, SubmittedAnswer } from '#lib/content/types.js';
+	import type { DragAndDropQuestion, SortItem, SubmittedAnswer } from '#lib/content/types.js';
+	import { dndzone, SOURCES, TRIGGERS, type DndEvent } from 'svelte-dnd-action';
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
+	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
 
 	let { question }: { question: DragAndDropQuestion } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
 	let selectedItemId = $state('');
 	let shuffledItems = $state<DragAndDropQuestion['items']>([]);
 	let shuffleReady = $state(false);
-	let draggedItemId = '';
+	let zones = $state<Record<string, SortItem[]>>({});
 	let submitError = $state('');
+	let dragging = $state(false);
 	let practicing = $state(false);
 	let practiceAnswer = $state<SubmittedAnswer>();
 	let firstAttempt = $derived($progress.answers[question.id]);
@@ -27,6 +30,11 @@
 		}
 	});
 
+	$effect(() => {
+		saved;
+		if (shuffleReady) untrack(syncZones);
+	});
+
 	onMount(() => {
 		shuffledItems = [...question.items];
 		if (!$progress.answers[question.id]) {
@@ -36,7 +44,17 @@
 			}
 		}
 		shuffleReady = true;
+		syncZones();
 	});
+
+	function syncZones() {
+		zones = Object.fromEntries(
+			['pool', ...question.targets.map((target) => target.id)].map((id) => [
+				id,
+				shuffledItems.filter((item) => (placements[item.id] ?? 'pool') === id)
+			])
+		);
+	}
 
 	function placeItem(itemId: string, targetId: string) {
 		if (saved) return;
@@ -53,23 +71,31 @@
 		next[itemId] = targetId;
 		draftPlacements = next;
 		selectedItemId = '';
+		syncZones();
 	}
 
-	function startDrag(event: DragEvent, itemId: string) {
-		draggedItemId = itemId;
-		event.dataTransfer?.setData('text/plain', itemId);
-		if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+	function consider(event: CustomEvent<DndEvent<SortItem>>, targetId: string) {
+		zones = { ...zones, [targetId]: event.detail.items };
+		dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED;
 	}
 
-	function dropOn(event: DragEvent, targetId: string) {
-		event.preventDefault();
-		const itemId = event.dataTransfer?.getData('text/plain') || draggedItemId;
-		if (itemId) placeItem(itemId, targetId);
-		draggedItemId = '';
+	function finalize(event: CustomEvent<DndEvent<SortItem>>, targetId: string) {
+		if (!saved && [TRIGGERS.DROPPED_INTO_ZONE, TRIGGERS.DROPPED_OUTSIDE_OF_ANY].includes(event.detail.info.trigger)) {
+			const itemId = event.detail.info.id;
+			if (targetId === 'pool' || event.detail.info.trigger === TRIGGERS.DROPPED_OUTSIDE_OF_ANY) {
+				const next = { ...draftPlacements };
+				delete next[itemId];
+				draftPlacements = next;
+			} else {
+				placeItem(itemId, targetId);
+			}
+		}
+		syncZones();
+		dragging = event.detail.info.source === SOURCES.KEYBOARD;
 	}
 
 	function submit() {
-		if (saved) return;
+		if (saved || dragging) return;
 		const complete = Object.keys(question.answerKey).every((itemId) => placements[itemId]);
 		if (!complete) {
 			submitError = 'Place every required item before submitting.';
@@ -103,19 +129,31 @@
 		practicing = true;
 		practiceAnswer = undefined;
 	}
+
+	function removeAll() {
+		if (saved) tryAgain();
+		draftPlacements = {};
+		selectedItemId = '';
+		submitError = '';
+		syncZones();
+	}
 </script>
 
 {#snippet targetSlot(targetId: string)}
 	{@const target = question.targets.find((candidate) => candidate.id === targetId)}
-	{@const placedItems = shuffledItems.filter((item) => placements[item.id] === targetId)}
+	{@const placedItems = zones[targetId] ?? []}
 	<div
 		class="sort-target"
 		role="group"
 		aria-label={target?.label ?? 'Dropzone'}
-		ondragover={(event) => event.preventDefault()}
-		ondrop={(event) => dropOn(event, targetId)}
 	>
-		{#if placedItems.length}
+		<div
+			class="exercise-dnd-zone flex flex-wrap gap-2"
+			use:dndzone={{ items: placedItems, type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
+			onconsider={(event) => consider(event, targetId)}
+			onfinalize={(event) => finalize(event, targetId)}
+			aria-label={target?.label ?? 'Dropzone'}
+		>
 			{#each placedItems as item (item.id)}
 				{@const itemCorrect = saved && isPlacementCorrect(question, item.id, saved.placements?.[item.id] ?? '')}
 				<button
@@ -124,8 +162,6 @@
 					class:answer-correct={Boolean(saved) && itemCorrect}
 					class:answer-incorrect={Boolean(saved) && !itemCorrect}
 					disabled={Boolean(saved)}
-					draggable={!saved}
-					ondragstart={(event) => startDrag(event, item.id)}
 					onclick={() => {
 						if (selectedItemId && selectedItemId !== item.id) placeItem(selectedItemId, targetId);
 						else selectedItemId = item.id;
@@ -135,10 +171,11 @@
 					{item.text}
 				</button>
 			{/each}
-		{:else}
+		</div>
+		{#if !placedItems.length}
 			<button
 				type="button"
-				class="drop-placeholder"
+				class="drop-placeholder dnd-placeholder"
 				class:url-placeholder={question.id === 'url-parts'}
 				aria-label={`Drop ${target?.label ?? 'item'} here`}
 				disabled={Boolean(saved)}
@@ -166,26 +203,27 @@
 	{:else}
 		<div class="mt-5">
 			<h4 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h4>
-			<div class="flex flex-wrap gap-2" aria-label="Items to place">
-				{#each shuffledItems as item (item.id)}
-					{@const itemTarget = placements[item.id]}
-					{#if !itemTarget}
+			<div
+				class="exercise-dnd-zone flex flex-wrap gap-2"
+				aria-label="Items to place"
+				use:dndzone={{ items: zones.pool ?? [], type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
+				onconsider={(event) => consider(event, 'pool')}
+				onfinalize={(event) => finalize(event, 'pool')}
+			>
+				{#each zones.pool ?? [] as item (item.id)}
 						<button
 							type="button"
 							class="sort-chip"
 							class:sort-chip-selected={selectedItemId === item.id}
-							draggable={!saved}
 							disabled={Boolean(saved)}
 							aria-pressed={selectedItemId === item.id}
-							ondragstart={(event) => startDrag(event, item.id)}
 							onclick={() => (selectedItemId = selectedItemId === item.id ? '' : item.id)}
 						>
 							{item.text}
 						</button>
-					{/if}
 				{/each}
 			</div>
-			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination.</p>
+			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination. Drop outside a destination to return an item here. To drag with the keyboard, press Space, use the arrow keys or Tab, then press Space to drop.</p>
 		</div>
 
 		{#if question.id === 'url-parts'}
@@ -202,28 +240,7 @@
 			</div>
 		</div>
 		{:else if question.id === 'html-parts'}
-		<div class="syntax-diagram mt-5">
-			<div class="syntax-code" aria-label="HTML example">
-				<span class="syntax-token syntax-opening">&lt;p</span>
-				<span class="syntax-token syntax-space"> </span>
-				<span class="syntax-token syntax-attribute">class</span>
-				<span class="syntax-token">=</span>
-				<span class="syntax-token syntax-value">"editor-note"</span>
-				<span class="syntax-token syntax-opening">&gt;</span>
-				<span class="syntax-token syntax-space"> </span>
-				<span class="syntax-token syntax-content">My cat is very grumpy</span>
-				<span class="syntax-token syntax-closing">&lt;/p&gt;</span>
-			</div>
-			<div class="syntax-bracket-grid">
-				<div class="syntax-bracket syntax-bracket-opening">{@render targetSlot('opening-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-closing">{@render targetSlot('closing-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-content">{@render targetSlot('content-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-element">{@render targetSlot('element-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-attribute">{@render targetSlot('attribute-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-name">{@render targetSlot('attribute-name-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-value">{@render targetSlot('attribute-value-slot')}</div>
-			</div>
-		</div>
+			<HtmlSyntaxDiagram {targetSlot} />
 		{:else if question.id === 'body-element-tree'}
 		<div class="webpage-diagram mt-5">
 			<div class="webpage-invisible">
@@ -251,14 +268,6 @@
 							<div class="webpage-section">
 								<div class="webpage-role-label">Article section</div>
 								{@render targetSlot('section-target')}
-								<div class="webpage-heading">
-									<div class="webpage-role-label">Main heading</div>
-									{@render targetSlot('h1-target')}
-								</div>
-								<div class="webpage-paragraph">
-									<div class="webpage-role-label">Paragraph</div>
-									{@render targetSlot('p-target')}
-								</div>
 							</div>
 						</div>
 						<div class="webpage-aside">
@@ -285,8 +294,15 @@
 		{/if}
 	{/if}
 
+	<div class="mt-5 flex flex-wrap gap-2">
+		{#if saved}
+			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
+		{/if}
+		<button class="button-secondary" disabled={dragging || !shuffleReady} onclick={removeAll}>Remove all</button>
+	</div>
+
 	{#if !saved}
-		<button class="button-primary mt-5" onclick={submit}>Submit answer</button>
+		<button class="button-primary mt-5" disabled={dragging} onclick={submit}>Submit answer</button>
 	{:else}
 		<p class="mt-3 text-sm font-semibold" class:text-emerald-800={saved.isCorrect} class:text-rose-800={!saved.isCorrect}>
 			{saved.isCorrect ? 'Correct' : 'Not quite'}
@@ -296,7 +312,6 @@
 				{@html renderMarkdown(question.feedback)}
 			</div>
 		{/if}
-		<button class="button-secondary mt-3" onclick={tryAgain}>Try again</button>
 	{/if}
 
 	{#if firstAttempt}

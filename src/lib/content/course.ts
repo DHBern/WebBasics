@@ -33,9 +33,13 @@ const sortAnswerKeys: Record<string, Record<string, string>> = {
 	'html-parts': {
 		element: 'element-slot',
 		'opening-tag': 'opening-slot',
-		attribute: 'attribute-slot',
-		'attribute-name': 'attribute-name-slot',
-		'attribute-value': 'attribute-value-slot',
+		'class-attribute': 'class-attribute-slot',
+		'class-name': 'class-name-slot',
+		'class-names': 'class-names-slot',
+		'style-attribute': 'style-attribute-slot',
+		'style-name': 'style-name-slot',
+		'style-value': 'style-value-slot',
+		disabled: 'disabled-slot',
 		content: 'content-slot',
 		'closing-tag': 'closing-slot'
 	},
@@ -48,8 +52,6 @@ const sortAnswerKeys: Record<string, Record<string, string>> = {
 		main: 'main-target',
 		article: 'article-target',
 		section: 'section-target',
-		h1: 'h1-target',
-		p: 'p-target',
 		aside: 'aside-target',
 		footer: 'footer-target'
 	},
@@ -197,35 +199,47 @@ export const htmlSections: CourseSection[] = [
 			dragAndDrop(
 				'html-parts',
 				'Place each label at the matching bracket in the HTML example.',
-				'The attribute name and value are shown by the smaller brackets.',
+				'Identify the button element, its class and style attributes, and its disabled boolean attribute. The smaller brackets mark attribute names and values; disabled has no value here.',
 				[
 					{ id: 'element', text: 'Element' },
 					{ id: 'opening-tag', text: 'Opening tag' },
 					{ id: 'closing-tag', text: 'Closing tag' },
-					{ id: 'attribute', text: 'Attribute' },
-					{ id: 'attribute-name', text: 'Attribute name' },
-					{ id: 'attribute-value', text: 'Attribute value' },
+					{ id: 'class-attribute', text: 'class-attribute' },
+					{ id: 'class-name', text: 'class-attribute name' },
+					{ id: 'class-names', text: 'class-names' },
+					{ id: 'style-attribute', text: 'style-attribute' },
+					{ id: 'style-name', text: 'style-attribute name' },
+					{ id: 'style-value', text: 'CSS declarations' },
+					{ id: 'disabled', text: 'Boolean attribute (disabled)' },
 					{ id: 'content', text: 'Content' }
 				],
 				[
 					{ id: 'element-slot', label: 'Whole element' },
 					{ id: 'opening-slot', label: 'Opening tag', parentId: 'element-slot' },
-					{ id: 'attribute-slot', label: 'Attribute', parentId: 'opening-slot' },
-					{ id: 'attribute-name-slot', label: 'Attribute name', parentId: 'attribute-slot' },
-					{ id: 'attribute-value-slot', label: 'Attribute value', parentId: 'attribute-slot' },
+					{ id: 'class-attribute-slot', label: 'class-attribute', parentId: 'opening-slot' },
+					{ id: 'class-name-slot', label: 'class-attribute name', parentId: 'class-attribute-slot' },
+					{ id: 'class-names-slot', label: 'class-names', parentId: 'class-attribute-slot' },
+					{ id: 'style-attribute-slot', label: 'style-attribute', parentId: 'opening-slot' },
+					{ id: 'style-name-slot', label: 'style-attribute name', parentId: 'style-attribute-slot' },
+					{ id: 'style-value-slot', label: 'CSS declarations', parentId: 'style-attribute-slot' },
+					{ id: 'disabled-slot', label: 'Boolean attribute (disabled)', parentId: 'opening-slot' },
 					{ id: 'content-slot', label: 'Content', parentId: 'element-slot' },
 					{ id: 'closing-slot', label: 'Closing tag', parentId: 'element-slot' }
 				],
 				{
 					element: 'element-slot',
 					'opening-tag': 'opening-slot',
-					attribute: 'attribute-slot',
-					'attribute-name': 'attribute-name-slot',
-					'attribute-value': 'attribute-value-slot',
+					'class-attribute': 'class-attribute-slot',
+					'class-name': 'class-name-slot',
+					'class-names': 'class-names-slot',
+					'style-attribute': 'style-attribute-slot',
+					'style-name': 'style-name-slot',
+					'style-value': 'style-value-slot',
+					disabled: 'disabled-slot',
 					content: 'content-slot',
 					'closing-tag': 'closing-slot'
 				},
-				'An element includes its opening tag, content, and closing tag. Attributes belong in the opening tag and have a name and a value.'
+				'An element includes its opening tag, content, and closing tag. The class-attribute assigns class names: `button--external` is a BEM modifier of the `button` block. The style-attribute contains CSS declarations. These two attributes have quoted values. The boolean attribute `disabled` needs no value: its presence disables the button; omitting it leaves the button enabled. Writing `disabled="false"` would still disable it.'
 			),
 			mcq(
 				'html-indentation',
@@ -293,9 +307,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'aside', text: '<aside>' },
 					{ id: 'main', text: '<main>' },
 					{ id: 'article', text: '<article>' },
-					{ id: 'section', text: '<section>' },
-					{ id: 'h1', text: '<h1>' },
-					{ id: 'p', text: '<p>' }
+					{ id: 'section', text: '<section>' }
 				],
 				[
 					{ id: 'document', label: '<html>' },
@@ -306,8 +318,6 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'main-target', label: '<main>', parentId: 'body-target' },
 					{ id: 'article-target', label: '<article>', parentId: 'main-target' },
 					{ id: 'section-target', label: '<section>', parentId: 'article-target' },
-					{ id: 'h1-target', label: '<h1>', parentId: 'section-target' },
-					{ id: 'p-target', label: '<p>', parentId: 'section-target' },
 					{ id: 'aside-target', label: '<aside>', parentId: 'main-target' },
 					{ id: 'footer-target', label: '<footer>', parentId: 'body-target' }
 				],
@@ -320,8 +330,6 @@ export const htmlSections: CourseSection[] = [
 					main: 'main-target',
 					article: 'article-target',
 					section: 'section-target',
-					h1: 'h1-target',
-					p: 'p-target',
 					aside: 'aside-target',
 					footer: 'footer-target'
 				},

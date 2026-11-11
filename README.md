@@ -19,8 +19,16 @@ code is syntax-highlighted by mdsvex. Question IDs, answer keys, feedback, and
 drag-sort targets are defined in `src/lib/content/course.ts`. Keep question IDs
 stable when reordering content.
 
-The reusable quiz controls are in `src/lib/components/`. Answers are saved in
-the current browser's local storage. At the end of HTML Questions, students can
+The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
+uses SVG text, brackets, and HTML dropzones inside
+`foreignObject` elements in one coordinate system. It scrolls horizontally on
+narrow screens to keep the bracket endpoints aligned with the code.
+The button example distinguishes the class-attribute and class names, the
+style-attribute and CSS declarations, and the valueless boolean `disabled`
+attribute. Separate bracket rows and gaps distinguish nested and
+adjacent spans, with dropzones above and below the code.
+
+Answers are saved in the current browser's local storage. At the end of HTML Questions, students can
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
 files locally in the browser; it does not upload or retain them.
 
@@ -30,6 +38,18 @@ in the JSON export, even if a later practice attempt is correct. Practice feedba
 is temporary; reopening the course restores the first attempt. **Reset progress**
 clears saved attempts. As before, revising a question invalidates its saved answer.
 Multiple-choice questions still allow only one submission.
+**Try again** and **Remove all** sit directly below the exercise, before feedback.
+**Remove all** returns every item to the item pool in its original shuffled order,
+including when starting another practice attempt. Dropping an item outside all
+destinations also returns it to that pool. Neither operation clears saved results;
+only **Reset progress** (or a question revision) does that. Sorting exercises
+retain their initially shuffled heading list and provide a pool for returned items.
+
+Drag-and-drop and sorting exercises use the MIT-licensed `svelte-dnd-action`
+library for visible drag previews, touch input, and keyboard dragging. Press
+Space to pick up/drop, arrow keys to reorder, and Tab to move between areas.
+Drag areas are isolated by question ID; single-item destinations swap their
+existing item back to the source destination (or the item pool).
 
 The dashboard groups submissions by course and question ID across revisions.
 Revision breakdowns retain the exported wording, options, and original grading;
