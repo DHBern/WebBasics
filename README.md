@@ -32,6 +32,12 @@ Answers are saved in the current browser's local storage. At the end of HTML Que
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
 files locally in the browser; it does not upload or retain them.
 
+Drag-and-drop and sorting exercises use the MIT-licensed `svelte-dnd-action`
+library for visible drag previews, touch input, and keyboard dragging. Press
+Space to pick up/drop, arrow keys to reorder, and Tab to move between areas.
+Drag areas are isolated by question ID; single-item destinations swap their
+existing item back to the source destination (or the item pool).
+
 The dashboard groups submissions by course and question ID across revisions.
 Revision breakdowns retain the exported wording, options, and original grading;
 MCQ options show checked/unchecked counts, with correct choices highlighted.
