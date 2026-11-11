@@ -143,11 +143,36 @@ a {
 }
 
 .sort-target {
+	position: relative;
 	border: 1px dashed #cbd5e1;
 	border-radius: 0.7rem;
 	background: #f8fafc;
 	padding: 0.45rem;
 	margin-left: calc(var(--target-depth, 0) * 1.15rem);
+}
+
+.exercise-dnd-zone {
+	min-height: 2.25rem;
+	min-width: 3rem;
+}
+
+.exercise-dnd-zone > * {
+	touch-action: none;
+}
+
+.dnd-placeholder {
+	position: absolute;
+	inset: 0.45rem;
+	width: calc(100% - 0.9rem);
+}
+
+.url-drop-slot .dnd-placeholder {
+	inset: 0.15rem;
+}
+
+.sort-order-list.exercise-dnd-zone,
+.sort-invalid-target .exercise-dnd-zone {
+	min-height: 7rem;
 }
 
 .sort-target-child {
@@ -475,40 +500,13 @@ a {
 	font-weight: 700;
 }
 
-.sort-order-controls {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.35rem;
-	margin-left: auto;
-}
-
-.sort-order-controls .button-secondary,
-.sort-invalid-chip .button-secondary {
-	padding: 0.35rem 0.5rem;
-	font-size: 0.72rem;
-}
-
-.sort-invalid-target,
-.sort-empty-target {
+.sort-invalid-target {
 	min-height: 7rem;
 	border: 1px dashed #94a3b8;
 	border-radius: 0.75rem;
 	background: #f8fafc;
 	padding: 0.8rem;
 	text-align: left;
-}
-
-.sort-empty-target {
-	width: 100%;
-	margin-top: 0.5rem;
-	color: #64748b;
-	font-size: 0.8rem;
-}
-
-.sort-invalid-chip {
-	display: grid;
-	justify-items: start;
-	gap: 0.35rem;
 }
 
 @media (max-width: 760px) {
