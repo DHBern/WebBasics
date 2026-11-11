@@ -1,46 +1,76 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
 	import type { SortQuestion, SubmittedAnswer } from '#lib/content/types.js';
 	import { questionRevision } from '#lib/content/course.js';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 
 	let { question }: { question: SortQuestion } = $props();
-	let draftPlacements = $state<Record<string, string>>({});
-	let selectedItemId = $state('');
+	let orderedIds = $state<string[]>([]);
+	let invalidIds = $state<string[]>([]);
 	let draggedItemId = '';
 	let submitError = $state('');
+	let restoredAnswer = $state(false);
 	let saved = $derived($progress.answers[question.id]);
-	let placements = $derived(saved?.placements ?? draftPlacements);
 	let changed = $derived($progress.changeNotices.includes(question.id));
-	const multiTargetIds = new Set(['block', 'inline', 'table-category', 'list-category', 'both-category', 'neither-category']);
-	let droppableTargetIds = $derived(new Set(Object.values(question.answerKey)));
 
-	function targetDepth(targetId: string): number {
-		let depth = 0;
-		let current = question.targets.find((target) => target.id === targetId);
-		while (current?.parentId) {
-			depth++;
-			const parentId = current.parentId;
-			current = question.targets.find((target) => target.id === parentId);
-		}
-		return depth;
+	function restoreSavedOrder(placements: Record<string, string>) {
+		orderedIds = question.items
+			.filter((item) => placements[item.id]?.startsWith('heading-position-'))
+			.sort(
+				(a, b) =>
+					Number(placements[a.id]?.replace('heading-position-', '')) -
+					Number(placements[b.id]?.replace('heading-position-', ''))
+			)
+			.map((item) => item.id);
+		invalidIds = question.items
+			.filter((item) => placements[item.id] === 'invalid-headings')
+			.map((item) => item.id);
 	}
 
-	function placeItem(itemId: string, targetId: string) {
-		if (saved) return;
-		const next = { ...draftPlacements };
-		if (!multiTargetIds.has(targetId)) {
-			for (const [placedId, placedTarget] of Object.entries(next)) {
-				if (placedTarget === targetId && placedId !== itemId) {
-					const previousTarget = next[itemId];
-					if (previousTarget) next[placedId] = previousTarget;
-					else delete next[placedId];
-				}
-			}
+	$effect(() => {
+		if (!saved?.placements || restoredAnswer) return;
+		restoredAnswer = true;
+		restoreSavedOrder(saved.placements);
+	});
+
+	onMount(() => {
+		if (saved?.placements) {
+			restoreSavedOrder(saved.placements);
+			restoredAnswer = true;
+			return;
 		}
-		next[itemId] = targetId;
-		draftPlacements = next;
-		selectedItemId = '';
+		orderedIds = question.items.map((item) => item.id);
+		for (let index = orderedIds.length - 1; index > 0; index--) {
+			const swapIndex = Math.floor(Math.random() * (index + 1));
+			[orderedIds[index], orderedIds[swapIndex]] = [orderedIds[swapIndex], orderedIds[index]];
+		}
+	});
+
+	function itemText(itemId: string): string {
+		return question.items.find((item) => item.id === itemId)?.text ?? itemId;
+	}
+
+	function moveItem(itemId: string, index: number) {
+		if (saved) return;
+		const current = orderedIds.indexOf(itemId);
+		if (current === -1) return;
+		const next = [...orderedIds];
+		next.splice(current, 1);
+		next.splice(Math.max(0, Math.min(index, next.length)), 0, itemId);
+		orderedIds = next;
+	}
+
+	function moveToInvalid(itemId: string) {
+		if (saved || !orderedIds.includes(itemId)) return;
+		orderedIds = orderedIds.filter((id) => id !== itemId);
+		invalidIds = [...invalidIds, itemId];
+	}
+
+	function restoreToOrder(itemId: string) {
+		if (saved || !invalidIds.includes(itemId)) return;
+		invalidIds = invalidIds.filter((id) => id !== itemId);
+		orderedIds = [...orderedIds, itemId];
 	}
 
 	function startDrag(event: DragEvent, itemId: string) {
@@ -49,29 +79,44 @@
 		if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
 	}
 
-	function dropOn(event: DragEvent, targetId: string) {
+	function dropBefore(event: DragEvent, targetItemId: string) {
 		event.preventDefault();
 		const itemId = event.dataTransfer?.getData('text/plain') || draggedItemId;
-		if (itemId) placeItem(itemId, targetId);
+		if (itemId && itemId !== targetItemId) {
+			const targetIndex = orderedIds.indexOf(targetItemId);
+			const itemIndex = orderedIds.indexOf(itemId);
+			moveItem(itemId, targetIndex - (itemIndex < targetIndex ? 1 : 0));
+		}
+		draggedItemId = '';
+	}
+
+	function dropOnInvalid(event: DragEvent) {
+		event.preventDefault();
+		const itemId = event.dataTransfer?.getData('text/plain') || draggedItemId;
+		if (itemId) moveToInvalid(itemId);
 		draggedItemId = '';
 	}
 
 	function submit() {
 		if (saved) return;
-		const complete = Object.keys(question.answerKey).every((itemId) => placements[itemId]);
-		if (!complete) {
-			submitError = 'Place every required item before submitting.';
+		if (orderedIds.length + invalidIds.length !== question.items.length) {
+			submitError = 'Place every heading in the order or invalid area before submitting.';
 			return;
 		}
+
+		const placements = Object.fromEntries([
+			...orderedIds.map((itemId, index) => [itemId, `heading-position-${index + 1}`]),
+			...invalidIds.map((itemId) => [itemId, 'invalid-headings'])
+		]);
 		const isCorrect = question.items.every(
-			(item) => (placements[item.id] ?? '') === (question.answerKey[item.id] ?? '')
+			(item) => placements[item.id] === question.answerKey[item.id]
 		);
 		const answer: SubmittedAnswer = {
 			questionId: question.id,
 			revision: questionRevision(question),
 			submittedAt: new Date().toISOString(),
 			type: question.type,
-			placements: { ...draftPlacements },
+			placements,
 			isCorrect
 		};
 		try {
@@ -95,84 +140,84 @@
 		</p>
 	{/if}
 
-	<div class="mt-5 grid gap-5 lg:grid-cols-[minmax(12rem,0.8fr)_minmax(0,1.2fr)]">
+	<div class="sort-exercise-layout">
 		<div>
-			<h4 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h4>
-			<div class="flex flex-wrap gap-2" aria-label="Items to sort">
-				{#each question.items as item (item.id)}
-					{@const itemTarget = placements[item.id]}
-					{@const itemCorrect = saved && (saved.placements?.[item.id] ?? '') === (question.answerKey[item.id] ?? '')}
-					{#if !itemTarget}
+			<h4 class="mb-2 text-sm font-semibold text-slate-700">Order from smallest to largest</h4>
+			<ol class="sort-order-list" aria-label="Heading order">
+				{#each orderedIds as itemId, index (itemId)}
+					{@const itemCorrect = saved && saved.placements?.[itemId] === question.answerKey[itemId]}
+					<li
+						class="sort-order-row"
+						ondragover={(event) => event.preventDefault()}
+						ondrop={(event) => dropBefore(event, itemId)}
+					>
+						<span class="sort-position">{index + 1}</span>
 						<button
 							type="button"
 							class="sort-chip"
-							class:sort-chip-selected={selectedItemId === item.id}
 							class:answer-correct={Boolean(saved) && itemCorrect}
 							class:answer-incorrect={Boolean(saved) && !itemCorrect}
 							draggable={!saved}
 							disabled={Boolean(saved)}
-							aria-pressed={selectedItemId === item.id}
-							ondragstart={(event) => startDrag(event, item.id)}
-							onclick={() => (selectedItemId = selectedItemId === item.id ? '' : item.id)}
+							ondragstart={(event) => startDrag(event, itemId)}
 						>
 							{#if saved}<span aria-hidden="true">{itemCorrect ? '✓' : '✗'}</span>{/if}
-							{@html renderInline(item.text)}
+							{itemText(itemId)}
 						</button>
-					{/if}
+						{#if !saved}
+							<div class="sort-order-controls">
+								<button type="button" class="button-secondary" disabled={index === 0} onclick={() => moveItem(itemId, index - 1)} aria-label={`Move ${itemText(itemId)} up`}>Move up</button>
+								<button type="button" class="button-secondary" disabled={index === orderedIds.length - 1} onclick={() => moveItem(itemId, index + 1)} aria-label={`Move ${itemText(itemId)} down`}>Move down</button>
+								<button type="button" class="button-secondary" onclick={() => moveToInvalid(itemId)}>Not a heading</button>
+							</div>
+						{/if}
+					</li>
 				{/each}
-			</div>
-			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination.</p>
+			</ol>
+			{#if !saved && orderedIds.length === 0}
+				<button
+					type="button"
+					class="sort-empty-target"
+					ondragover={(event) => event.preventDefault()}
+					ondrop={(event) => {
+						event.preventDefault();
+						const itemId = event.dataTransfer?.getData('text/plain') || draggedItemId;
+						if (itemId && !invalidIds.includes(itemId)) orderedIds = [...orderedIds, itemId];
+					}}
+				>
+					Drop valid headings here
+				</button>
+			{/if}
 		</div>
 
-		<div>
-			<h4 class="mb-2 text-sm font-semibold text-slate-700">Dropzones</h4>
-			<div class="space-y-2">
-				{#each question.targets as target (target.id)}
-					{@const placedItems = question.items.filter((item) => placements[item.id] === target.id)}
-					<div
-						class="sort-target"
-						role="group"
-						aria-label={target.label}
-						class:sort-target-child={targetDepth(target.id) > 0}
-						style={`--target-depth: ${targetDepth(target.id)}`}
-						ondragover={(event) => event.preventDefault()}
-						ondrop={(event) => dropOn(event, target.id)}
-					>
-						<div class="flex min-h-11 items-center gap-2">
-							<span class="text-xs text-slate-500">{target.label}</span>
-							{#if droppableTargetIds.has(target.id) && placedItems.length}
-								{#each placedItems as item (item.id)}
-									{@const itemCorrect = saved && (saved.placements?.[item.id] ?? '') === (question.answerKey[item.id] ?? '')}
-									<button
-										type="button"
-										class="sort-chip"
-										class:answer-correct={Boolean(saved) && itemCorrect}
-										class:answer-incorrect={Boolean(saved) && !itemCorrect}
-										disabled={Boolean(saved)}
-										draggable={!saved}
-										ondragstart={(event) => startDrag(event, item.id)}
-										onclick={() => {
-											if (selectedItemId && selectedItemId !== item.id) placeItem(selectedItemId, target.id);
-											else selectedItemId = item.id;
-										}}
-									>
-										{#if saved}<span aria-hidden="true">{itemCorrect ? '✓' : '✗'}</span>{/if}
-										{@html renderInline(item.text)}
-									</button>
-								{/each}
-							{:else if droppableTargetIds.has(target.id)}
-								<button
-									type="button"
-									class="min-h-8 flex-1 rounded border border-dashed border-slate-300 px-2 text-left text-xs text-slate-400"
-									disabled={Boolean(saved)}
-									onclick={() => selectedItemId && placeItem(selectedItemId, target.id)}
-								>
-									{selectedItemId ? 'Place selected item here' : 'Drop or select an item'}
-								</button>
-							{:else}
-								<span class="text-xs text-slate-400">Document container</span>
-							{/if}
-						</div>
+		<div
+			class="sort-invalid-target"
+			ondragover={(event) => event.preventDefault()}
+			ondrop={dropOnInvalid}
+			role="group"
+			aria-label="Not valid HTML headings"
+		>
+			<h4 class="text-sm font-semibold text-slate-700">Not valid HTML headings</h4>
+			<p class="mt-1 text-xs text-slate-500">Move elements that do not exist in HTML here.</p>
+			<div class="mt-3 flex flex-wrap gap-2">
+				{#each invalidIds as itemId (itemId)}
+					{@const itemCorrect = saved && saved.placements?.[itemId] === question.answerKey[itemId]}
+					<div class="sort-invalid-chip">
+						<button
+							type="button"
+							class="sort-chip"
+							class:answer-correct={Boolean(saved) && itemCorrect}
+							class:answer-incorrect={Boolean(saved) && !itemCorrect}
+							draggable={!saved}
+							disabled={Boolean(saved)}
+							ondragstart={(event) => startDrag(event, itemId)}
+						>
+							{#if saved}<span aria-hidden="true">{itemCorrect ? '✓' : '✗'}</span>{/if}
+							{itemText(itemId)}
+						</button>
+						{#if !saved}
+							<button type="button" class="button-secondary" onclick={() => restoreToOrder(itemId)}>Add to order</button>
+						{/if}
 					</div>
 				{/each}
 			</div>

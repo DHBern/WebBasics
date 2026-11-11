@@ -13,6 +13,8 @@ export type SortTarget = {
 	id: string;
 	label: string;
 	parentId?: string;
+	prefix?: string;
+	suffix?: string;
 };
 
 type QuestionBase = {
@@ -26,6 +28,14 @@ export type MultipleChoiceQuestion = QuestionBase & {
 	options: Option[];
 };
 
+export type DragAndDropQuestion = QuestionBase & {
+	type: 'drag-n-drop';
+	instructions: string;
+	items: SortItem[];
+	targets: SortTarget[];
+	answerKey: Record<string, string>;
+};
+
 export type SortQuestion = QuestionBase & {
 	type: 'sort';
 	instructions: string;
@@ -34,7 +44,8 @@ export type SortQuestion = QuestionBase & {
 	answerKey: Record<string, string>;
 };
 
-export type Question = MultipleChoiceQuestion | SortQuestion;
+export type PlacementQuestion = DragAndDropQuestion | SortQuestion;
+export type Question = MultipleChoiceQuestion | PlacementQuestion;
 
 export type LessonBlock = {
 	id: string;

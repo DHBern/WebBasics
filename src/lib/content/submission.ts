@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { htmlStrand, questionList, questionRevision, questionSection } from './course.js';
+import { htmlStrand, isPlacementCorrect, questionList, questionRevision, questionSection } from './course.js';
 import { progress } from '#lib/progress.js';
 import type { SubmissionFile, SubmissionPayload } from './types.js';
 
@@ -61,7 +61,7 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 					text: item.text,
 					correctTargetId: question.answerKey[item.id] ?? '',
 					selectedTargetId: placements[item.id] ?? null,
-					correct: (placements[item.id] ?? '') === (question.answerKey[item.id] ?? '')
+					correct: isPlacementCorrect(question, item.id, placements[item.id] ?? '')
 				}))
 			};
 		})
