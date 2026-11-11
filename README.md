@@ -31,6 +31,9 @@ The button example distinguishes the class-attribute and class names, the
 style-attribute and CSS declarations, and the valueless boolean `disabled`
 attribute. Separate bracket rows and gaps distinguish nested and
 adjacent spans, with dropzones above and below the code.
+To debug the HTML-parts exercise, append `?debug=1` to its page URL to show
+**Debug: fill randomly**. Remove the query parameter to hide it. Filling does not
+submit an answer; submitting still saves the first attempt in browser storage.
 
 Answers are saved in the current browser's local storage. At the end of HTML Questions, students can
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
