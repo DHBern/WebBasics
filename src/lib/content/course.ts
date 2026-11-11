@@ -19,16 +19,12 @@ const option = (id: string, text: string, correct: boolean) => ({ id, text, corr
 
 const sortAnswerKeys: Record<string, Record<string, string>> = {
 	'url-parts': {
+		protocol: 'url-protocol',
 		subdomain: 'url-subdomain',
 		domain: 'url-domain',
 		tld: 'url-tld',
-		'route-1': 'url-route-1',
-		'route-2': 'url-route-2',
-		'query-attribute-1': 'url-query-attribute-1',
-		'query-value-1': 'url-query-value-1',
-		'query-attribute-2': 'url-query-attribute-2',
-		'query-value-2': 'url-query-value-2',
-		hash: 'url-hash'
+		path: 'url-path',
+		fragment: 'url-fragment'
 	},
 	'html-parts': {
 		element: 'element-slot',
@@ -107,11 +103,7 @@ const dragAndDrop = (
 };
 
 export function isPlacementCorrect(question: PlacementQuestion, itemId: string, targetId: string): boolean {
-	const expected = question.answerKey[itemId];
-	if (expected === targetId) return true;
-	if (question.id !== 'url-parts') return false;
-	const group = (id: string) => question.targets.find((target) => target.id === id)?.parentId;
-	return Boolean(group(expected) && group(expected) === group(targetId));
+	return question.answerKey[itemId] === targetId;
 }
 
 export const htmlSections: CourseSection[] = [
@@ -121,51 +113,83 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			dragAndDrop(
 				'url-parts',
-				'Build a URL by dragging each part into the matching position.',
-				'The two query-parameter attributes and values are interchangeable.',
+				'Exercise 1: Identify the parts of `https://en.wikipedia.org/wiki/Digital_humanities#Definition`.',
+				'Drag each category label onto the matching text in the URL. Treat the displayed path as one piece.',
 				[
+					{ id: 'protocol', text: 'Protocol' },
 					{ id: 'subdomain', text: 'Subdomain' },
 					{ id: 'domain', text: 'Domain' },
 					{ id: 'tld', text: 'Top-level domain' },
-					{ id: 'route-1', text: 'Route' },
-					{ id: 'route-2', text: 'Subroute' },
-					{ id: 'query-attribute-1', text: 'Query parameter attribute' },
-					{ id: 'query-value-1', text: 'Query parameter value' },
-					{ id: 'query-attribute-2', text: 'Query parameter attribute' },
-					{ id: 'query-value-2', text: 'Query parameter value' },
-					{ id: 'hash', text: 'Hash fragment' }
+					{ id: 'path', text: 'Path' },
+					{ id: 'fragment', text: 'Fragment' }
 				],
 				[
-					{ id: 'url-subdomain', label: 'Subdomain', prefix: 'https://', suffix: '.' },
-					{ id: 'url-domain', label: 'Domain', suffix: '.' },
-					{ id: 'url-tld', label: 'Top-level domain', suffix: '/' },
-					{ id: 'url-route-1', label: 'Route', suffix: '/' },
-					{ id: 'url-route-2', label: 'Subroute', suffix: '?' },
-					{ id: 'url-query-attribute-1', label: 'Query parameter attribute', suffix: '=', parentId: 'url-query-attributes' },
-					{ id: 'url-query-value-1', label: 'Query parameter value', suffix: '&', parentId: 'url-query-values' },
-					{ id: 'url-query-attribute-2', label: 'Query parameter attribute', suffix: '=', parentId: 'url-query-attributes' },
-					{ id: 'url-query-value-2', label: 'Query parameter value', suffix: '#', parentId: 'url-query-values' },
-					{ id: 'url-hash', label: 'Hash fragment' }
+					{ id: 'url-protocol', label: 'Protocol', displayText: 'https', suffix: '://' },
+					{ id: 'url-subdomain', label: 'Subdomain', displayText: 'en', suffix: '.' },
+					{ id: 'url-domain', label: 'Domain', displayText: 'wikipedia', suffix: '.' },
+					{ id: 'url-tld', label: 'Top-level domain', displayText: 'org' },
+					{ id: 'url-path', label: 'Path', displayText: '/wiki/Digital_humanities' },
+					{ id: 'url-fragment', label: 'Fragment', prefix: '#', displayText: 'Definition' }
+				],
+				'The complete answer, from left to right, is `https` (protocol), `en` (subdomain), `wikipedia` (domain), `org` (top-level domain), `/wiki/Digital_humanities` (path), and `Definition` (fragment). Formally, `https` is the URL scheme, often called its protocol. The path is one URL component; its `wiki` and `Digital_humanities` segments can be described as a route and subroute. The `#` symbol starts the fragment, and `Definition` is its value. A fragment can identify a location within a page.'
+			),
+			dragAndDrop(
+				'url-query-params',
+				'Exercise 2: What does each search parameter control in `https://duckduckgo.com/?q=Digital%20Humanities&df=d&ia=web`?',
+				'Read each query parameter as an attribute/value pair (also called a name/value pair), written `name=value`. Place the description on the pair it represents; `&` separates the pairs.',
+				[
+					{ id: 'search-term', text: 'Search term' },
+					{ id: 'date-filter', text: 'Date filter' },
+					{ id: 'search-type', text: 'Search type' }
+				],
+				[
+					{
+						id: 'query-search-term',
+						label: 'Search term parameter',
+						prefix: 'https://duckduckgo.com/?',
+						displayText: 'q=Digital%20Humanities',
+						suffix: '&'
+					},
+					{ id: 'query-date-filter', label: 'Date filter parameter', displayText: 'df=d', suffix: '&' },
+					{ id: 'query-search-type', label: 'Search type parameter', displayText: 'ia=web' }
 				],
 				{
-					subdomain: 'url-subdomain',
-					domain: 'url-domain',
-					tld: 'url-tld',
-					'route-1': 'url-route-1',
-					'route-2': 'url-route-2',
-					'query-attribute-1': 'url-query-attribute-1',
-					'query-value-1': 'url-query-value-1',
-					'query-attribute-2': 'url-query-attribute-2',
-					'query-value-2': 'url-query-value-2',
-					hash: 'url-hash'
+					'search-term': 'query-search-term',
+					'date-filter': 'query-date-filter',
+					'search-type': 'query-search-type'
 				},
-				'For this course, the relevant pieces are routes (folders, each containing an `index.html` file) and the hash fragment, which can scroll to an element with the corresponding `id`. For example: https://en.wikipedia.org/wiki/Hashtag#Format\n\n**Bonus Exercise:** Inspect the ID of the corresponding Wikipedia heading in DevTools and find how to link to “Non-commercial use.”\n\n**Bonus Knowledge:** Search parameters often carry information such as queries and page settings. [Swisscovery example](https://swisscovery.slsp.ch/discovery/search?query=any%2Ccontains%2Chtml%2CAND&tab=41SLSP_NETWORK&search_scope=DN_and_CI&vid=41SLSP_NETWORK%3AVU1_UNION&mode=advanced&offset=0)'
+				'Each query parameter is a name/value pair. `q=Digital%20Humanities` uses the name `q` for the search term, whose value decodes to “Digital Humanities.” `df=d` uses `df` to request results from the past day. `ia=web` selects web results. The `?` starts the query string, `=` separates a name from its value, and `&` separates one parameter pair from the next. These are URL query parameters, not HTML attributes.'
 			),
 			{
 				id: 'url-encoding',
-				title: 'URL Encoding',
-				type: 'lesson',
-				text: 'About whitespace and other unusual characters: link a URI converter.'
+				prompt:
+					'Exercise 3: Decode common URL encodings. The search term in Exercise 2 contains `Digital%20Humanities`. Use the [URL Encoder/Decoder](https://www.urlencoder.io/) to find what the encoded symbols represent, then match each code to its decoded character.',
+				type: 'drag-n-drop',
+				instructions:
+					'Paste each code into the decoder, or enter its character and use the encoder. Use the linked tool to solve the matches; you do not need to memorize an encoding table.',
+				items: [
+					{ id: 'encoded-space', text: '%20' },
+					{ id: 'encoded-slash', text: '%2F' },
+					{ id: 'encoded-question', text: '%3F' },
+					{ id: 'encoded-ampersand', text: '%26' },
+					{ id: 'encoded-equals', text: '%3D' }
+				],
+				targets: [
+					{ id: 'decoded-space', label: 'Space', displayText: 'space' },
+					{ id: 'decoded-slash', label: 'Slash', displayText: '/' },
+					{ id: 'decoded-question', label: 'Question mark', displayText: '?' },
+					{ id: 'decoded-ampersand', label: 'Ampersand', displayText: '&' },
+					{ id: 'decoded-equals', label: 'Equals sign', displayText: '=' }
+				],
+				answerKey: {
+					'encoded-space': 'decoded-space',
+					'encoded-slash': 'decoded-slash',
+					'encoded-question': 'decoded-question',
+					'encoded-ampersand': 'decoded-ampersand',
+					'encoded-equals': 'decoded-equals'
+				},
+				feedback:
+					'In `Digital%20Humanities`, `%20` decodes to a space, producing “Digital Humanities.” Other useful examples are `%2F` for `/`, `%3F` for `?`, `%26` for `&`, and `%3D` for `=`. These percent-encoded forms represent a byte using `%` followed by two hexadecimal digits. Encoding reserved characters inside a value keeps them from being mistaken for URL separators: for example, `&` separates query parameters and `=` separates each name from its value. You can use the [URL Encoder/Decoder](https://www.urlencoder.io/) to encode or decode other text.'
 			}
 		]
 	},
