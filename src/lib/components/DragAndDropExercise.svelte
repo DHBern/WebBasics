@@ -181,7 +181,7 @@
 				disabled={Boolean(saved)}
 				onclick={() => selectedItemId && placeItem(selectedItemId, targetId)}
 			>
-				{question.id === 'url-parts' ? '___' : 'Drop here'}
+				{target?.displayText ?? (question.id === 'url-parts' ? '___' : 'Drop here')}
 			</button>
 		{/if}
 	</div>
@@ -226,7 +226,7 @@
 			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination. Drop outside a destination to return an item here. To drag with the keyboard, press Space, use the arrow keys or Tab, then press Space to drop.</p>
 		</div>
 
-		{#if question.id === 'url-parts'}
+		{#if question.id === 'url-parts' || question.id === 'url-query-params'}
 			<div class="url-exercise mt-5">
 			<div class="url-string" aria-label="URL template">
 				{#each question.targets as target (target.id)}

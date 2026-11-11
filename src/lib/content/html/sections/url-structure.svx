@@ -1,16 +1,14 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
-	import { getCourseItem, getQuestion } from '#lib/content/course.js';
+	import { getQuestion } from '#lib/content/course.js';
 </script>
 
 ### URL Structure
 
-Let's start with how you access a website in the browser: the URL.
+Web addresses appear before you begin writing HTML: a URL can point to a page and, sometimes, to a more specific place or search context. In these exercises, read each address as information the browser can use. Start with a Wikipedia article, then examine the settings attached to a search, and finally use a converter to explore how special characters are represented. Try each activity before reading its feedback; the explanations give the complete answers as well as the reasons behind them.
 
 <ExerciseCard question={getQuestion('url-parts')} />
 
-#### URL Encoding
+<ExerciseCard question={getQuestion('url-query-params')} />
 
-About whitespace and other unusual characters: link a URI converter.
-
-<ExerciseCard question={getCourseItem('url-encoding')} />
+<ExerciseCard question={getQuestion('url-encoding')} />
