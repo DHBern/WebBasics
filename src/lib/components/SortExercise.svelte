@@ -11,8 +11,18 @@
 	let draggedItemId = '';
 	let submitError = $state('');
 	let restoredAnswer = $state(false);
-	let saved = $derived($progress.answers[question.id]);
+	let practicing = $state(false);
+	let practiceAnswer = $state<SubmittedAnswer>();
+	let firstAttempt = $derived($progress.answers[question.id]);
+	let saved = $derived(firstAttempt ? (practicing ? practiceAnswer : firstAttempt) : undefined);
 	let changed = $derived($progress.changeNotices.includes(question.id));
+
+	$effect(() => {
+		if (!firstAttempt) {
+			practicing = false;
+			practiceAnswer = undefined;
+		}
+	});
 
 	function restoreSavedOrder(placements: Record<string, string>) {
 		orderedIds = question.items
@@ -120,12 +130,19 @@
 			isCorrect
 		};
 		try {
-			saveAnswer(answer);
+			if (!firstAttempt) saveAnswer(answer);
+			else practiceAnswer = answer;
 			clearChangeNotice(question.id);
 			submitError = '';
 		} catch (error) {
 			submitError = error instanceof Error ? error.message : 'Your answer could not be saved.';
 		}
+	}
+
+	function tryAgain() {
+		practicing = true;
+		practiceAnswer = undefined;
+		submitError = '';
 	}
 </script>
 
@@ -235,6 +252,13 @@
 				{@html renderMarkdown(question.feedback)}
 			</div>
 		{/if}
+		<button class="button-secondary mt-3" onclick={tryAgain}>Try again</button>
+	{/if}
+
+	{#if firstAttempt}
+		<p class="mt-3 text-xs text-slate-500">
+			Your first attempt ({firstAttempt.isCorrect ? 'correct' : 'not quite'}) is saved for the JSON export. You can practise as often as you like; retries do not change that result.
+		</p>
 	{/if}
 
 	{#if submitError}

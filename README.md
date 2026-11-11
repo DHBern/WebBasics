@@ -24,6 +24,13 @@ the current browser's local storage. At the end of HTML Questions, students can
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
 files locally in the browser; it does not upload or retain them.
 
+Drag-and-drop and sorting exercises allow unlimited practice with **Try again**.
+Only the first submitted attempt is saved in browser local storage and included
+in the JSON export, even if a later practice attempt is correct. Practice feedback
+is temporary; reopening the course restores the first attempt. **Reset progress**
+clears saved attempts. As before, revising a question invalidates its saved answer.
+Multiple-choice questions still allow only one submission.
+
 The dashboard groups submissions by course and question ID across revisions.
 Revision breakdowns retain the exported wording, options, and original grading;
 MCQ options show checked/unchecked counts, with correct choices highlighted.
