@@ -238,13 +238,15 @@ export const htmlSections: CourseSection[] = [
 			),
 			mcq(
 				'comment-visibility',
-				'“Comments in HTML are invisible to the user.”',
-				[option('yes', 'Yes', false), option('no', 'No', true)],
-				'This is a tricky question: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. Anyone can inspect the source and read them, so do not put passwords or other secrets in comments.',
+				'Comments Visibility',
+				['"Comments in HTML are invisible to the user." True or false?'],
+				[option('true', 'True', true), option('false', 'False', true)],
+				'Well, this is a tricky one: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. This means that anyone can inspect the source and read them. So NEVER put passwords or other secrets in comments.',
 				'comment-visibility-bonus'
 			),
 			input(
 				'comment-visibility-bonus',
+				'Let's inspect a Wikipedia page',
 				'Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.'
 			)
 		]
