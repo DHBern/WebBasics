@@ -4,6 +4,13 @@ import { getQuestion, mcq, input, sort, dragAndDrop, questionRevision, requiredQ
 import { renderMarkdown } from '../src/lib/content/markdown.ts';
 import { analyzeSubmissions } from '../src/lib/content/analysis.ts';
 
+function codeText(html) {
+	const code = html.match(/<code\b[^>]*>([\s\S]*?)<\/code>/)?.[1];
+	assert.notEqual(code, undefined);
+	return code.replace(/<\/?span\b[^>]*>/g, '')
+		.replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
+}
+
 test('MCQ descriptions retain ordered paragraphs and code blocks inside the question', () => {
 	const question = getQuestion('valid-html-comments');
 	assert.equal(question.type, 'multiple-choice');
@@ -21,14 +28,14 @@ test('MCQ descriptions retain ordered paragraphs and code blocks inside the ques
 	assert.deepEqual(exercise.description, blocks);
 	const html = exercise.description.map(renderMarkdown).join('');
 	assert.match(html, /<p>Consider the following HTML:<\/p>/);
-	assert.match(html, /<pre><code class="language-html">/);
-	assert.match(html, /&lt;p&gt;Visible text&lt;\/p&gt;/);
+	assert.match(html, /<pre\b[^>]*><code class="language-html">/);
+	assert.match(codeText(html), /<p>Visible text<\/p>/);
 	assert.match(html, /<p>Which statement is correct\?<\/p>/);
 	const feedback = exercise.feedback.map(renderMarkdown).join('');
 	assert.match(feedback, /<p>Feedback paragraph\.<\/p>/);
-	assert.match(feedback, /<pre><code class="language-html">&lt;p&gt;Feedback example&lt;\/p&gt;/);
+	assert.match(codeText(feedback), /<p>Feedback example<\/p>/);
 	assert.match(feedback, /<p>Another paragraph\.<\/p>/);
-	assert.match(renderMarkdown('One paragraph.\n\n```html\n<p>Code</p>\n```\n\nAnother paragraph.'), /<pre><code class="language-html">/);
+	assert.match(renderMarkdown('One paragraph.\n\n```html\n<p>Code</p>\n```\n\nAnother paragraph.'), /<pre\b[^>]*><code class="language-html">/);
 	const withoutDescription = mcq('example-2', 'Title', [{ id: 'a', text: 'A', correct: true }], exercise.feedback, 'bonus');
 	assert.equal(withoutDescription.options[0].id, 'a');
 	assert.deepEqual(withoutDescription.feedback, exercise.feedback);
@@ -100,7 +107,7 @@ test('all exercise types preserve Markdown bodies, feedback and linked bonuses',
 			const description = exercise.description ?? exercise.instructions;
 			const html = (Array.isArray(description) ? description : [description]).map(renderMarkdown).join('');
 			assert.match(html, /<p>First paragraph\.<\/p>/);
-			assert.match(html, /<pre><code class="language-html">&lt;p&gt;Code&lt;\/p&gt;/);
+			assert.match(codeText(html), /<p>Code<\/p>/);
 			assert.match(html, /<p>Last paragraph\.<\/p>/);
 			assert.deepEqual(exercise.feedback, feedback);
 			assert.equal(exercise.bonusId, 'bonus');
@@ -127,8 +134,29 @@ test('all exercise types accept paragraph and code-block arrays as the question 
 		assert.equal(question.prompt, prompt.join('\n\n'));
 		const html = renderMarkdown(question.prompt);
 		assert.match(html, /<p>First paragraph\.<\/p>/);
-		assert.match(html, /<pre><code class="language-html">&lt;p&gt;Code&lt;\/p&gt;/);
+		assert.match(codeText(html), /<p>Code<\/p>/);
 		assert.match(html, /<p>Last paragraph\.<\/p>/);
 		assert.notEqual(questionRevision(question), questionRevision({ ...question, prompt: 'Changed' }));
+	}
+});
+
+test('Markdown highlights HTML tags, attributes and comments without rendering the example', () => {
+	const source = '<!-- note -->\n<button class="example" disabled>Click & learn</button>';
+	const html = renderMarkdown(`\`\`\`html\n${source}\n\`\`\``);
+	assert.match(html, /class="token tag"/);
+	assert.match(html, /class="token attr-name"/);
+	assert.match(html, /class="token attr-value"/);
+	assert.match(html, /class="token comment"/);
+	assert.doesNotMatch(html, /<button\b/);
+	assert.equal(codeText(html), source);
+});
+
+test('unlabelled and unknown code fences remain escaped readable code', () => {
+	for (const language of ['', 'unknown-language']) {
+		const html = renderMarkdown(`\`\`\`${language}\n<p>Example & text</p>\n\`\`\``);
+		assert.match(html, /<pre><code/);
+		assert.doesNotMatch(html, /class="token/);
+		assert.doesNotMatch(html, /<p>Example/);
+		assert.equal(codeText(html).trimEnd(), '<p>Example & text</p>');
 	}
 });

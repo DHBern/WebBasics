@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'prismjs/themes/prism-tomorrow.css';
 
 :root {
 	font-family:
@@ -583,12 +584,13 @@ a {
 	overflow-x: auto;
 	border-radius: 0.75rem;
 	background: #0f172a;
+	color: #f8fafc;
 	padding: 1rem;
 }
 
-.exercise-description pre code,
-.feedback-content pre code {
-	color: #f8fafc;
+.prose pre code {
+	background: transparent;
+	color: inherit;
 }
 
 .prose table {

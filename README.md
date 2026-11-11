@@ -15,7 +15,10 @@ npm run dev
 
 Edit `src/routes/+page.svelte` to change the course picker. The HTML welcome
 page and section content are mdsvex files under `src/lib/content/html/`; fenced
-code is syntax-highlighted by mdsvex. Question IDs, answer keys, feedback, and
+code is syntax-highlighted by mdsvex. Exercise Markdown uses Prism for supported
+code languages, with the same dark syntax theme as lessons. Use fenced `html`
+blocks for HTML examples; unhighlighted code also has a readable foreground.
+Question IDs, answer keys, feedback, and
 drag-sort targets are defined in `src/lib/content/course.ts`. Keep question IDs
 stable when reordering content.
 
