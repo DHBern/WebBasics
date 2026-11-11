@@ -1,6 +1,7 @@
 import type {
 	CourseSection,
 	MultipleChoiceQuestion,
+	PlacementQuestion,
 	Question,
 	SortItem,
 	SortTarget,
@@ -39,8 +40,8 @@ const sortAnswerKeys: Record<string, Record<string, string>> = {
 		'closing-tag': 'closing-slot'
 	},
 	'body-element-tree': {
-		head: 'head-target',
-		title: 'title-target',
+		head: 'invisible-target',
+		title: 'invisible-target',
 		body: 'body-target',
 		header: 'header-target',
 		nav: 'nav-target',
@@ -84,14 +85,11 @@ const sortAnswerKeys: Record<string, Record<string, string>> = {
 		table: 'table-category',
 		tr: 'table-category',
 		li: 'list-category',
-		caption: 'table-category',
-		thead: 'table-category',
-		tbody: 'table-category',
-		tfoot: 'table-category'
+		caption: 'table-category'
 	}
 };
 
-const sort = (
+const dragAndDrop = (
 	id: string,
 	prompt: string,
 	instructions: string,
@@ -103,23 +101,31 @@ const sort = (
 	const answerKey =
 		typeof answerKeyOrFeedback === 'string' ? sortAnswerKeys[id] : answerKeyOrFeedback;
 	const feedback = typeof answerKeyOrFeedback === 'string' ? answerKeyOrFeedback : maybeFeedback;
-	return { id, prompt, type: 'sort' as const, instructions, items, targets, answerKey, feedback };
+	return { id, prompt, type: 'drag-n-drop' as const, instructions, items, targets, answerKey, feedback };
 };
+
+export function isPlacementCorrect(question: PlacementQuestion, itemId: string, targetId: string): boolean {
+	const expected = question.answerKey[itemId];
+	if (expected === targetId) return true;
+	if (question.id !== 'url-parts') return false;
+	const group = (id: string) => question.targets.find((target) => target.id === id)?.parentId;
+	return Boolean(group(expected) && group(expected) === group(targetId));
+}
 
 export const htmlSections: CourseSection[] = [
 	{
 		id: 'url-structure',
 		title: 'URL Structure',
 		questions: [
-			sort(
+			dragAndDrop(
 				'url-parts',
-				'Drag the URL-part labels into the matching positions.',
-				'The path in the supplied template has two blanks, although the source lists “subroute” once. The repeated route label is included twice here.',
+				'Build a URL by dragging each part into the matching position.',
+				'The two query-parameter attributes and values are interchangeable.',
 				[
 					{ id: 'subdomain', text: 'Subdomain' },
 					{ id: 'domain', text: 'Domain' },
 					{ id: 'tld', text: 'Top-level domain' },
-					{ id: 'route-1', text: 'Subroute' },
+					{ id: 'route-1', text: 'Route' },
 					{ id: 'route-2', text: 'Subroute' },
 					{ id: 'query-attribute-1', text: 'Query parameter attribute' },
 					{ id: 'query-value-1', text: 'Query parameter value' },
@@ -128,16 +134,16 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'hash', text: 'Hash fragment' }
 				],
 				[
-					{ id: 'url-subdomain', label: 'https:// ___' },
-					{ id: 'url-domain', label: '___' },
-					{ id: 'url-tld', label: '___ /' },
-					{ id: 'url-route-1', label: '___ /' },
-					{ id: 'url-route-2', label: '___ ?' },
-					{ id: 'url-query-attribute-1', label: '___ =' },
-					{ id: 'url-query-value-1', label: '___ &' },
-					{ id: 'url-query-attribute-2', label: '___ =' },
-					{ id: 'url-query-value-2', label: '___ #' },
-					{ id: 'url-hash', label: '___' }
+					{ id: 'url-subdomain', label: 'Subdomain', prefix: 'https://', suffix: '.' },
+					{ id: 'url-domain', label: 'Domain', suffix: '.' },
+					{ id: 'url-tld', label: 'Top-level domain', suffix: '/' },
+					{ id: 'url-route-1', label: 'Route', suffix: '/' },
+					{ id: 'url-route-2', label: 'Subroute', suffix: '?' },
+					{ id: 'url-query-attribute-1', label: 'Query parameter attribute', suffix: '=', parentId: 'url-query-attributes' },
+					{ id: 'url-query-value-1', label: 'Query parameter value', suffix: '&', parentId: 'url-query-values' },
+					{ id: 'url-query-attribute-2', label: 'Query parameter attribute', suffix: '=', parentId: 'url-query-attributes' },
+					{ id: 'url-query-value-2', label: 'Query parameter value', suffix: '#', parentId: 'url-query-values' },
+					{ id: 'url-hash', label: 'Hash fragment' }
 				],
 				{
 					subdomain: 'url-subdomain',
@@ -188,10 +194,10 @@ export const htmlSections: CourseSection[] = [
 		id: 'basic-syntax',
 		title: 'Basic Syntax (Elements and Attributes)',
 		questions: [
-			sort(
+			dragAndDrop(
 				'html-parts',
-				'Sort the HTML parts into the correct relationship.',
-				'Use the nested example to identify the whole element, its opening and closing tags, its attribute, and its content.',
+				'Place each label at the matching bracket in the HTML example.',
+				'The attribute name and value are shown by the smaller brackets.',
 				[
 					{ id: 'element', text: 'Element' },
 					{ id: 'opening-tag', text: 'Opening tag' },
@@ -219,7 +225,7 @@ export const htmlSections: CourseSection[] = [
 					content: 'content-slot',
 					'closing-tag': 'closing-slot'
 				},
-				'The original source refers to two screenshots that are not included. This interactive tree is an inferred replacement; the exact original diagrams cannot be recovered from the text.'
+				'An element includes its opening tag, content, and closing tag. Attributes belong in the opening tag and have a name and a value.'
 			),
 			mcq(
 				'html-indentation',
@@ -273,10 +279,10 @@ export const htmlSections: CourseSection[] = [
 				],
 				'The `<head>` contains document metadata. A page’s visible header may contain a `<nav>` element; `<nav>` also has its own semantic meaning.'
 			),
-			sort(
+			dragAndDrop(
 				'body-element-tree',
-				'Sort the elements into a basic webpage structure. Place elements from the head in the invisible area and the remaining elements in the body tree.',
-				'Build a nested structure. `<aside>` may be a sibling of `<main>`; CSS determines whether it appears beside or below it.',
+				'Place the elements in a basic webpage structure. Put elements from the head in the invisible area and the remaining elements in the body tree.',
+				'Build the nested structure shown. Both `<head>` and `<title>` belong in the collective invisible area.',
 				[
 					{ id: 'head', text: '<head>' },
 					{ id: 'title', text: '<title>' },
@@ -293,8 +299,7 @@ export const htmlSections: CourseSection[] = [
 				],
 				[
 					{ id: 'document', label: '<html>' },
-					{ id: 'head-target', label: '<head>', parentId: 'document' },
-					{ id: 'title-target', label: '<title>', parentId: 'head-target' },
+					{ id: 'invisible-target', label: 'Invisible to the user', parentId: 'document' },
 					{ id: 'body-target', label: '<body>', parentId: 'document' },
 					{ id: 'header-target', label: '<header>', parentId: 'body-target' },
 					{ id: 'nav-target', label: '<nav>', parentId: 'header-target' },
@@ -303,12 +308,12 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'section-target', label: '<section>', parentId: 'article-target' },
 					{ id: 'h1-target', label: '<h1>', parentId: 'section-target' },
 					{ id: 'p-target', label: '<p>', parentId: 'section-target' },
-					{ id: 'aside-target', label: '<aside>', parentId: 'body-target' },
+					{ id: 'aside-target', label: '<aside>', parentId: 'main-target' },
 					{ id: 'footer-target', label: '<footer>', parentId: 'body-target' }
 				],
 				{
-					head: 'head-target',
-					title: 'title-target',
+					head: 'invisible-target',
+					title: 'invisible-target',
 					body: 'body-target',
 					header: 'header-target',
 					nav: 'nav-target',
@@ -320,7 +325,7 @@ export const htmlSections: CourseSection[] = [
 					aside: 'aside-target',
 					footer: 'footer-target'
 				},
-				'The original source refers to a missing layout image. This tree is an inferred example. The source listed `<sidebar>`; the standard semantic element is `<aside>`. The exact placement of elements is illustrative, since many valid document structures are possible.'
+				'The `<head>` and `<title>` are not displayed in the page. A `<header>` contains the site navigation; `<main>` contains the article and adjacent related-links `<aside>`, followed by the footer.'
 			)
 		],
 		lesson: '**Further Reading:** [MDN: Structuring documents](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents) · [MDN: Website metadata](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Webpage_metadata)'
@@ -349,11 +354,12 @@ export const htmlSections: CourseSection[] = [
 		id: 'formatting-text',
 		title: 'Formatting Text (Headings, paragraphs, strong, emphasis)',
 		questions: [
-			sort(
-				'heading-order',
-				'Sort the heading elements from smallest to largest.',
-				'Only move elements that exist in HTML.',
-				[
+			{
+				id: 'heading-order',
+				prompt: 'Sort the headings from smallest to largest.',
+				type: 'sort',
+				instructions: 'Reorder the valid headings and move invalid elements into the discard area.',
+				items: [
 					{ id: 'h1', text: '<h1>' },
 					{ id: 'h2', text: '<h2>' },
 					{ id: 'h3', text: '<h3>' },
@@ -363,28 +369,31 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'h7', text: '<h7>' },
 					{ id: 'h8', text: '<h8>' }
 				],
-				[
+				targets: [
 					{ id: 'heading-position-1', label: 'Smallest' },
 					{ id: 'heading-position-2', label: '2' },
 					{ id: 'heading-position-3', label: '3' },
 					{ id: 'heading-position-4', label: '4' },
 					{ id: 'heading-position-5', label: '5' },
-					{ id: 'heading-position-6', label: 'Largest' }
+					{ id: 'heading-position-6', label: 'Largest' },
+					{ id: 'invalid-headings', label: 'Not valid HTML headings' }
 				],
-				{
+				answerKey: {
 					h6: 'heading-position-1',
 					h5: 'heading-position-2',
 					h4: 'heading-position-3',
 					h3: 'heading-position-4',
 					h2: 'heading-position-5',
-					h1: 'heading-position-6'
+					h1: 'heading-position-6',
+					h7: 'invalid-headings',
+					h8: 'invalid-headings'
 				},
-				'The valid heading elements are `<h1>` through `<h6>`. `<h6>` is the smallest heading level and `<h1>` the largest.'
-			),
-			sort(
+				feedback: 'The valid heading elements are `<h1>` through `<h6>`. `<h6>` is the smallest heading level and `<h1>` the largest; `<h7>` and `<h8>` do not exist.'
+			},
+			dragAndDrop(
 				'block-inline-elements',
-				'Sort these elements by their usual HTML display category: block or inline.',
-				'`<quote>` in the source is not an HTML element; it is corrected to the quotation element `<q>`.',
+				'Place each element in its usual display category: block or inline.',
+				'These are the elements’ default browser display categories; CSS can change them.',
 				[
 					{ id: 'p', text: '<p>' },
 					{ id: 'h1', text: '<h1>' },
@@ -429,9 +438,9 @@ export const htmlSections: CourseSection[] = [
 		id: 'lists-tables',
 		title: 'Lists and Tables',
 		questions: [
-			sort(
+			dragAndDrop(
 				'list-table-elements',
-				'Sort the elements into table elements, list elements, both, or neither.',
+				'Place the elements into table elements, list elements, both, or neither.',
 				'Each element belongs in the category describing its HTML role.',
 				[
 					{ id: 'ul', text: '<ul>' },
@@ -441,10 +450,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'table', text: '<table>' },
 					{ id: 'tr', text: '<tr>' },
 					{ id: 'li', text: '<li>' },
-					{ id: 'caption', text: '<caption>' },
-					{ id: 'thead', text: '<thead>' },
-					{ id: 'tbody', text: '<tbody>' },
-					{ id: 'tfoot', text: '<tfoot>' }
+					{ id: 'caption', text: '<caption>' }
 				],
 				[
 					{ id: 'table-category', label: 'Table elements' },
@@ -452,7 +458,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'both-category', label: 'Both' },
 					{ id: 'neither-category', label: 'Neither' }
 				],
-				'List elements include `ul`, `ol`, and `li`. Table elements include `table`, `caption`, `thead`, `tbody`, `tfoot`, `tr`, `th`, and `td`.\n\n| Element | Purpose | Example |\n| --- | --- | --- |\n| `ul` | Unordered (bulleted) list | `<ul><li>A</li></ul>` |\n| `ol` | Ordered (numbered) list | `<ol><li>First</li></ol>` |\n| `li` | One list item | `<li>Item</li>` |\n| `table` | Wraps a table | `<table>...</table>` |\n| `caption` | Table title | `<caption>Prices</caption>` |\n| `thead` / `tbody` / `tfoot` | Table row groups | `<tbody>...</tbody>` |\n| `tr` | Table row | `<tr>...</tr>` |\n| `th` | Header cell with scope | `<th scope=\"col\">Name</th>` |\n| `td` | Data cell; can span cells | `<td colspan=\"2\" rowspan=\"2\">X</td>` |'
+				'List elements include `<ul>`, `<ol>`, and `<li>`. Table elements include `<table>`, `<caption>`, `<tr>`, `<th>`, and `<td>`.'
 			)
 		]
 	},

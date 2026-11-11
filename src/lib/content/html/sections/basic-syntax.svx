@@ -5,7 +5,7 @@
 
 ### Basic Syntax (Elements and Attributes)
 
-#### Sort HTML parts into the correct order
+#### Place HTML parts at the matching brackets
 
 <pre><code class="language-html">&lt;p class="intro"&gt;Hello!&lt;/p&gt;</code></pre>
 

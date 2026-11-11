@@ -25,7 +25,7 @@ function isSubmittedAnswer(value: unknown): value is SubmittedAnswer {
 		typeof value.questionId === 'string' &&
 		typeof value.revision === 'string' &&
 		typeof value.submittedAt === 'string' &&
-		(value.type === 'multiple-choice' || value.type === 'sort') &&
+		(value.type === 'multiple-choice' || value.type === 'drag-n-drop' || value.type === 'sort') &&
 		typeof value.isCorrect === 'boolean' &&
 		(value.selectedOptionIds === undefined || isStringArray(value.selectedOptionIds)) &&
 		(value.placements === undefined ||

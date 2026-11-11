@@ -50,6 +50,7 @@
 			{#each htmlSections as section (section.id)}
 				{@const questions = sectionQuestions(section.id)}
 				{@const multipleChoiceCount = questions.filter((question) => question.type === 'multiple-choice').length}
+				{@const dragAndDropCount = questions.filter((question) => question.type === 'drag-n-drop').length}
 				{@const sortCount = questions.filter((question) => question.type === 'sort').length}
 				{@const answered = questions.filter((question) => $progress.answers[question.id]).length}
 				<a
@@ -64,6 +65,7 @@
 					</span>
 					<span class="flex shrink-0 flex-col items-end gap-1 text-[10px] text-slate-500">
 						{#if multipleChoiceCount}<span>{multipleChoiceCount} MCQ</span>{/if}
+						{#if dragAndDropCount}<span>{dragAndDropCount} drag-n-drop</span>{/if}
 						{#if sortCount}<span>{sortCount} sort</span>{/if}
 					</span>
 				</a>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CourseItem } from '#lib/content/types.js';
 	import MultipleChoice from './MultipleChoice.svelte';
+	import DragAndDropExercise from './DragAndDropExercise.svelte';
 	import SortExercise from './SortExercise.svelte';
 
 	let { question }: { question?: CourseItem } = $props();
@@ -8,6 +9,8 @@
 
 {#if question?.type === 'multiple-choice'}
 	<MultipleChoice {question} />
+{:else if question?.type === 'drag-n-drop'}
+	<DragAndDropExercise question={question} />
 {:else if question?.type === 'sort'}
 	<SortExercise {question} />
 {:else if question?.type === 'lesson'}

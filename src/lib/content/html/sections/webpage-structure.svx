@@ -7,7 +7,7 @@
 
 <ExerciseCard question={getQuestion('head-header-nav')} />
 
-#### Sort elements inside the body
+#### Build the webpage structure
 
 The original exercise asks you to place body elements in a basic website layout and head elements in the invisible part of the document. Build the nested structure; CSS can place an `<aside>` next to `<main>`.
 

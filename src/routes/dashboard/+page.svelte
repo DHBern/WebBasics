@@ -38,7 +38,9 @@
 			typeof value.sectionId !== 'string' ||
 			typeof value.sectionTitle !== 'string' ||
 			typeof value.question !== 'string' ||
-			(value.type !== 'multiple-choice' && value.type !== 'sort') ||
+			(value.type !== 'multiple-choice' &&
+				value.type !== 'drag-n-drop' &&
+				value.type !== 'sort') ||
 			typeof value.isCorrect !== 'boolean'
 		) {
 			return false;
