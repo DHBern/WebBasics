@@ -255,8 +255,8 @@ export const htmlSections: CourseSection[] = [
 			),
 			input(
 				'comment-visibility-bonus',
-				"Let's inspect a Wikipedia page",
-				'Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.'
+				"Let's test this on a real page!",
+				['Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.']
 			)
 		]
 	},
