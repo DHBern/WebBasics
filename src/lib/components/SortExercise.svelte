@@ -214,7 +214,7 @@
 
 	{#if firstAttempt}
 		<p class="mt-3 text-xs text-slate-500">
-			Your first attempt ({firstAttempt.isCorrect ? 'correct' : 'not quite'}) is saved for the JSON export. You can practise as often as you like; retries do not change that result.
+			Your first attempt has been saved for the JSON export so we can discuss it during our consultation hour. Feel free to practise as often as you like afterwards.
 		</p>
 	{/if}
 
