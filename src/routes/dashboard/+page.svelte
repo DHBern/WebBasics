@@ -46,6 +46,9 @@
 			return false;
 		}
 
+		if (value.description !== undefined && !isStringArray(value.description)) {
+			return false;
+		}
 		if (
 			value.bonusResponse !== undefined &&
 			(!isObject(value.bonusResponse) ||
@@ -321,6 +324,13 @@
 										</span>
 									</h3>
 									<p class="mt-2 text-sm font-medium">{version.question}</p>
+									{#if version.description?.length}
+										<div class="mt-2 text-sm">
+											{#each version.description as block}
+												<p class="mt-2 whitespace-pre-wrap">{block}</p>
+											{/each}
+										</div>
+									{/if}
 									<p class="mt-1 text-xs text-slate-600">
 										Exported: <time datetime={version.firstExportedAt}>{version.firstExportedAt}</time>
 										{#if version.firstExportedAt !== version.lastExportedAt}

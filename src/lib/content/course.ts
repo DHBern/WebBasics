@@ -8,13 +8,28 @@ import type {
 	Strand
 } from './types';
 
+type McqArguments =
+	| [options: MultipleChoiceQuestion['options'], feedback?: string, bonusPrompt?: string]
+	| [description: string[], options: MultipleChoiceQuestion['options'], feedback?: string, bonusPrompt?: string];
+
+function hasMcqDescription(
+	args: McqArguments
+): args is [string[], MultipleChoiceQuestion['options'], string?, string?] {
+	return Array.isArray(args[1]);
+}
+
 const mcq = (
 	id: string,
 	prompt: string,
-	options: MultipleChoiceQuestion['options'],
-	feedback?: string,
-	bonusPrompt?: string
-): MultipleChoiceQuestion => ({ id, prompt, type: 'multiple-choice', options, feedback, bonusPrompt });
+	...args: McqArguments
+): MultipleChoiceQuestion => {
+	if (hasMcqDescription(args)) {
+		const [description, options, feedback, bonusPrompt] = args;
+		return { id, prompt, type: 'multiple-choice', description, options, feedback, bonusPrompt };
+	}
+	const [options, feedback, bonusPrompt] = args;
+	return { id, prompt, type: 'multiple-choice', options, feedback, bonusPrompt };
+};
 
 const option = (id: string, text: string, correct: boolean) => ({ id, text, correct });
 
@@ -176,7 +191,8 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			mcq(
 				'valid-html-comments',
-				'What are valid ways to wrap a comment in HTML?',
+				'HTML comment syntax',
+				['What are valid ways to wrap a comment in HTML? Select all that apply.'],
 				[
 					option('html-comment', '`<!-- A comment -->`', true),
 					option('multiline-html-comment', '`<!-- A multiline comment -->`', true),
@@ -187,7 +203,12 @@ export const htmlSections: CourseSection[] = [
 			),
 			mcq(
 				'comment-visibility',
-				'Given `<p>Visible text</p><!-- internal note -->`, which statement is correct?',
+				'Comment visibility',
+				[
+					'Consider the following HTML:',
+					'```html\n<p>Visible text</p><!-- internal note -->\n```',
+					'Which statement is correct?'
+				],
 				[
 					option('both-visible', 'The browser displays “Visible text” and “internal note.”', false),
 					option('rendered-and-source', 'The browser displays “Visible text”; the comment remains in the page source but is not rendered.', true),
@@ -683,7 +704,8 @@ export function questionRevision(question: Question): string {
 					id: question.id,
 					prompt: question.prompt,
 					options: question.options.map(({ id, text, correct }) => ({ id, text, correct })),
-					bonusPrompt: question.bonusPrompt
+					bonusPrompt: question.bonusPrompt,
+					...(question.description?.length ? { description: question.description } : {})
 				}
 			: {
 					id: question.id,

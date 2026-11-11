@@ -13,6 +13,7 @@ type RevisionMetric = {
 	revision: string;
 	sectionTitle: string;
 	question: string;
+	description?: string[];
 	type: SubmissionPayload['answers'][number]['type'];
 	firstExportedAt: string;
 	lastExportedAt: string;
@@ -57,6 +58,7 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 					revision: answer.questionRevision,
 					sectionTitle: answer.sectionTitle,
 					question: answer.question,
+					description: answer.description,
 					type: answer.type,
 					firstExportedAt: exportedAt,
 					lastExportedAt: exportedAt,

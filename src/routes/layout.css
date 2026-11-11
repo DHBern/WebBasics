@@ -586,6 +586,10 @@ a {
 	padding: 1rem;
 }
 
+.exercise-description pre code {
+	color: #f8fafc;
+}
+
 .prose table {
 	width: 100%;
 	border-collapse: collapse;

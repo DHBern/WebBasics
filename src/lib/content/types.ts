@@ -26,6 +26,7 @@ type QuestionBase = {
 
 export type MultipleChoiceQuestion = QuestionBase & {
 	type: 'multiple-choice';
+	description?: string[];
 	options: Option[];
 };
 
@@ -101,6 +102,7 @@ export type SubmissionPayload = {
 		sectionId: string;
 		sectionTitle: string;
 		question: string;
+		description?: string[];
 		type: Question['type'];
 		response: {
 			selectedOptionIds?: string[];

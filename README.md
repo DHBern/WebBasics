@@ -19,6 +19,13 @@ code is syntax-highlighted by mdsvex. Question IDs, answer keys, feedback, and
 drag-sort targets are defined in `src/lib/content/course.ts`. Keep question IDs
 stable when reordering content.
 
+For multiple-choice questions, an optional array of Markdown blocks can be
+placed between the title and options: `mcq('id', 'Title', ['Question text',
+'```html\n<p>Example</p>\n```'], [option(...)], 'Feedback')`. Each array item
+is rendered inside the exercise, before the options. Existing calls without a
+description remain supported. Description changes invalidate saved answers,
+and descriptions are included in exported submissions.
+
 The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
 uses SVG text, brackets, and HTML dropzones inside
 `foreignObject` elements in one coordinate system. It scrolls horizontally on
@@ -67,7 +74,7 @@ in [`CONTENT_ISSUES.md`](CONTENT_ISSUES.md).
 
 ```sh
 npm run check
-node --experimental-strip-types --test tests/analysis.test.mjs
+node --experimental-strip-types --test tests/*.test.mjs
 npm run build
 npm run preview
 ```

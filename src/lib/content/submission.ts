@@ -46,6 +46,7 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 				const selected = new Set(submitted.selectedOptionIds ?? []);
 				return {
 					...base,
+					...(question.description?.length ? { description: question.description } : {}),
 					response: { selectedOptionIds: [...selected] },
 					correctResponse: {
 						selectedOptionIds: question.options

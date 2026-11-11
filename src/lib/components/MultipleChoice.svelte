@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderInline } from '#lib/content/markdown.js';
+	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
 	import type { MultipleChoiceQuestion, SubmittedAnswer } from '#lib/content/types.js';
 	import { questionRevision } from '#lib/content/course.js';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
@@ -46,6 +46,14 @@
 		<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
 			{@html renderInline(question.prompt)}
 		</h3>
+
+		{#if question.description?.length}
+			<div class="exercise-description prose max-w-none">
+				{#each question.description as block}
+					{@html renderMarkdown(block)}
+				{/each}
+			</div>
+		{/if}
 
 		{#if changed}
 			<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
