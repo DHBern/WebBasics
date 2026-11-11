@@ -232,14 +232,6 @@
 							<div class="webpage-section">
 								<div class="webpage-role-label">Article section</div>
 								{@render targetSlot('section-target')}
-								<div class="webpage-heading">
-									<div class="webpage-role-label">Main heading</div>
-									{@render targetSlot('h1-target')}
-								</div>
-								<div class="webpage-paragraph">
-									<div class="webpage-role-label">Paragraph</div>
-									{@render targetSlot('p-target')}
-								</div>
 							</div>
 						</div>
 						<div class="webpage-aside">
