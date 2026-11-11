@@ -320,6 +320,6 @@
 		<p class="mt-3 text-sm text-rose-800" role="alert">{submitError}</p>
 	{/if}
 </section>
-{#if saved && question.feedback}
-	<ExerciseFeedback feedback={question.feedback} id={question.id} />
+{#if saved && (question.feedback || question.bonusId)}
+	<ExerciseFeedback feedback={question.feedback} id={question.id} bonusId={question.bonusId} />
 {/if}

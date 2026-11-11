@@ -586,7 +586,8 @@ a {
 	padding: 1rem;
 }
 
-.exercise-description pre code {
+.exercise-description pre code,
+.feedback-content pre code {
 	color: #f8fafc;
 }
 

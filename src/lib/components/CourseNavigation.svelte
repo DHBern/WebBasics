@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resetProgress, progress, progressError } from '#lib/progress.js';
-	import { htmlSections, questionList } from '#lib/content/course.js';
+	import { htmlSections, requiredQuestionList, bonusQuestionIds } from '#lib/content/course.js';
 	import type { Question } from '#lib/content/types.js';
 
 	let { activeSection = '' }: { activeSection?: string } = $props();
@@ -8,7 +8,7 @@
 
 	function sectionQuestions(sectionId: string): Question[] {
 		const section = htmlSections.find((item) => item.id === sectionId);
-		return section?.questions.filter((item): item is Question => item.type !== 'lesson') ?? [];
+		return section?.questions.filter((item): item is Question => item.type !== 'lesson' && !bonusQuestionIds.has(item.id)) ?? [];
 	}
 
 	function reset() {
@@ -35,7 +35,7 @@
 		<a class="text-sm font-semibold text-slate-700 hover:text-orange-700" href="/courses/html/welcome/">
 			HTML Questions
 		</a>
-		<span class="text-xs text-slate-500">{Object.keys($progress.answers).length}/{questionList.length}</span>
+		<span class="text-xs text-slate-500">{requiredQuestionList.filter((question) => $progress.answers[question.id]).length}/{requiredQuestionList.length}</span>
 	</div>
 	<div id="course-navigation-panel" class="course-nav-panel" class:course-nav-panel-open={navigationOpen}>
 		<nav class="mt-3 space-y-1" aria-label="HTML course sections">

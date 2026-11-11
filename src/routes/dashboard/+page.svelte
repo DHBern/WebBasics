@@ -40,8 +40,9 @@
 			typeof value.question !== 'string' ||
 			(value.type !== 'multiple-choice' &&
 				value.type !== 'drag-n-drop' &&
-				value.type !== 'sort') ||
-			typeof value.isCorrect !== 'boolean'
+				value.type !== 'sort' &&
+				value.type !== 'input') ||
+			(value.type === 'input' ? value.isCorrect !== null : typeof value.isCorrect !== 'boolean')
 		) {
 			return false;
 		}
@@ -94,6 +95,11 @@
 				isStringArray(value.correctResponse.selectedOptionIds) &&
 				Array.isArray(value.options)
 			);
+		}
+		if (value.type === 'input') {
+			return typeof value.response.text === 'string' &&
+				typeof value.response.submittedAt === 'string' &&
+				Number.isFinite(Date.parse(value.response.submittedAt));
 		}
 		return isStringMap(value.response.placements) && isStringMap(value.correctResponse.placements) && Array.isArray(value.items);
 	}
@@ -310,8 +316,8 @@
 										<span class="mt-1 block text-xs font-semibold text-amber-800">Includes historical or unavailable versions — expand for export dates</span>
 									{/if}
 								</span>
-								<span class="text-right font-semibold">{metric.wrong} wrong</span>
-								<span class="text-right">{((metric.wrong / metric.attempts) * 100).toFixed(1)}%</span>
+								<span class="text-right font-semibold">{metric.gradedAttempts ? `${metric.wrong} wrong` : 'Ungraded'}</span>
+								<span class="text-right">{metric.gradedAttempts ? `${((metric.wrong / metric.gradedAttempts) * 100).toFixed(1)}%` : '—'}</span>
 								<span class="text-right text-slate-500">{metric.attempts} tries</span>
 							</summary>
 							{#each metric.versions as version (version.revision + version.type)}
@@ -337,6 +343,7 @@
 											to <time datetime={version.lastExportedAt}>{version.lastExportedAt}</time>
 										{/if}
 									</p>
+									{#if version.type !== 'input'}
 									<p class="mt-2 text-sm">{version.wrong} wrong · {((version.wrong / version.attempts) * 100).toFixed(1)}% · {version.attempts} tries</p>
 									<h4 class="mt-4 text-sm font-semibold">{version.type === 'multiple-choice' ? 'Option selections' : 'Item errors'}</h4>
 									{#if version.items.length}
@@ -357,6 +364,17 @@
 										</ul>
 									{:else}
 										<p class="mt-2 text-sm text-slate-600">This question has no individually analyzable choices/items.</p>
+									{/if}
+									{:else}
+										<h4 class="mt-4 text-sm font-semibold">Text responses (ungraded)</h4>
+										<ul class="mt-2 space-y-2">
+											{#each version.textResponses as response, index (`${response.submittedAt}-${index}`)}
+												<li class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+													<p class="whitespace-pre-wrap">{response.response}</p>
+													<p class="mt-2 text-xs text-slate-600">Submitted: {response.submittedAt}</p>
+												</li>
+											{/each}
+										</ul>
 									{/if}
 									{#if version.bonusResponses.length}
 										<h4 class="mt-5 text-sm font-semibold">Bonus text responses</h4>

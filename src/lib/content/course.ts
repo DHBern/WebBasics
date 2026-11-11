@@ -1,5 +1,6 @@
 import type {
 	CourseSection,
+	InputQuestion,
 	MultipleChoiceQuestion,
 	PlacementQuestion,
 	Question,
@@ -8,28 +9,40 @@ import type {
 	Strand
 } from './types';
 
+type Feedback = Question['feedback'];
+
 type McqArguments =
-	| [options: MultipleChoiceQuestion['options'], feedback?: string, bonusPrompt?: string]
-	| [description: string[], options: MultipleChoiceQuestion['options'], feedback?: string, bonusPrompt?: string];
+	| [options: MultipleChoiceQuestion['options'], feedback?: Feedback, bonusId?: string]
+	| [description: string[], options: MultipleChoiceQuestion['options'], feedback?: Feedback, bonusId?: string];
 
 function hasMcqDescription(
 	args: McqArguments
-): args is [string[], MultipleChoiceQuestion['options'], string?, string?] {
-	return Array.isArray(args[1]);
+): args is [string[], MultipleChoiceQuestion['options'], Feedback?, string?] {
+	return args[0].length
+		? typeof args[0][0] === 'string'
+		: Array.isArray(args[1]) && args[1].every((item) => typeof item !== 'string');
 }
 
-const mcq = (
+export const mcq = (
 	id: string,
 	prompt: string,
 	...args: McqArguments
 ): MultipleChoiceQuestion => {
 	if (hasMcqDescription(args)) {
-		const [description, options, feedback, bonusPrompt] = args;
-		return { id, prompt, type: 'multiple-choice', description, options, feedback, bonusPrompt };
+		const [description, options, feedback, bonusId] = args;
+		return { id, prompt, type: 'multiple-choice', description, options, feedback, bonusId };
 	}
-	const [options, feedback, bonusPrompt] = args;
-	return { id, prompt, type: 'multiple-choice', options, feedback, bonusPrompt };
+	const [options, feedback, bonusId] = args;
+	return { id, prompt, type: 'multiple-choice', options, feedback, bonusId };
 };
+
+export const input = (
+	id: string,
+	prompt: string,
+	description?: string[],
+	feedback?: Feedback,
+	bonusId?: string
+): InputQuestion => ({ id, prompt, type: 'input', description, feedback, bonusId });
 
 const option = (id: string, text: string, correct: boolean) => ({ id, text, correct });
 
@@ -107,20 +120,42 @@ const sortAnswerKeys: Record<string, Record<string, string>> = {
 	}
 };
 
-const dragAndDrop = (
+type PlacementArguments =
+	| [feedback: Feedback, bonusId?: string]
+	| [answerKey: Record<string, string>, feedback?: Feedback, bonusId?: string];
+
+function hasPlacementFeedback(args: PlacementArguments): args is [Feedback, string?] {
+	return args[0] === undefined || typeof args[0] === 'string' || Array.isArray(args[0]);
+}
+
+export const dragAndDrop = (
 	id: string,
 	prompt: string,
 	instructions: string,
 	items: SortItem[],
 	targets: SortTarget[],
-	answerKeyOrFeedback: Record<string, string> | string,
-	maybeFeedback?: string
+	...args: PlacementArguments
 ) => {
-	const answerKey =
-		typeof answerKeyOrFeedback === 'string' ? sortAnswerKeys[id] : answerKeyOrFeedback;
-	const feedback = typeof answerKeyOrFeedback === 'string' ? answerKeyOrFeedback : maybeFeedback;
-	return { id, prompt, type: 'drag-n-drop' as const, instructions, items, targets, answerKey, feedback };
+	if (hasPlacementFeedback(args)) {
+		const [feedback, bonusId] = args;
+		const answerKey = sortAnswerKeys[id];
+		if (!answerKey) throw new Error(`Missing answer key for "${id}".`);
+		return { id, prompt, type: 'drag-n-drop' as const, instructions, items, targets, answerKey, feedback, bonusId };
+	}
+	const [answerKey, feedback, bonusId] = args;
+	return { id, prompt, type: 'drag-n-drop' as const, instructions, items, targets, answerKey, feedback, bonusId };
 };
+
+export const sort = (
+	id: string,
+	prompt: string,
+	instructions: string,
+	items: SortItem[],
+	targets: SortTarget[],
+	answerKey: Record<string, string>,
+	feedback?: Feedback,
+	bonusId?: string
+) => ({ id, prompt, type: 'sort' as const, instructions, items, targets, answerKey, feedback, bonusId });
 
 export function isPlacementCorrect(question: PlacementQuestion, itemId: string, targetId: string): boolean {
 	const expected = question.answerKey[itemId];
@@ -206,6 +241,10 @@ export const htmlSections: CourseSection[] = [
 				'“Comments in HTML are invisible to the user.”',
 				[option('yes', 'Yes', false), option('no', 'No', true)],
 				'This is a tricky question: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. Anyone can inspect the source and read them, so do not put passwords or other secrets in comments.',
+				'comment-visibility-bonus'
+			),
+			input(
+				'comment-visibility-bonus',
 				'Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.'
 			)
 		]
@@ -380,12 +419,11 @@ export const htmlSections: CourseSection[] = [
 		id: 'formatting-text',
 		title: 'Formatting Text (Headings, paragraphs, strong, emphasis)',
 		questions: [
-			{
-				id: 'heading-order',
-				prompt: 'Sort the headings from smallest to largest.',
-				type: 'sort',
-				instructions: 'Reorder the valid headings and move invalid elements into the discard area.',
-				items: [
+			sort(
+				'heading-order',
+				'Sort the headings from smallest to largest.',
+				'Reorder the valid headings and move invalid elements into the discard area.',
+				[
 					{ id: 'h1', text: '<h1>' },
 					{ id: 'h2', text: '<h2>' },
 					{ id: 'h3', text: '<h3>' },
@@ -395,7 +433,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'h7', text: '<h7>' },
 					{ id: 'h8', text: '<h8>' }
 				],
-				targets: [
+				[
 					{ id: 'heading-position-1', label: 'Smallest' },
 					{ id: 'heading-position-2', label: '2' },
 					{ id: 'heading-position-3', label: '3' },
@@ -404,7 +442,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'heading-position-6', label: 'Largest' },
 					{ id: 'invalid-headings', label: 'Not valid HTML headings' }
 				],
-				answerKey: {
+				{
 					h6: 'heading-position-1',
 					h5: 'heading-position-2',
 					h4: 'heading-position-3',
@@ -414,8 +452,8 @@ export const htmlSections: CourseSection[] = [
 					h7: 'invalid-headings',
 					h8: 'invalid-headings'
 				},
-				feedback: 'The valid heading elements are `<h1>` through `<h6>`. `<h6>` is the smallest heading level and `<h1>` the largest; `<h7>` and `<h8>` do not exist.'
-			},
+				'The valid heading elements are `<h1>` through `<h6>`. `<h6>` is the smallest heading level and `<h1>` the largest; `<h7>` and `<h8>` do not exist.'
+			),
 			dragAndDrop(
 				'block-inline-elements',
 				'Place each element in its usual display category: block or inline.',
@@ -680,12 +718,33 @@ export const questionList: Question[] = htmlSections
 	.flatMap((section) => section.questions)
 	.filter((item): item is Question => item.type !== 'lesson');
 
+export const bonusQuestionIds = new Set(questionList.flatMap((question) => question.bonusId ? [question.bonusId] : []));
+export const requiredQuestionList = questionList.filter((question) => !bonusQuestionIds.has(question.id));
+
 export const getQuestion = (id: string) => questionList.find((question) => question.id === id);
 export const getCourseItem = (id: string) =>
 	htmlSections.flatMap((section) => section.questions).find((item) => item.id === id);
 
 export const questionSection = (questionId: string) =>
 	htmlSections.find((section) => section.questions.some((question) => question.id === questionId));
+
+function revisionHash(relevant: object): string {
+	let hash = 2166136261;
+	for (const character of JSON.stringify(relevant)) {
+		hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+	}
+	return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+export function legacyCommentVisibilityRevision(question: MultipleChoiceQuestion, bonus: InputQuestion): string {
+	return revisionHash({
+		id: question.id,
+		prompt: question.prompt,
+		options: question.options.map(({ id, text, correct }) => ({ id, text, correct })),
+		bonusPrompt: bonus.prompt,
+		...(question.description?.length ? { description: question.description } : {})
+	});
+}
 
 export function questionRevision(question: Question): string {
 	const relevant =
@@ -694,7 +753,12 @@ export function questionRevision(question: Question): string {
 					id: question.id,
 					prompt: question.prompt,
 					options: question.options.map(({ id, text, correct }) => ({ id, text, correct })),
-					bonusPrompt: question.bonusPrompt,
+					...(question.description?.length ? { description: question.description } : {})
+				}
+			: question.type === 'input'
+			? {
+					id: question.id,
+					prompt: question.prompt,
 					...(question.description?.length ? { description: question.description } : {})
 				}
 			: {
@@ -705,9 +769,5 @@ export function questionRevision(question: Question): string {
 					targets: question.targets,
 					answerKey: question.answerKey
 				};
-	let hash = 2166136261;
-	for (const character of JSON.stringify(relevant)) {
-		hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
-	}
-	return (hash >>> 0).toString(16).padStart(8, '0');
+	return revisionHash(relevant);
 }

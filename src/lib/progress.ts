@@ -1,6 +1,6 @@
 import { browser } from '$app/env';
 import { get, writable } from 'svelte/store';
-import { getQuestion, questionRevision } from './content/course.js';
+import { getQuestion, legacyCommentVisibilityRevision, questionRevision } from './content/course.js';
 import type { SavedProgress, SubmittedAnswer } from './content/types.js';
 
 const STORAGE_KEY = 'webbasics.progress.v1';
@@ -25,8 +25,8 @@ function isSubmittedAnswer(value: unknown): value is SubmittedAnswer {
 		typeof value.questionId === 'string' &&
 		typeof value.revision === 'string' &&
 		typeof value.submittedAt === 'string' &&
-		(value.type === 'multiple-choice' || value.type === 'drag-n-drop' || value.type === 'sort') &&
-		typeof value.isCorrect === 'boolean' &&
+		(value.type === 'multiple-choice' || value.type === 'drag-n-drop' || value.type === 'sort' || value.type === 'input') &&
+		(value.type === 'input' ? value.isCorrect === null && typeof value.textResponse === 'string' : typeof value.isCorrect === 'boolean') &&
 		(value.selectedOptionIds === undefined || isStringArray(value.selectedOptionIds)) &&
 		(value.placements === undefined ||
 			(isRecord(value.placements) &&
@@ -74,7 +74,25 @@ export function hydrateProgress() {
 			if (!isSubmittedAnswer(value)) continue;
 			const question = getQuestion(id);
 			if (!question) continue;
-			if (value.revision !== questionRevision(question)) {
+			if (id === 'comment-visibility' && question.type === 'multiple-choice') {
+				const bonus = getQuestion('comment-visibility-bonus');
+				if (bonus?.type === 'input' && value.revision === legacyCommentVisibilityRevision(question, bonus)) {
+					const { bonusResponse, bonusSubmittedAt, ...answer } = value;
+					restored.answers[id] = { ...answer, revision: questionRevision(question) };
+					if (bonusResponse?.trim()) {
+						restored.answers[bonus.id] = {
+							questionId: bonus.id,
+							revision: questionRevision(bonus),
+							submittedAt: bonusSubmittedAt ?? value.submittedAt,
+							type: 'input',
+							textResponse: bonusResponse,
+							isCorrect: null
+						};
+					}
+					continue;
+				}
+			}
+			if (value.type !== question.type || value.revision !== questionRevision(question)) {
 				restored.changeNotices.push(id);
 				continue;
 			}
@@ -103,34 +121,6 @@ export function saveAnswer(answer: SubmittedAnswer) {
 	const next: SavedProgress = {
 		...current,
 		answers: { ...current.answers, [answer.questionId]: answer }
-	};
-	persist(next);
-	progress.set(next);
-}
-
-export function saveBonusResponse(questionId: string, response: string) {
-	if (!response.trim()) {
-		throw new Error('Enter a response before submitting.');
-	}
-	const question = getQuestion(questionId);
-	if (!question?.bonusPrompt) {
-		throw new Error('This question does not have a bonus response.');
-	}
-	const current = get(progress);
-	const answer = current.answers[questionId];
-	if (!answer) {
-		throw new Error('Answer the question before submitting its bonus response.');
-	}
-	const next: SavedProgress = {
-		...current,
-		answers: {
-			...current.answers,
-			[questionId]: {
-				...answer,
-				bonusResponse: response,
-				bonusSubmittedAt: new Date().toISOString()
-			}
-		}
 	};
 	persist(next);
 	progress.set(next);

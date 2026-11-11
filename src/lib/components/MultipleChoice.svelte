@@ -101,6 +101,6 @@
 		{/if}
 </section>
 
-{#if saved && question.feedback}
-	<ExerciseFeedback feedback={question.feedback} id={question.id} bonusPrompt={question.bonusPrompt} />
+{#if saved && (question.feedback || question.bonusId)}
+	<ExerciseFeedback feedback={question.feedback} id={question.id} bonusId={question.bonusId} />
 {/if}

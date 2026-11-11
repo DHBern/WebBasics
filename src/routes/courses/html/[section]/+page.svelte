@@ -12,7 +12,7 @@
 	import FormsButtons from '#lib/content/html/sections/forms-buttons.svx';
 	import Embeddings from '#lib/content/html/sections/embeddings.svx';
 	import { downloadSubmission } from '#lib/content/submission.js';
-	import { htmlSections, questionList } from '#lib/content/course.js';
+	import { htmlSections, requiredQuestionList } from '#lib/content/course.js';
 	import { progress } from '#lib/progress.js';
 	import type { PageData } from './$types';
 
@@ -36,8 +36,8 @@
 	let currentIndex = $derived(htmlSections.findIndex((section) => section.id === data.section.id));
 	let nextSection = $derived(htmlSections[currentIndex + 1]);
 	let previousSection = $derived(htmlSections[currentIndex - 1]);
-	let answeredCount = $derived(questionList.filter((question) => $progress.answers[question.id]).length);
-	let complete = $derived(questionList.every((question) => $progress.answers[question.id]));
+	let answeredCount = $derived(requiredQuestionList.filter((question) => $progress.answers[question.id]).length);
+	let complete = $derived(requiredQuestionList.every((question) => $progress.answers[question.id]));
 
 	async function exportResults() {
 		downloading = true;
@@ -63,7 +63,7 @@
 			<a class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950" href="/courses/html/welcome/">
 				← Course introduction
 			</a>
-			<p class="text-sm text-slate-500">{answeredCount} of {questionList.length} questions answered</p>
+			<p class="text-sm text-slate-500">{answeredCount} of {requiredQuestionList.length} questions answered</p>
 		</div>
 		<div class="prose max-w-none">
 			<Content />
@@ -85,7 +85,7 @@
 						{#if complete}
 							All questions answered.
 						{:else}
-							Answer all {questionList.length} interactive questions to enable export.
+							Answer all {requiredQuestionList.length} required questions to enable export.
 						{/if}
 					</p>
 					{#if downloadError}<p class="text-sm text-rose-800" role="alert">{downloadError}</p>{/if}

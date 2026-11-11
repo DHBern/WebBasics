@@ -3,6 +3,7 @@
 	import MultipleChoice from './MultipleChoice.svelte';
 	import DragAndDropExercise from './DragAndDropExercise.svelte';
 	import SortExercise from './SortExercise.svelte';
+	import InputExercise from './InputExercise.svelte';
 
 	let { question }: { question?: CourseItem } = $props();
 </script>
@@ -13,6 +14,8 @@
 	<DragAndDropExercise question={question} />
 {:else if question?.type === 'sort'}
 	<SortExercise {question} />
+{:else if question?.type === 'input'}
+	<InputExercise {question} />
 {:else if question?.type === 'lesson'}
 	<aside class="my-5 rounded-xl border border-sky-200 bg-sky-50 p-5 text-sky-950">
 		<h3 class="font-semibold">{question.title}</h3>

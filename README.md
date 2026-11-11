@@ -26,6 +26,18 @@ is rendered inside the exercise, before the options. Existing calls without a
 description remain supported. Description changes invalidate saved answers,
 and descriptions are included in exported submissions.
 
+Feedback accepts a Markdown string (including multiple paragraphs and fenced
+code) or an array of Markdown blocks. Exercises can optionally link to a
+separately defined bonus exercise by passing its ID as their final argument,
+for example `mcq('id', 'Title', [option(...)], 'Feedback', 'bonus-id')`.
+Omitting the ID means there is no linked bonus. Define the bonus in the section's
+question list using `input(...)`, `mcq(...)`, or a placement exercise with that
+ID; it appears after the parent is answered and is not required for completion.
+Use `undefined` for omitted optional arguments before the bonus ID. `sort(...)`,
+`dragAndDrop(...)`, and `input(...)` also take the bonus ID as their final argument.
+Text input answers are ungraded, saved separately, and included in exports only
+when submitted. Previously saved comment bonus responses are migrated.
+
 The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
 uses SVG text, brackets, and HTML dropzones inside
 `foreignObject` elements in one coordinate system. It scrolls horizontally on
