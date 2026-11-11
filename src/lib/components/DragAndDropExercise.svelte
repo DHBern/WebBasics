@@ -4,6 +4,7 @@
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
 	import { onMount } from 'svelte';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
+	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
 
 	let { question }: { question: DragAndDropQuestion } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
@@ -183,28 +184,7 @@
 			</div>
 		</div>
 		{:else if question.id === 'html-parts'}
-		<div class="syntax-diagram mt-5">
-			<div class="syntax-code" aria-label="HTML example">
-				<span class="syntax-token syntax-opening">&lt;p</span>
-				<span class="syntax-token syntax-space"> </span>
-				<span class="syntax-token syntax-attribute">class</span>
-				<span class="syntax-token">=</span>
-				<span class="syntax-token syntax-value">"editor-note"</span>
-				<span class="syntax-token syntax-opening">&gt;</span>
-				<span class="syntax-token syntax-space"> </span>
-				<span class="syntax-token syntax-content">My cat is very grumpy</span>
-				<span class="syntax-token syntax-closing">&lt;/p&gt;</span>
-			</div>
-			<div class="syntax-bracket-grid">
-				<div class="syntax-bracket syntax-bracket-opening">{@render targetSlot('opening-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-closing">{@render targetSlot('closing-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-content">{@render targetSlot('content-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-element">{@render targetSlot('element-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-attribute">{@render targetSlot('attribute-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-name">{@render targetSlot('attribute-name-slot')}</div>
-				<div class="syntax-bracket syntax-bracket-value">{@render targetSlot('attribute-value-slot')}</div>
-			</div>
-		</div>
+			<HtmlSyntaxDiagram {targetSlot} />
 		{:else if question.id === 'body-element-tree'}
 		<div class="webpage-diagram mt-5">
 			<div class="webpage-invisible">
