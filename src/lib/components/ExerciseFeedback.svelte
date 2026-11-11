@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderMarkdown } from '#lib/content/markdown.js';
+	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
 	import { progress, saveBonusResponse } from '#lib/progress.js';
 
 	let {
@@ -34,7 +34,7 @@
 	{#if bonusPrompt}
 		<div class="feedback-bonus mt-4">
 			<h5 class="font-bold">Bonus</h5>
-			<p class="mt-1">{bonusPrompt}</p>
+			<p class="mt-1">{@html renderInline(bonusPrompt)}</p>
 			{#if bonusResponse}
 				<p class="mt-3 rounded-lg bg-white/70 p-3 whitespace-pre-wrap" role="status">
 					Submitted response: {bonusResponse}

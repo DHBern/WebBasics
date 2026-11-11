@@ -203,20 +203,10 @@ export const htmlSections: CourseSection[] = [
 			),
 			mcq(
 				'comment-visibility',
-				'Comment visibility',
-				[
-					'Consider the following HTML:',
-					'```html\n<p>Visible text</p><!-- internal note -->\n```',
-					'Which statement is correct?'
-				],
-				[
-					option('both-visible', 'The browser displays “Visible text” and “internal note.”', false),
-					option('rendered-and-source', 'The browser displays “Visible text”; the comment remains in the page source but is not rendered.', true),
-					option('comment-removed', 'The browser removes the comment from the HTML source.', false),
-					option('text-hidden', 'The comment hides the paragraph from the browser.', false)
-				],
-				'The paragraph text is rendered on the page, but the comment is not. The comment remains in the HTML source and can be read by anyone who inspects that source; do not put passwords or other secrets in comments.',
-				'Open Wikipedia page source (Ctrl+U on Windows/Linux, Cmd+Option+U on macOS) and search for `<!--`. In the field below, paste or describe one comment you find and briefly note whether it appears on the rendered page.'
+				'“Comments in HTML are invisible to the user.”',
+				[option('yes', 'Yes', false), option('no', 'No', true)],
+				'This is a tricky question: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. Anyone can inspect the source and read them, so do not put passwords or other secrets in comments.',
+				'Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.'
 			)
 		]
 	},

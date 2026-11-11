@@ -637,6 +637,11 @@ a {
 	margin: 0.5rem 0;
 }
 
+.exercise-feedback .feedback-bonus a {
+	color: #9a3412;
+	text-decoration: underline;
+}
+
 .feedback-content ul,
 .feedback-content ol {
 	margin: 0.75rem 0;
