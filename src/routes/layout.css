@@ -590,6 +590,10 @@ a {
 	padding: 1rem;
 }
 
+.prose pre code {
+	color: #e2e8f0;
+}
+
 .prose table {
 	width: 100%;
 	border-collapse: collapse;

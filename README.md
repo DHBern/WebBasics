@@ -18,6 +18,10 @@ page and section content are mdsvex files under `src/lib/content/html/`; fenced
 code is syntax-highlighted by mdsvex. Question IDs, answer keys, feedback, and
 drag-sort targets are defined in `src/lib/content/course.ts`. Keep question IDs
 stable when reordering content.
+Multiple-choice questions can use an optional short `title`; when present, their
+`prompt` is rendered as block Markdown inside the exercise card, including fenced
+code examples. All multiple-choice cards show a shared "Select all correct answers"
+note above the options, so prompts should not repeat it.
 
 The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
 uses SVG text, brackets, and HTML dropzones inside

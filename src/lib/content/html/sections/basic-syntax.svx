@@ -5,56 +5,20 @@
 
 ### Basic Syntax (Elements and Attributes)
 
-#### Place HTML parts at the matching brackets
-
-<pre><code class="language-html">&lt;button class="button--external" style="border: 2px solid black;" disabled&gt;Click me&lt;/button&gt;</code></pre>
+HTML uses elements and attributes to describe a page. Start by identifying the parts of an element.
 
 <ExerciseCard question={getQuestion('html-parts')} />
 
-#### Indentation
-
-Compare these three code snippets:
-
-```html
-<html><body><p>Why should I care about formatting?</p></body></html>
-```
-
-```html
-<html>
-<body>
-<p>
-Why should I care about formatting?
-</p>
-</body>
-</html>
-```
-
-```html
-<html>
-	<body>
-		<p>Why should I care about formatting?</p>
-	</body>
-</html>
-```
-
-<ExerciseCard question={getQuestion('html-indentation')} />
-
-#### Closing tags and void elements
-
-What goes wrong here?
-
-```html
-<img src="../img/icon.jpeg" alt="Icon"></img>
-```
+Not all elements have the same structure. Next, consider an image.
 
 <ExerciseCard question={getQuestion('img-void-element')} />
 
-What went wrong with these overlapping tags?
-
-```html
-<p>I didn't expect to find the <em>next-door neighbor's <strong>cat</em></strong> here!</p>
-```
+Elements can also contain other elements. Their nesting determines how the parts fit together.
 
 <ExerciseCard question={getQuestion('overlapping-tags')} />
+
+Finally, consider how formatting helps people read HTML.
+
+<ExerciseCard question={getQuestion('html-indentation')} />
 
 **Further Reading:** [Elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [Attributes (MDN)](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)

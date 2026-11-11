@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderInline } from '#lib/content/markdown.js';
+	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
 	import type { MultipleChoiceQuestion, SubmittedAnswer } from '#lib/content/types.js';
 	import { questionRevision } from '#lib/content/course.js';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
@@ -44,8 +44,14 @@
 
 <section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
 		<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
-			{@html renderInline(question.prompt)}
+			{@html renderInline(question.title ?? question.prompt)}
 		</h3>
+
+		{#if question.title}
+			<div class="prose mt-4 max-w-none">
+				{@html renderMarkdown(question.prompt)}
+			</div>
+		{/if}
 
 		{#if changed}
 			<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
@@ -53,7 +59,8 @@
 			</p>
 		{/if}
 
-		<fieldset class="mt-4 space-y-2" disabled={Boolean(saved)}>
+		<p class="mt-4 text-right text-xs text-slate-500" aria-hidden="true">Select all correct answers</p>
+		<fieldset class="mt-2 space-y-2" disabled={Boolean(saved)}>
 			<legend class="sr-only">Select all correct answers</legend>
 			{#each question.options as option (option.id)}
 				{@const selected = selectedIds.includes(option.id)}

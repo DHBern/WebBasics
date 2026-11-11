@@ -12,8 +12,11 @@ const mcq = (
 	id: string,
 	prompt: string,
 	options: MultipleChoiceQuestion['options'],
-	feedback?: string
-): MultipleChoiceQuestion => ({ id, prompt, type: 'multiple-choice', options, feedback });
+	feedback?: string,
+	title?: string
+): MultipleChoiceQuestion => ({
+	id, prompt, type: 'multiple-choice', options, feedback, ...(title ? { title } : {})
+});
 
 const option = (id: string, text: string, correct: boolean) => ({ id, text, correct });
 
@@ -222,8 +225,8 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			dragAndDrop(
 				'html-parts',
-				'Place each label at the matching bracket in the HTML example.',
-				'Identify the button element, its class and style attributes, and its disabled boolean attribute. The smaller brackets mark attribute names and values; disabled has no value here.',
+				'Parts of an HTML element',
+				'Place each label at the matching bracket in the HTML example. Identify the button element, its `class` and `style` attributes, and its `disabled` boolean attribute. The smaller brackets mark attribute names and values; `disabled` has no value here. Scroll horizontally if needed to see the whole example.',
 				[
 					{ id: 'element', text: 'Element' },
 					{ id: 'opening-tag', text: 'Opening tag' },
@@ -266,20 +269,8 @@ export const htmlSections: CourseSection[] = [
 				'An element includes its opening tag, content, and closing tag. The class-attribute assigns class names: `button--external` is a BEM modifier of the `button` block. The style-attribute contains CSS declarations. These two attributes have quoted values. The boolean attribute `disabled` needs no value: its presence disables the button; omitting it leaves the button enabled. Writing `disabled="false"` would still disable it.'
 			),
 			mcq(
-				'html-indentation',
-				'Compare the three snippets: (1) all tags on one line, (2) each tag and text on separate lines, and (3) nested tags consistently indented.',
-				[
-					option('all-valid', 'All three versions are valid HTML.', true),
-					option('same-rendering', 'All three versions render the same in the browser.', true),
-					option('first-preferred', 'The first version is preferred because it uses less space and therefore less bandwidth.', false),
-					option('third-readable', 'The third version is preferred because it is easier to read.', true),
-					option('third-collaboration', 'The third version is preferred because it simplifies collaboration.', true)
-				],
-				'Consistent formatting makes code easier to read and collaborate on. Tools such as [Prettier](https://www.youtube.com/watch?v=RIFWADZzSjM) can format code on demand or on save. Standard formatting avoids noisy diffs caused by each contributor reformatting code to personal taste.'
-			),
-			mcq(
 				'img-void-element',
-				'What is wrong with `<img src="../img/icon.jpeg" alt="Icon"></img>`?',
+				'What is wrong with this HTML?\n\n```html\n<img src="../img/icon.jpeg" alt="Icon"></img>\n```',
 				[
 					option('correct', 'Everything is correct.', false),
 					option('src', 'There is a mistake in the `src` attribute.', false),
@@ -287,18 +278,33 @@ export const htmlSections: CourseSection[] = [
 					option('text', 'Text is missing between `<img>` and `</img>`.', false),
 					option('void', 'An `<img>` element is a void element and must not have a closing tag.', true)
 				],
-				'`img` is a void element and must not have an end tag. Write `<img src="..." alt="Icon">`. The optional trailing slash in `<img ... />` is permitted in HTML, but it does not close the element and is not required.'
+				'`img` is a void element and must not have an end tag. Write `<img src="..." alt="Icon">`. The optional trailing slash in `<img ... />` is permitted in HTML, but it does not close the element and is not required.',
+				'Void elements'
 			),
 			mcq(
 				'overlapping-tags',
-				`What went wrong here? \`<p>I didn't expect to find the <em>next-door neighbor's <strong>cat</em></strong> here!</p>\``,
+				"What went wrong here?\n\n```html\n<p>I didn't expect to find the <em>next-door neighbor's <strong>cat</em></strong> here!</p>\n```",
 				[
 					option('works', 'Everything works just fine.', false),
 					option('closing-order', 'The closing `</strong>` tag should be before the closing `</em>` tag.', true),
 					option('browser-repairs', 'Browsers may repair the markup and render the neighbor’s cat in italics and “cat” in bold.', true),
 					option('invalid', 'This is invalid HTML.', true)
 				],
-				'Browsers may repair misnested formatting elements, but the source is invalid HTML. It is better to write correct markup in the first place. The [HTML validator](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML#html_validation) can help find errors.'
+				'Browsers may repair misnested formatting elements, but the source is invalid HTML. It is better to write correct markup in the first place. The [HTML validator](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML#html_validation) can help find errors.',
+				'Nesting elements'
+			),
+			mcq(
+				'html-indentation',
+				'Compare these three code snippets.\n\n**1. One line**\n\n```html\n<html><body><p>Why should I care about formatting?</p></body></html>\n```\n\n**2. Separate lines**\n\n```html\n<html>\n<body>\n<p>\nWhy should I care about formatting?\n</p>\n</body>\n</html>\n```\n\n**3. Consistent indentation**\n\n```html\n<html>\n\t<body>\n\t\t<p>Why should I care about formatting?</p>\n\t</body>\n</html>\n```',
+				[
+					option('all-valid', 'All three versions are valid HTML.', true),
+					option('same-rendering', 'All three versions render the same in the browser.', true),
+					option('first-preferred', 'The first version is preferred because it uses less space and therefore less bandwidth.', false),
+					option('third-readable', 'The third version is preferred because it is easier to read.', true),
+					option('third-collaboration', 'The third version is preferred because it simplifies collaboration.', true)
+				],
+				'Consistent formatting makes code easier to read and collaborate on. Tools such as [Prettier](https://www.youtube.com/watch?v=RIFWADZzSjM) can format code on demand or on save. Standard formatting avoids noisy diffs caused by each contributor reformatting code to personal taste.',
+				'Indentation'
 			)
 		],
 		lesson: '**Further Reading:** [HTML elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [MDN: Attributes](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)'

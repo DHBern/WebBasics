@@ -26,6 +26,7 @@ type QuestionBase = {
 
 export type MultipleChoiceQuestion = QuestionBase & {
 	type: 'multiple-choice';
+	title?: string;
 	options: Option[];
 };
 
