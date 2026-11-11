@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { dndzone } from 'svelte-dnd-action';
+	import { dndzone, SOURCES, TRIGGERS } from 'svelte-dnd-action';
 	import { renderInline, renderMarkdown } from '#lib/content/markdown.js';
 	import type { SortItem, SortQuestion, SubmittedAnswer } from '#lib/content/types.js';
 	import { questionRevision } from '#lib/content/course.js';
@@ -96,8 +96,8 @@
 				class="sort-order-list exercise-dnd-zone"
 				aria-label="Heading order"
 				use:dndzone={{ items: orderedItems, type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
-				onconsider={(event) => { orderedItems = event.detail.items; dragging = true; }}
-				onfinalize={(event) => { orderedItems = event.detail.items; dragging = false; }}
+				onconsider={(event) => { orderedItems = event.detail.items; dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED; }}
+				onfinalize={(event) => { orderedItems = event.detail.items; dragging = event.detail.info.source === SOURCES.KEYBOARD; }}
 			>
 				{#each orderedItems as item, index (item.id)}
 					{@const itemCorrect = saved && saved.placements?.[item.id] === question.answerKey[item.id]}
@@ -120,8 +120,8 @@
 				class="exercise-dnd-zone mt-3 flex flex-wrap gap-2"
 				aria-label="Not valid HTML headings"
 				use:dndzone={{ items: invalidItems, type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
-				onconsider={(event) => { invalidItems = event.detail.items; dragging = true; }}
-				onfinalize={(event) => { invalidItems = event.detail.items; dragging = false; }}
+				onconsider={(event) => { invalidItems = event.detail.items; dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED; }}
+				onfinalize={(event) => { invalidItems = event.detail.items; dragging = event.detail.info.source === SOURCES.KEYBOARD; }}
 			>
 				{#each invalidItems as item (item.id)}
 					{@const itemCorrect = saved && saved.placements?.[item.id] === question.answerKey[item.id]}
