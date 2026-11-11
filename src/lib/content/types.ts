@@ -15,6 +15,7 @@ export type SortTarget = {
 	parentId?: string;
 	prefix?: string;
 	suffix?: string;
+	displayText?: string;
 };
 
 type QuestionBase = {
