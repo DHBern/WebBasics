@@ -19,8 +19,16 @@ code is syntax-highlighted by mdsvex. Question IDs, answer keys, feedback, and
 drag-sort targets are defined in `src/lib/content/course.ts`. Keep question IDs
 stable when reordering content.
 
-The reusable quiz controls are in `src/lib/components/`. Answers are saved in
-the current browser's local storage. At the end of HTML Questions, students can
+The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
+uses SVG text, brackets, and HTML dropzones inside
+`foreignObject` elements in one coordinate system. It scrolls horizontally on
+narrow screens to keep the bracket endpoints aligned with the code.
+The button example distinguishes the class-attribute and class names, the
+style-attribute and CSS declarations, and the valueless boolean `disabled`
+attribute. Separate bracket rows and gaps distinguish nested and
+adjacent spans, with dropzones above and below the code.
+
+Answers are saved in the current browser's local storage. At the end of HTML Questions, students can
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON
 files locally in the browser; it does not upload or retain them.
 
