@@ -48,8 +48,6 @@ const sortAnswerKeys: Record<string, Record<string, string>> = {
 		main: 'main-target',
 		article: 'article-target',
 		section: 'section-target',
-		h1: 'h1-target',
-		p: 'p-target',
 		aside: 'aside-target',
 		footer: 'footer-target'
 	},
@@ -293,9 +291,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'aside', text: '<aside>' },
 					{ id: 'main', text: '<main>' },
 					{ id: 'article', text: '<article>' },
-					{ id: 'section', text: '<section>' },
-					{ id: 'h1', text: '<h1>' },
-					{ id: 'p', text: '<p>' }
+					{ id: 'section', text: '<section>' }
 				],
 				[
 					{ id: 'document', label: '<html>' },
@@ -306,8 +302,6 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'main-target', label: '<main>', parentId: 'body-target' },
 					{ id: 'article-target', label: '<article>', parentId: 'main-target' },
 					{ id: 'section-target', label: '<section>', parentId: 'article-target' },
-					{ id: 'h1-target', label: '<h1>', parentId: 'section-target' },
-					{ id: 'p-target', label: '<p>', parentId: 'section-target' },
 					{ id: 'aside-target', label: '<aside>', parentId: 'main-target' },
 					{ id: 'footer-target', label: '<footer>', parentId: 'body-target' }
 				],
@@ -320,8 +314,6 @@ export const htmlSections: CourseSection[] = [
 					main: 'main-target',
 					article: 'article-target',
 					section: 'section-target',
-					h1: 'h1-target',
-					p: 'p-target',
 					aside: 'aside-target',
 					footer: 'footer-target'
 				},
