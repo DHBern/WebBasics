@@ -115,7 +115,8 @@ export function hydrateProgress() {
 
 export function saveAnswer(answer: SubmittedAnswer) {
 	const current = get(progress);
-	if (current.answers[answer.questionId]) {
+	const existing = current.answers[answer.questionId];
+	if (existing && (existing.type !== 'input' || answer.type !== 'input')) {
 		throw new Error('This question has already been answered.');
 	}
 	const next: SavedProgress = {

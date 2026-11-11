@@ -44,7 +44,9 @@ ID; it appears after the parent is answered and is not required for completion.
 Use `undefined` for omitted optional arguments before the bonus ID. `sort(...)`,
 `dragAndDrop(...)`, and `input(...)` also take the bonus ID as their final argument.
 Text input answers are ungraded, saved separately, and included in exports only
-when submitted. Previously saved comment bonus responses are migrated.
+when submitted. **Edit answer** reopens a submitted input response; **Save answer**
+replaces it, and JSON exports use the latest saved response. Unsaved edits do not
+change the exported answer. Previously saved comment bonus responses are migrated.
 
 The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
 uses SVG text, brackets, and HTML dropzones inside
