@@ -77,10 +77,9 @@
 				class:answer-correct={Boolean(saved) && matches}
 				class:answer-incorrect={Boolean(saved) && !matches}
 			>
+				<input type="checkbox" checked={selected} onchange={() => toggle(option.id)} />
 				{#if saved}
 					<span class="answer-icon" aria-hidden="true">{matches ? '✓' : '✗'}</span>
-				{:else}
-					<input type="checkbox" checked={selected} onchange={() => toggle(option.id)} />
 				{/if}
 				<span>{@html renderInline(option.text)}</span>
 				{#if saved}
