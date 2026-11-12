@@ -501,9 +501,10 @@ export const htmlSections: CourseSection[] = [
 			input({
 				slug: 'semantic-definition',
 				title: 'Recap: Definition with examples',
-				question:
-					['Give a few examples of semantic HTML elements (e.g. from the previous section) and explain what distinguishes them from `<div>` and `<span>`. If you are unsure, you can [catch up here](https://developer.mozilla.org/en-US/curriculum/core/semantic-html/).',
-					"It's important for your learning, that you answer in your own words."]
+				question: [
+					'Give a few examples of semantic HTML elements (e.g. from the previous section) and explain what distinguishes them from `<div>` and `<span>`. If you are unsure, you can [catch up here](https://developer.mozilla.org/en-US/curriculum/core/semantic-html/).',
+					"It's important for your learning, that you answer in your own words."
+				]
 			}),
 			mcq({
 				slug: 'html-without-css',
@@ -516,20 +517,33 @@ export const htmlSections: CourseSection[] = [
 			mcq({
 				slug: 'html-full-of-divs',
 				title: 'How about `<divs>`?',
-				question: ['Consider these two button componenets', 
-					"```html\n<div>\n\t<div>\n\t\t<div>Link A</div>\n\t</div>\n\t<div>\n\t\t<div>Link B</div>\n\t</div>\n</div>", 
-					"```html\n<ul>\n\t<li>\n\t\t<a>Link A</a>\n\t</li>\n\t<li>\n\t\t<a>Link B</a>\n\t</li>\n</ul>"
+				question: [
+					'Consider these two button componenets',
+					'```html\n<div>\n\t<div>\n\t\t<div>Link A</div>\n\t</div>\n\t<div>\n\t\t<div>Link B</div>\n\t</div>\n</div>',
+					'```html\n<ul>\n\t<li>\n\t\t<a>Link A</a>\n\t</li>\n\t<li>\n\t\t<a>Link B</a>\n\t</li>\n</ul>'
 				],
 				options: [
-					option('div-for-everything','`<div>` has no semantic meaning, so you can use them for everything.', true),
-					option('styling','With the propper CSS, both code-blocks can be styled exactly the same.', true),
-					option('div-vs-span','`<div>` could be replaced with `<span>` with just the same effect.', false),
+					option(
+						'div-for-everything',
+						'`<div>` has no semantic meaning, so you can use them for everything.',
+						true
+					),
+					option(
+						'styling',
+						'With the propper CSS, both code-blocks can be styled exactly the same.',
+						true
+					),
+					option(
+						'div-vs-span',
+						'`<div>` could be replaced with `<span>` with just the same effect.',
+						false
+					)
 				],
-				feedback:
-					['So, while the first answer technically is correct, **you should never do this.** `<div>` elements are meant as structural wrappers around other elements, but not to replace semantic elements. Even if it seems to produce the same output at first glance.',
+				feedback: [
+					'So, while the first answer technically is correct, **you should never do this.** `<div>` elements are meant as structural wrappers around other elements, but not to replace semantic elements. Even if it seems to produce the same output at first glance.',
 					"It's true, that `<div>` elements can be styled to *visually (!)* resemble their semantic counter-parts. You can also do the oposite and *remove* or *overwrite* default browser styling from semantic elements. This, by the way, is a pretty common technique, if you prefer to start styling from scratch.",
 					"Lastly, it's true that `<span>` has no semantic meaning either. However, there is an important difference between `<div>` and `<span>` which we will cover later in the next section. In short: `<div>` elements are block-elements, which means they take up new vertical space, whereas `<span>` appears inline. So the given code snippet with just `<span>` would style differently. Note, however, that with CSS you can even revert this behavior, but this should be avoided by any means."
-					]
+				]
 			})
 		],
 		lesson:
@@ -580,36 +594,108 @@ export const htmlSections: CourseSection[] = [
 			dragAndDrop({
 				slug: 'text-elements',
 				title: 'Elements for textual mark-up',
-				question:
-					['Match each element with its meaning.'],
+				question: [
+					'Match each element with its meaning. Focus on what it communicates, not just how the browser displays it.'
+				],
 				items: [
 					{ id: 'p', text: '<p>' },
 					{ id: 'strong', text: '<strong>' },
 					{ id: 'em', text: '<em>' },
 					{ id: 'b', text: '<b>' },
-					{ id: 'i', text: '<i>' }
+					{ id: 'i', text: '<i>' },
+					{ id: 'br', text: '<br>' },
+					{ id: 'hr', text: '<hr>' },
+					{ id: 'q', text: '<q>' },
+					{ id: 'blockquote', text: '<blockquote>' },
+					{ id: 'cite', text: '<cite>' },
+					{ id: 'pre', text: '<pre>' },
+					{ id: 'span', text: '<span>' },
+					{ id: 'mark', text: '<mark>' },
+					{ id: 'small', text: '<small>' },
+					{ id: 'sub', text: '<sub>' },
+					{ id: 'sup', text: '<sup>' },
+					{ id: 'abbr', text: '<abbr>' },
+					{ id: 'code', text: '<code>' },
+					{ id: 'del', text: '<del>' },
+					{ id: 'ins', text: '<ins>' }
 				],
 				targets: [
-					{ id: "p", label: 'paragraph'},
-					{ id: "strong", label: 'important'},
-					{ id: "em", label: 'emphasis'},
-					{ id: "b", label: 'bold'},
-					{ id: "i", label: 'italic'}
+					{ id: 'p', label: 'A paragraph' },
+					{ id: 'strong', label: 'Strong importance, seriousness, or urgency' },
+					{ id: 'em', label: 'Stress emphasis' },
+					{ id: 'b', label: 'Attention without extra importance, such as a keyword' },
+					{ id: 'i', label: 'An alternate voice or convention, such as a technical term' },
+					{ id: 'br', label: 'A line break within text' },
+					{ id: 'hr', label: 'A thematic break between passages' },
+					{ id: 'q', label: 'A short quotation within a sentence' },
+					{ id: 'blockquote', label: 'A quotation in its own block' },
+					{ id: 'cite', label: 'The title of a work being referenced' },
+					{ id: 'pre', label: 'Text with preserved whitespace and line breaks' },
+					{ id: 'span', label: 'A generic inline container with no special meaning' },
+					{ id: 'mark', label: 'Text highlighted as relevant in the current context' },
+					{ id: 'small', label: 'Side comments or small print' },
+					{ id: 'sub', label: 'Subscript, such as the number in a chemical formula' },
+					{ id: 'sup', label: 'Superscript, such as an exponent or footnote marker' },
+					{ id: 'abbr', label: 'An abbreviation or acronym' },
+					{ id: 'code', label: 'A fragment of computer code' },
+					{ id: 'del', label: 'Text deleted from a document' },
+					{ id: 'ins', label: 'Text inserted into a document' }
 				],
 				answerKey: {
-					p: "p",
-					strong: "strong",
-					em: "em",
-					b: "b",
-					i: "i"
+					p: 'p',
+					strong: 'strong',
+					em: 'em',
+					b: 'b',
+					i: 'i',
+					br: 'br',
+					hr: 'hr',
+					q: 'q',
+					blockquote: 'blockquote',
+					cite: 'cite',
+					pre: 'pre',
+					span: 'span',
+					mark: 'mark',
+					small: 'small',
+					sub: 'sub',
+					sup: 'sup',
+					abbr: 'abbr',
+					code: 'code',
+					del: 'del',
+					ins: 'ins'
 				},
-				feedback: ["COMMENT ON strong vs. em vs. b vs. i."]
+				feedback: [
+					'**Meaning before appearance.** HTML describes what text means; CSS controls its presentation. Browsers have default styles, but those styles can change. Choose an element for its purpose, not simply because it looks bold, italic, or small.',
+					'**Importance and emphasis.** `<strong>` marks importance, seriousness, or urgency; `<em>` marks stress emphasis. Compare “Do **not** touch the manuscript” with “I said *this* manuscript, not that one.” Browsers commonly show them in bold and italic, respectively, but the meaning is the reason to use them.',
+					'**Attention and alternate voices.** `<b>` draws attention without adding importance, for example to a keyword in a summary. `<i>` marks text set apart by convention or voice, such as a technical term, a taxonomic name, or a thought. Neither is merely a request for a font style. For purely visual bold or italic styling, use CSS instead.',
+					'**Paragraphs and breaks.** `<p>` groups a paragraph. `<br>` breaks a line within text, useful for verse or an address; do not pile up line breaks to create margins. `<hr>` marks a thematic break, often displayed as a horizontal line. Both `<br>` and `<hr>` are void elements, so they have no closing tags.',
+					'**Quotations and sources.** `<q>` marks a short inline quotation; browsers normally supply quotation marks. `<blockquote>` marks a quotation in a separate block, often indented. `<cite>` identifies the **title of a work**, not the name of its author. The optional `cite` **attribute** on `<q>` or `<blockquote>` can hold a source URL, but does not create a visible reference; provide a readable citation or link as well.',
+					'**Preserving text and showing code.** `<pre>` preserves spaces and line breaks, useful when spacing matters in a transcription. `<code>` identifies computer code; combine `<pre><code>…</code></pre>` for a code block. To display literal HTML tags, escape angle brackets as `&lt;` and `&gt;` rather than letting the browser interpret them as elements.',
+					'**Neutral containers and annotations.** `<span>` has no special meaning; it groups inline text for a class, language, or style. `<mark>` highlights text relevant to the current context, such as a search match. `<small>` marks side comments or small print, not any text you happen to want in a smaller font.',
+					'**Abbreviations and raised or lowered text.** `<abbr>` marks an abbreviation; `title` can supply its expansion. Explain unfamiliar abbreviations in the visible text too, since a hover hint is not accessible to everyone. `<sub>` and `<sup>` represent conventional subscripts and superscripts, such as H₂O and x², rather than arbitrary visual positioning.',
+					'**Document changes.** `<del>` marks a deletion and `<ins>` an insertion. They can help communicate an editorial correction, often shown with a strike-through and an underline. For scholarly transcriptions, explain your editorial conventions: HTML alone does not distinguish every kind of correction or uncertainty.',
+					'**Rendered example.** This fictional archive entry combines the elements above. Look for changes in meaning as well as appearance; the colors, borders, and spacing are presentation, not additional HTML semantics.',
+					`<div class="text-elements-example rounded-lg border border-slate-200 bg-white p-4">
+<h4>A fictional archive entry</h4>
+<p><b>Keyword:</b> <mark>water</mark>. This note belongs to a <span style="color: #9a3412;">botanical collection</span> and mentions <i>Rosa canina</i>.</p>
+<p><strong>Handle the original with care.</strong> Read <em>this copy</em>, not the fragile manuscript. Digital humanities (<abbr title="Digital humanities">DH</abbr>) researchers can compare the text below.</p>
+<p>The note says <q>The garden is quiet</q>. The following invented passage is quoted from <cite>A Garden Notebook</cite>:</p>
+<blockquote><p>The rain has stopped.<br>The roses hold the morning light.</p></blockquote>
+<p>The formula is H<sub>2</sub>O; the plot measures 4 m<sup>2</sup>. An editorial note follows<sup>1</sup>.</p>
+<hr>
+<p>The catalogue date was corrected from <del>1890</del> to <ins>1891</ins>.</p>
+<p>Whitespace can matter in a transcription:</p>
+<pre>Line 1:  roses
+Line 2:      rain</pre>
+<p>The <code>class</code> attribute can label a passage. A code example:</p>
+<pre><code>&lt;p class="transcription"&gt;A garden note.&lt;/p&gt;</code></pre>
+<p><small>1. All quotations, dates, and collection details in this example are invented.</small></p>
+</div>`
+				]
 			}),
 			dragAndDrop({
 				slug: 'block-inline-elements',
 				title: 'Block and inline Elements',
-				question:
-					['Place each element in its usual display category: block or inline.'],
+				question: ['Place each element in its usual display category: block or inline.'],
 				items: [
 					{ id: 'p', text: '<p>' },
 					{ id: 'h1', text: '<h1>' },
@@ -646,7 +732,9 @@ export const htmlSections: CourseSection[] = [
 					img: 'inline',
 					main: 'block'
 				},
-				feedback: ["Note, these are the elements’ default browser display categories. CSS can change them."]
+				feedback: [
+					'Note, these are the elements’ default browser display categories. CSS can change them.'
+				]
 			})
 		]
 	},

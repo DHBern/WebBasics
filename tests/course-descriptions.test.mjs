@@ -362,3 +362,23 @@ test('unlabelled and unknown code fences remain escaped readable code', () => {
 		assert.equal(codeText(html).trimEnd(), '<p>Example & text</p>');
 	}
 });
+
+test('text-elements explains semantics in grouped paragraphs and renders every taught element', () => {
+	const question = getQuestion('text-elements');
+	assert.equal(question.type, 'drag-n-drop');
+	for (const item of question.items) {
+		assert.ok(question.targets.some((target) => target.id === question.answerKey[item.id]));
+	}
+	const explanations = question.feedback.slice(0, -1).map(renderMarkdown).join('');
+	assert.match(explanations, /<p><strong>Importance and emphasis\.<\/strong>/);
+	assert.match(explanations, /<p><strong>Quotations and sources\.<\/strong>/);
+	assert.match(explanations, /<strong>title of a work<\/strong>/);
+	assert.doesNotMatch(explanations, /COMMENT ON/);
+	const example = renderMarkdown(question.feedback.at(-1));
+	for (const item of question.items) {
+		const tag = item.id;
+		assert.match(example, new RegExp(`<${tag}(?:\\s|>)`), `${item.text} has a rendered example`);
+	}
+	assert.match(example, /&lt;p class="transcription"&gt;/);
+	assert.doesNotMatch(example, /<p class="transcription">/);
+});
