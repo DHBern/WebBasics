@@ -65,6 +65,9 @@ uses SVG text, brackets, and HTML dropzones inside
 narrow screens to keep the bracket endpoints aligned with the code.
 Drag-and-drop cards can extend beyond the normal content width on wide screens;
 on narrow screens the diagram remains horizontally scrollable.
+Basic Syntax uses `ExerciseBridge` for transition text: narrow boxes with generous
+vertical spacing and curved connectors. Alignment and attachment points are
+randomized once per mount; connectors follow resizing and revealed feedback.
 The button example distinguishes the class-attribute and class names, the
 style-attribute and CSS declarations, and the valueless boolean `disabled`
 attribute. Separate bracket rows and gaps distinguish nested and

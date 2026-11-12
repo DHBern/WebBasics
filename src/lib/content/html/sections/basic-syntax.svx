@@ -1,5 +1,6 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
@@ -9,15 +10,21 @@ HTML uses elements and attributes to describe a page. Start by identifying the p
 
 <ExerciseCard question={getQuestion('html-parts')} />
 
-Not all elements have the same structure. Next, consider an image.
+<ExerciseBridge>
+	Not all elements have the same structure. Next, consider an image.
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('img-void-element')} />
 
-Elements can also contain other elements. Their nesting determines how the parts fit together.
+<ExerciseBridge>
+	Elements can also contain other elements. Their nesting determines how the parts fit together.
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('overlapping-tags')} />
 
-Finally, consider how formatting helps people read HTML.
+<ExerciseBridge>
+	Finally, consider how formatting helps people read HTML.
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('html-indentation')} />
 
