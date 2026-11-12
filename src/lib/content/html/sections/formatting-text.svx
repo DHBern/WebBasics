@@ -20,7 +20,7 @@ Headings, paragraphs, and emphasis give text a readable structure. In HTML, thes
 
 An important aspect of semantic elements in HTML is their flow-behavior. We separate between **block elements** and **inline elements.**
 
-Watch this short [video by MDN on Flow] (just minute 1:00 until 2:30) for a great summary. Then return to the following exercise.
+For a great summary, watch this short [MDN video on Flow](https://youtu.be/4Clyc38U-MA?si=txw4S-nfiT_yXZL8&t=59) (relevant are just minutes 1:00 to 2:30). Then return to the following exercise.
 
 </ExerciseBridge>
 
