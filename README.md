@@ -65,9 +65,15 @@ uses SVG text, brackets, and HTML dropzones inside
 narrow screens to keep the bracket endpoints aligned with the code.
 Drag-and-drop cards can extend beyond the normal content width on wide screens;
 on narrow screens the diagram remains horizontally scrollable.
-Basic Syntax uses `ExerciseBridge` for transition text: narrow boxes with generous
-vertical spacing and curved connectors. Alignment and attachment points are
-randomized once per mount; connectors follow resizing and revealed feedback.
+Every section renders its content in `ExercisePath`, which connects consecutive
+top-level exercises with curved lines and generous vertical spacing. Wrap optional
+transition text in `<ExerciseBridge>` to show a narrow connected box; other loose
+content between exercises is connected as one full-width block. Bridge alignment
+and exercise attachment points (always within the middle half) are randomized
+once per mount. A line leaving an exercise is grey and dashed until its first
+answer is submitted. Put closing material such as Further Reading in
+`<ExerciseBridge final>`; it automatically contains the next-section or export
+button. Sections without one get a generated final bridge.
 The button example distinguishes the class-attribute and class names, the
 style-attribute and CSS declarations, and the valueless boolean `disabled`
 attribute. Separate bracket rows and gaps distinguish nested and

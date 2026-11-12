@@ -40,7 +40,7 @@
 	}
 </script>
 
-<section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
+<section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
 	{#if question.description?.length}
 		<div class="exercise-description prose max-w-none">

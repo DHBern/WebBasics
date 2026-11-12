@@ -28,4 +28,8 @@ HTML uses elements and attributes to describe a page. Start by identifying the p
 
 <ExerciseCard question={getQuestion('html-indentation')} />
 
+<ExerciseBridge final>
+
 **Further Reading:** [Elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [Attributes (MDN)](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)
+
+</ExerciseBridge>

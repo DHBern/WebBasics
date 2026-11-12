@@ -1,5 +1,6 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
@@ -17,4 +18,8 @@ Sort these elements based on whether they act as blocks or inline elements.
 
 <ExerciseCard question={getQuestion('block-inline-elements')} />
 
+<ExerciseBridge final>
+
 **Further Reading:** [Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) · [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) · [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features)
+
+</ExerciseBridge>

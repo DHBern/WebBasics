@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CourseNavigation from '#lib/components/CourseNavigation.svelte';
+	import ExercisePath from '#lib/components/ExercisePath.svelte';
 	import UrlStructure from '#lib/content/html/sections/url-structure.svx';
 	import Comments from '#lib/content/html/sections/comments.svx';
 	import BasicSyntax from '#lib/content/html/sections/basic-syntax.svx';
@@ -65,32 +66,35 @@
 			</a>
 			<p class="text-sm text-slate-500">{answeredCount} of {requiredQuestionList.length} questions answered</p>
 		</div>
-		<div class="prose max-w-none">
-			<Content />
-		</div>
-		<div class="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6">
-			{#if previousSection}
+		{#key data.section.id}
+			<ExercisePath navigation={sectionNavigation}>
+				<Content />
+			</ExercisePath>
+		{/key}
+		{#if previousSection}
+			<div class="mt-10 border-t border-slate-200 pt-6">
 				<a class="button-secondary" href={`/courses/html/${previousSection.id}/`}>← Previous section</a>
-			{:else}
-				<span></span>
-			{/if}
-			{#if nextSection}
-				<a class="button-primary" href={`/courses/html/${nextSection.id}/`}>Next section →</a>
-			{:else}
-				<div class="flex flex-col items-end gap-2">
-					<button class="button-primary" disabled={!complete || downloading} onclick={exportResults}>
-						{downloading ? 'Preparing JSON…' : 'Download completed answers (.json)'}
-					</button>
-					<p class="text-xs text-slate-500">
-						{#if complete}
-							All questions answered.
-						{:else}
-							Answer all {requiredQuestionList.length} required questions to enable export.
-						{/if}
-					</p>
-					{#if downloadError}<p class="text-sm text-rose-800" role="alert">{downloadError}</p>{/if}
-				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</main>
 </div>
+
+{#snippet sectionNavigation()}
+	{#if nextSection}
+		<a class="button-primary" href={`/courses/html/${nextSection.id}/`}>Next section →</a>
+	{:else}
+		<div class="flex flex-col items-start gap-2">
+			<button class="button-primary" disabled={!complete || downloading} onclick={exportResults}>
+				{downloading ? 'Preparing JSON…' : 'Download completed answers (.json)'}
+			</button>
+			<p class="m-0 text-xs text-slate-500">
+				{#if complete}
+					All questions answered.
+				{:else}
+					Answer all {requiredQuestionList.length} required questions to enable export.
+				{/if}
+			</p>
+			{#if downloadError}<p class="m-0 text-sm text-rose-800" role="alert">{downloadError}</p>{/if}
+		</div>
+	{/if}
+{/snippet}

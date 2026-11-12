@@ -1,5 +1,6 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
@@ -49,4 +50,8 @@ Which of the two codes is better?
 
 <ExerciseCard question={getQuestion('label-input-association')} />
 
+<ExerciseBridge final>
+
 **Further Reading:** [MDN: Forms and buttons](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_forms)
+
+</ExerciseBridge>

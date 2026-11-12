@@ -1,5 +1,6 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
@@ -13,4 +14,8 @@ The original exercise asks you to place body elements in a basic website layout 
 
 <ExerciseCard question={getQuestion('body-element-tree')} />
 
+<ExerciseBridge final>
+
 **Further Reading:** [MDN: Structuring documents](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents) · [MDN: Website metadata](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Webpage_metadata)
+
+</ExerciseBridge>

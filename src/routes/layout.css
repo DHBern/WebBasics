@@ -576,8 +576,21 @@ a {
 	margin: 1rem 0;
 }
 
-.course-content > .prose > p:has(+ .exercise-card) {
-	margin-block: clamp(3rem, 6vw, 5rem);
+.exercise-path {
+	--exercise-path-gap: clamp(9rem, 18vw, 15rem);
+	position: relative;
+}
+
+.exercise-path-lines {
+	position: absolute;
+	inset: 0;
+	overflow: visible;
+	pointer-events: none;
+}
+
+.exercise-path-content > :is(.exercise-card, .exercise-feedback, .exercise-bridge) + :not(.exercise-feedback),
+.exercise-path-content > .exercise-card ~ :not(.exercise-card, .exercise-feedback, .exercise-bridge) + :is(.exercise-card, .exercise-bridge) {
+	margin-top: var(--exercise-path-gap);
 }
 
 .prose ul,

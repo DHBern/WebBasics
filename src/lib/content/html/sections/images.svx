@@ -1,5 +1,6 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
@@ -28,4 +29,8 @@ You are linking an image from `/about/team/teachers/andrea/index.html`. Which pa
 
 <ExerciseCard question={getQuestion('image-dimensions')} />
 
+<ExerciseBridge final>
+
 **Further Reading:** [MDN: Images](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_images) · [Bonus: Audio and video](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_video_and_audio)
+
+</ExerciseBridge>

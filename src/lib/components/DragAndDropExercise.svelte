@@ -204,7 +204,7 @@
 	</div>
 {/snippet}
 
-<section class="exercise-card drag-and-drop-card" aria-labelledby={`${question.id}-prompt`}>
+<section class="exercise-card drag-and-drop-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
 	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
