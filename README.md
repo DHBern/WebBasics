@@ -77,6 +77,12 @@ top-left corner, regardless of
 correctness. This completion marker remains while practising or editing a saved
 answer and clears when the saved answer is reset or invalidated.
 
+Dashboard exercises are ranked by the absolute total of wrong subtasks across
+submissions and revisions: each mismatched MCQ selection or placement counts once.
+Input responses remain ungraded. Percentages are not shown. For MCQ options,
+only checked/unchecked counts are colored according to whether that action is correct.
+Submitted MCQs retain the student's disabled checkboxes alongside correctness feedback.
+
 Markdown links in sections, exercises, and feedback open in a new tab with
 `rel="noopener noreferrer"`. Explicit HTML/Svelte navigation links are unchanged.
 

@@ -80,6 +80,8 @@ test('counts checked and unchecked choices, including unselected correct choices
 	}
 	assert.equal(metric.versions[0].items[0].correctOption, true);
 	assert.equal(metric.versions[0].items[1].correctOption, false);
+	assert.equal(metric.wrong, 2);
+	assert.equal(metric.versions[0].wrong, 2);
 });
 
 test('retains sort-item error counts and separates courses sharing a question ID', () => {
@@ -133,7 +135,12 @@ test('keeps standalone input responses ungraded across exercise type changes', (
 	});
 	const [metric] = analyzeSubmissions([
 		payload('2026-11-11T12:01:00Z', [input]),
-		payload('2026-11-11T12:02:00Z', [answer({ isCorrect: false })])
+		payload('2026-11-11T12:02:00Z', [
+			answer({
+				isCorrect: false,
+				options: [{ id: 'a', text: 'Option', correct: true, selected: false }]
+			})
+		])
 	]);
 	assert.equal(metric.attempts, 2);
 	assert.equal(metric.gradedAttempts, 1);
@@ -144,4 +151,42 @@ test('keeps standalone input responses ungraded across exercise type changes', (
 			submittedAt: '2026-11-11T12:00:00Z'
 		}
 	]);
+});
+
+test('totals wrong subtasks across submissions and revisions instead of failed attempts', () => {
+	const incorrect = answer({
+		options: [
+			{ id: 'a', text: 'Select this', correct: true, selected: false },
+			{ id: 'b', text: 'Do not select', correct: false, selected: true },
+			{ id: 'c', text: 'Another correct option', correct: true, selected: false }
+		],
+		isCorrect: false
+	});
+	const placement = answer({
+		questionRevision: 'placement',
+		type: 'drag-n-drop',
+		options: undefined,
+		response: { placements: {} },
+		correctResponse: { placements: { a: 'target', b: 'target' } },
+		items: [
+			{ id: 'a', text: 'A', correctTargetId: 'target', selectedTargetId: null, correct: false },
+			{ id: 'b', text: 'B', correctTargetId: 'target', selectedTargetId: null, correct: false }
+		],
+		isCorrect: false
+	});
+	const [metric] = analyzeSubmissions([
+		payload('2026-11-01T08:00:00Z', [incorrect]),
+		payload('2026-11-02T08:00:00Z', [incorrect]),
+		payload('2026-11-03T08:00:00Z', [placement])
+	]);
+	assert.equal(metric.attempts, 3);
+	assert.equal(metric.wrong, 8);
+	assert.equal(metric.versions.find((version) => version.revision === 'old').wrong, 6);
+	assert.equal(metric.versions.find((version) => version.revision === 'placement').wrong, 2);
+	for (const version of metric.versions) {
+		assert.equal(
+			version.wrong,
+			version.items.reduce((sum, item) => sum + item.wrong, 0)
+		);
+	}
 });

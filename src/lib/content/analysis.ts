@@ -79,10 +79,6 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 			metric.attempts++;
 			version.attempts++;
 			if (answer.isCorrect !== null) metric.gradedAttempts++;
-			if (answer.isCorrect === false) {
-				metric.wrong++;
-				version.wrong++;
-			}
 			if (answer.bonusResponse) version.bonusResponses.push(answer.bonusResponse);
 			if (answer.type === 'input' && answer.response.text !== undefined) {
 				version.textResponses.push({
@@ -106,11 +102,14 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 					version.items.push(itemMetric);
 				}
 				itemMetric.attempts++;
+				const wrong = 'selected' in item ? item.correct !== item.selected : !item.correct;
 				if ('selected' in item) {
 					if (item.selected) itemMetric.checked++;
-					if (item.correct !== item.selected) itemMetric.wrong++;
-				} else if (!item.correct) {
+				}
+				if (wrong) {
 					itemMetric.wrong++;
+					version.wrong++;
+					metric.wrong++;
 				}
 			}
 		}

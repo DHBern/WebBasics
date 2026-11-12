@@ -16,7 +16,6 @@
 	let files = $state<ImportedFile[]>([]);
 	let importError = $state('');
 	let importing = $state(false);
-	let sortColumn = $state<'wrong' | 'rate'>('wrong');
 
 	function isObject(value: unknown): value is Record<string, unknown> {
 		return typeof value === 'object' && value !== null;
@@ -209,9 +208,7 @@
 	let metrics = $derived.by(() => {
 		const payloads = analyzableFiles.flatMap((file) => (file.payload ? [file.payload] : []));
 		return analyzeSubmissions(payloads).sort((a, b) => {
-			const first = sortColumn === 'wrong' ? a.wrong : a.wrong / a.attempts;
-			const second = sortColumn === 'wrong' ? b.wrong : b.wrong / b.attempts;
-			return second - first || b.wrong - a.wrong || a.questionId.localeCompare(b.questionId);
+			return b.wrong - a.wrong || a.questionId.localeCompare(b.questionId);
 		});
 	});
 
@@ -318,19 +315,10 @@
 					<p class="mt-1 text-sm text-slate-600">
 						Results are grouped by question ID within each course, with separate revision
 						breakdowns. Each revision keeps its original grading, options, and any submitted Bonus
-						text responses. Dates refer to JSON exports, not answer times.
+						text responses. Wrong subtasks are summed across all submissions, and exercises are
+						ranked by this total. Dates refer to JSON exports, not answer times.
 					</p>
 				</div>
-				<label class="text-sm font-medium">
-					Rank by
-					<select
-						class="ml-2 rounded-md border border-slate-300 bg-white px-2 py-1"
-						bind:value={sortColumn}
-					>
-						<option value="wrong">Wrong count</option>
-						<option value="rate">Wrong percentage</option>
-					</select>
-				</label>
 			</div>
 
 			{#if !metrics.length}
@@ -346,7 +334,7 @@
 						{@const latest = metric.versions[0]}
 						<details class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 							<summary
-								class="grid cursor-pointer grid-cols-[minmax(0,1fr)_5rem_6rem_5rem] items-center gap-3 p-4 text-sm"
+								class="grid cursor-pointer grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 p-4 text-sm"
 							>
 								<span class="min-w-0">
 									<span class="block text-xs font-semibold text-orange-700"
@@ -365,12 +353,7 @@
 									{/if}
 								</span>
 								<span class="text-right font-semibold"
-									>{metric.gradedAttempts ? `${metric.wrong} wrong` : 'Ungraded'}</span
-								>
-								<span class="text-right"
-									>{metric.gradedAttempts
-										? `${((metric.wrong / metric.gradedAttempts) * 100).toFixed(1)}%`
-										: '—'}</span
+									>{metric.gradedAttempts ? `${metric.wrong} wrong subtasks` : 'Ungraded'}</span
 								>
 								<span class="text-right text-slate-500">{metric.attempts} tries</span>
 							</summary>
@@ -405,9 +388,7 @@
 									</p>
 									{#if version.type !== 'input'}
 										<p class="mt-2 text-sm">
-											{version.wrong} wrong · {((version.wrong / version.attempts) * 100).toFixed(
-												1
-											)}% · {version.attempts} tries
+											{version.wrong} wrong subtasks · {version.attempts} tries
 										</p>
 										<h4 class="mt-4 text-sm font-semibold">
 											{version.type === 'multiple-choice' ? 'Option selections' : 'Item errors'}
@@ -432,11 +413,7 @@
 																>
 															</span>
 														{:else}
-															<span
-																>{item.wrong} wrong · {((item.wrong / item.attempts) * 100).toFixed(
-																	1
-																)}% · {item.attempts} tries</span
-															>
+															<span>{item.wrong} wrong · {item.attempts} tries</span>
 														{/if}
 													</li>
 												{/each}
