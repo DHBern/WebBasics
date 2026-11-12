@@ -59,7 +59,8 @@ when submitted. **Edit answer** reopens a submitted input response; **Save answe
 replaces it, and JSON exports use the latest saved response. Unsaved edits do not
 change the exported answer. Previously saved comment bonus responses are migrated.
 
-Submitted exercises of every type use a green border and shadow, regardless of
+Submitted exercises of every type show a large black tick overlapping the
+top-left corner, regardless of
 correctness. This completion marker remains while practising or editing a saved
 answer and clears when the saved answer is reset or invalidated.
 
