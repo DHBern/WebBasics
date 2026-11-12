@@ -169,7 +169,7 @@ export function isPlacementCorrect(question: PlacementQuestion, itemId: string, 
 export const htmlSections: CourseSection[] = [
 	{
 		id: 'url-structure',
-		title: 'URL Structure',
+		title: 'URLs',
 		questions: [
 			dragAndDrop(
 				'url-parts',
@@ -191,7 +191,8 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'url-path', label: 'Path', displayText: '/wiki/Digital_humanities' },
 					{ id: 'url-fragment', label: 'Fragment', prefix: '#', displayText: 'Definition' }
 				],
-				'The complete answer, from left to right, is `https` (protocol), `en` (subdomain), `wikipedia` (domain), `org` (top-level domain), `/wiki/Digital_humanities` (path), and `Definition` (fragment). Formally, `https` is the URL scheme, often called its protocol. The path is one URL component; its `wiki` and `Digital_humanities` segments can be described as a route and subroute. The `#` symbol starts the fragment, and `Definition` is its value. A fragment can identify a location within a page.'
+				['The complete answer, from left to right, is `https` (protocol), `en` (subdomain), `wikipedia` (domain), `org` (top-level domain), `/wiki/Digital_humanities` (path), and `Definition` (fragment).', 
+					'Formally, `https` is the URL scheme, often called its protocol. The path is one URL component; its `wiki` and `Digital_humanities` segments can be described as a route and subroute. The `#` symbol starts the fragment, and `Definition` is its value. A fragment can identify a location within a page.']
 			),
 			dragAndDrop(
 				'url-query-params',

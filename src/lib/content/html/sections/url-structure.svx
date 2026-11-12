@@ -4,15 +4,20 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### URL Structure
 
-<ExerciseBridge title="In this section...">
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# URLs
 
 Web addresses appear before you begin writing HTML: a URL can point to a page and, sometimes, to a more specific place or search context. 
 
-In these exercises, read each address as information the browser can use. 
+This is why we start with URLs and how they are structured. 
 
-**Important reminder:** Try each activity before reading its feedback; the explanations give the complete answers as well as the reasons behind them.
+</ExerciseBridge>
+
+<ExerciseBridge title="Feedback" size="wide">
+
+After you submit an exercise a feedback block will pop up with explanations about the correct answers, as well as further material you are expected to learn. **Hence, these feedbacks are an integral part of this course**&mdash;so please read them carefully!
 
 </ExerciseBridge>
 
