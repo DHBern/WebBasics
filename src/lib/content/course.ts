@@ -388,7 +388,7 @@ export const htmlSections: CourseSection[] = [
 			}),
 			mcq({
 				slug: 'html-indentation',
-				title: 'Indentation',
+				title: 'Code Indentation',
 				question:
 					'Compare these three code snippets.\n\n**1. One line**\n\n```html\n<html><body><p>Why should I care about formatting?</p></body></html>\n```\n\n**2. Separate lines**\n\n```html\n<html>\n<body>\n<p>\nWhy should I care about formatting?\n</p>\n</body>\n</html>\n```\n\n**3. Consistent indentation**\n\n```html\n<html>\n\t<body>\n\t\t<p>Why should I care about formatting?</p>\n\t</body>\n</html>\n```',
 				options: [
@@ -500,17 +500,36 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			input({
 				slug: 'semantic-definition',
-				title: 'Definition with examples and motivation',
+				title: 'Recap: Definition with examples',
 				question:
-					'Give a few examples of semantic HTML elements and explain why they are important. If unsure, read a definition and answer in your own words.'
+					['Give a few examples of semantic HTML elements (e.g. from the previous section) and explain what distinguishes them from `<div>` and `<span>`. If you are unsure, you can [catch up here](https://developer.mozilla.org/en-US/curriculum/core/semantic-html/).',
+					"It's important for your learning, that you answer in your own words."]
 			}),
 			mcq({
 				slug: 'html-without-css',
-				title: 'Without CSS',
+				title: 'No CSS',
 				question: '"A website without CSS will appear completely unstyled."',
 				options: [option('true', 'True', false), option('false', 'False', true)],
 				feedback:
-					'Browsers apply default styles to semantic HTML. Note, however, that the result will differ between browsers.'
+					'The reason why this is wrong, is that **browsers apply default styles** to semantic HTML. Note, however, that the result will differ between browsers.'
+			}),
+			mcq({
+				slug: 'html-full-of-divs',
+				title: 'How about `<divs>`?',
+				question: ['Consider these two button componenets', 
+					"```html\n<div>\n\t<div>\n\t\t<div>Link A</div>\n\t</div>\n\t<div>\n\t\t<div>Link B</div>\n\t</div>\n</div>", 
+					"```html\n<ul>\n\t<li>\n\t\t<a>Link A</a>\n\t</li>\n\t<li>\n\t\t<a>Link B</a>\n\t</li>\n</ul>"
+				],
+				options: [
+					option('div-for-everything','`<div>` has no semantic meaning, so you can use them for everything.', true),
+					option('styling','With the propper CSS, both code-blocks can be styled exactly the same.', true),
+					option('div-vs-span','`<div>` could be replaced with `<span>` with just the same effect.', false),
+				],
+				feedback:
+					['So, while the first answer technically is correct, **you should never do this.** `<div>` elements are meant as structural wrappers around other elements, but not to replace semantic elements. Even if it seems to produce the same output at first glance.',
+					"It's true, that `<div>` elements can be styled to *visually (!)* resemble their semantic counter-parts. You can also do the oposite and *remove* or *overwrite* default browser styling from semantic elements. This, by the way, is a pretty common technique, if you prefer to start styling from scratch.",
+					"Lastly, it's true that `<span>` has no semantic meaning either. However, there is an important difference between `<div>` and `<span>` which we will cover later in the next section. In short: `<div>` elements are block-elements, which means they take up new vertical space, whereas `<span>` appears inline. So the given code snippet with just `<span>` would style differently. Note, however, that with CSS you can even revert this behavior, but this should be avoided by any means."
+					]
 			})
 		],
 		lesson:
@@ -525,6 +544,7 @@ export const htmlSections: CourseSection[] = [
 				title: 'Sort the headings from smallest to largest.',
 				question: 'Reorder the valid headings and move invalid elements into the discard area.',
 				items: [
+					{ id: 'h0', text: '<h0>' },
 					{ id: 'h1', text: '<h1>' },
 					{ id: 'h2', text: '<h2>' },
 					{ id: 'h3', text: '<h3>' },
@@ -550,11 +570,12 @@ export const htmlSections: CourseSection[] = [
 					h3: 'heading-position-4',
 					h2: 'heading-position-5',
 					h1: 'heading-position-6',
+					h0: 'invalid-headings',
 					h7: 'invalid-headings',
 					h8: 'invalid-headings'
 				},
 				feedback:
-					'The valid heading elements are `<h1>` through `<h6>`. `<h6>` is the smallest heading level and `<h1>` the largest; `<h7>` and `<h8>` do not exist.'
+					'The valid heading elements are `<h1>` through `<h6>`. `<h1>` is the largest heading level and `<h6>` the smallest; `<h0>`, `<h7>` and `<h8>` do not exist.'
 			}),
 			dragAndDrop({
 				slug: 'block-inline-elements',

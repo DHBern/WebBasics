@@ -8,47 +8,61 @@
 
 # Semantic HTML
 
-In short, semantic HTML is all about the right choice of HTML elements. 
+In short, semantic HTML is all about the **right choice of HTML elements.** 
 
-In the previous section on the Basic Page Structure we already got a glimpse of what's possible with semantic HTML. Now, let's turn to headings, lists, emphasis, and other meaningful parts.
-
-</ExerciseBridge>
-
-
-
-<ExerciseBridge title="An important question you should ask:">
-
-What does a page communicate even without its visual styling.
+In the previous section on the basic webpage structure we already got a glimpse of what's possible with semantic HTML (remember the browser's reading mode?). Here, we revise some other important aspects of semantic HTML.
 
 </ExerciseBridge>
-
 
 
 <ExerciseCard question={getQuestion('semantic-definition')} />
+
+
+<ExerciseCard question={getQuestion('html-full-of-divs')} />
+
+
+<ExerciseBridge title="It's about accessibility" size="wide">
+
+Consider, what a website communicates even without its visual styling. After all, semantic HTML is all about making a website **accessible**. 
+
+- For humans, with their different needs and interests.
+- And for machines, be it screen readers, printers, web crawlers, search engines, ...
+
+</ExerciseBridge>
+
+
+<ExerciseBridge title="How Mozilla puts it:" size="wide">
+
+<q>HTML tags must be used for their semantic value, not their appearance. It's always possible to totally change the look and feel of a given tag using CSS so, when using HTML, take the time to focus on the meaning rather than the appearance.</q> 
+
+[&mdash; MDN Guide on HTML](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Cheatsheet)
+
+</ExerciseBridge>
+
+
+<ExerciseBridge title="This is a core take away. Please memorise!">
+
+But now, let's turn to visual styling once again. If you carefully read the feedbacks above, you should already know the answer.
+
+</ExerciseBridge>
 
 
 <ExerciseCard question={getQuestion('html-without-css')} />
 
 
 
-<ExerciseBridge title="Meaning, not appearance">
+<ExerciseBridge title="Semantic Dates and Times", size="wide">
 
-“HTML tags must be used for their semantic value, not their appearance. It's always possible to totally change the look and feel of a given tag using CSS so, when using HTML, take the time to focus on the meaning rather than the appearance.” [Source: MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Cheatsheet)
-
-</ExerciseBridge>
-
-
-
-<ExerciseBridge title="Bonus: Micro-project">
-
-With only HTML (no CSS), try to replicate a layout and compare Firefox and Chrome. Use `section`, `aside`, `ul`, `li`, `h1`, `h2`, `h3`, `p`, `strong`, `em`, `del`, `ins`, `a`, `form`, `input`, and `button`.
+With semantic markup you can go really deep. For example, you can mark up dates and times, which is of high importance for many DH related tasks. Imagine you want to publish a heterogenous dataset where dates and times occur in various formats. [This is](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates) how you would serve it as unambiguous HTML, while preserving the source formatting.
 
 </ExerciseBridge>
 
 
 
-<ExerciseBridge title="Further reading">
+<ExerciseBridge title="Further Reading", size="wide">
 
-[Mark up dates and times](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates)
+- [MDN on Semantic HTML](https://developer.mozilla.org/en-US/curriculum/core/semantic-html/)
+- [MDN on Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
+- [a11yphant. Learning web accessibility made easy](https://a11yphant.com/)
 
 </ExerciseBridge>

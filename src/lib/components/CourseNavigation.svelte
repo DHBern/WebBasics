@@ -85,11 +85,6 @@
 							>{answered}/{questions.length} answered</span
 						>
 					</span>
-					<span class="flex shrink-0 flex-col items-end gap-1 text-[10px] text-slate-500">
-						{#if multipleChoiceCount}<span>{multipleChoiceCount} MCQ</span>{/if}
-						{#if dragAndDropCount}<span>{dragAndDropCount} drag-n-drop</span>{/if}
-						{#if sortCount}<span>{sortCount} sort</span>{/if}
-					</span>
 				</a>
 			{/each}
 		</nav>
