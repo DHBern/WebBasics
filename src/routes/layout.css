@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'prismjs/themes/prism-tomorrow.css';
 
 :root {
 	font-family:
@@ -129,6 +130,10 @@ a {
 	accent-color: #c2410c;
 }
 
+.answer-option code {
+	white-space: pre-wrap;
+}
+
 .answer-correct {
 	border-color: #86efac !important;
 	background: #f0fdf4 !important;
@@ -246,11 +251,11 @@ a {
 .url-string {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
+	align-items: center;
 	gap: 0.1rem 0;
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	font-size: clamp(0.9rem, 2.3vw, 1.15rem);
-	line-height: 2.5;
+	font-size: 0.875rem;
+	line-height: 1.5;
 }
 
 .url-literal {
@@ -262,8 +267,8 @@ a {
 }
 
 .url-drop-slot .sort-target {
-	display: inline-flex;
-	min-height: 2.2rem;
+	display: grid;
+	min-height: 2.5rem;
 	width: max-content;
 	align-items: center;
 	justify-content: center;
@@ -273,15 +278,22 @@ a {
 }
 
 .url-drop-slot .exercise-dnd-zone {
-	min-width: 0;
+	grid-area: 1 / 1;
+	align-self: stretch;
+	justify-self: stretch;
+	align-items: center;
+	justify-content: center;
+	min-width: 3rem;
+	z-index: 1;
 }
 
 .url-drop-slot .sort-chip {
 	padding: 0.25rem 0.35rem;
-	font-size: 0.8rem;
+	font: inherit;
 }
 
 .url-drop-slot .drop-placeholder {
+	grid-area: 1 / 1;
 	position: static;
 	inset: auto;
 	width: auto;
@@ -292,6 +304,7 @@ a {
 	font: inherit;
 	text-align: center;
 	white-space: nowrap;
+	z-index: 2;
 }
 
 .syntax-diagram {
@@ -593,11 +606,13 @@ a {
 	overflow-x: auto;
 	border-radius: 0.75rem;
 	background: #0f172a;
+	color: #f8fafc;
 	padding: 1rem;
 }
 
 .prose pre code {
-	color: #e2e8f0;
+	background: transparent;
+	color: inherit;
 }
 
 .prose table {
@@ -632,6 +647,24 @@ a {
 	background: #fffbeb;
 	padding: 0.75rem 0.9rem;
 	color: #78350f;
+}
+
+.exercise-feedback .feedback-bonus {
+	border: 1px solid #fcd34d;
+	border-left: 4px solid #f59e0b;
+	border-radius: 0.65rem;
+	background: #fffbeb;
+	padding: 0.9rem;
+	color: #78350f;
+}
+
+.exercise-feedback .feedback-bonus p {
+	margin: 0.5rem 0;
+}
+
+.exercise-feedback .feedback-bonus a {
+	color: #9a3412;
+	text-decoration: underline;
 }
 
 .feedback-content ul,

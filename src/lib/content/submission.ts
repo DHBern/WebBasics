@@ -1,16 +1,16 @@
 import { get } from 'svelte/store';
-import { htmlStrand, isPlacementCorrect, questionList, questionRevision, questionSection } from './course.js';
+import { htmlStrand, isPlacementCorrect, questionList, questionRevision, questionSection, requiredQuestionList } from './course.js';
 import { progress } from '#lib/progress.js';
 import type { SubmissionFile, SubmissionPayload } from './types.js';
 
 export function allQuestionsAnswered(): boolean {
 	const answers = get(progress).answers;
-	return questionList.every((question) => answers[question.id]);
+	return requiredQuestionList.every((question) => answers[question.id]);
 }
 
 export async function makeSubmission(): Promise<SubmissionFile> {
 	const answers = get(progress).answers;
-	if (!questionList.every((question) => answers[question.id])) {
+	if (!requiredQuestionList.every((question) => answers[question.id])) {
 		throw new Error('Answer every interactive question before exporting.');
 	}
 
@@ -20,7 +20,7 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 		strandId: htmlStrand.id,
 		strandTitle: htmlStrand.title,
 		createdAt: new Date().toISOString(),
-		answers: questionList.map((question) => {
+		answers: questionList.filter((question) => answers[question.id]).map((question) => {
 			const section = questionSection(question.id);
 			const submitted = answers[question.id];
 			if (!section || !submitted) throw new Error(`Missing data for question "${question.id}".`);
@@ -33,10 +33,20 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 				type: question.type,
 				isCorrect: submitted.isCorrect
 			};
+			if (question.type === 'input') {
+				if (submitted.textResponse === undefined) throw new Error(`Missing response for question "${question.id}".`);
+				return {
+					...base,
+					...(question.description?.length ? { description: question.description } : {}),
+					response: { text: submitted.textResponse, submittedAt: submitted.submittedAt },
+					correctResponse: {}
+				};
+			}
 			if (question.type === 'multiple-choice') {
 				const selected = new Set(submitted.selectedOptionIds ?? []);
 				return {
 					...base,
+					...(question.description?.length ? { description: question.description } : {}),
 					response: { selectedOptionIds: [...selected] },
 					correctResponse: {
 						selectedOptionIds: question.options
@@ -54,6 +64,7 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 			const placements = submitted.placements ?? {};
 			return {
 				...base,
+				description: Array.isArray(question.instructions) ? question.instructions : [question.instructions],
 				response: { placements },
 				correctResponse: { placements: question.answerKey },
 				items: question.items.map((item) => ({
