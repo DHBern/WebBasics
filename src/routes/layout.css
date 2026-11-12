@@ -201,7 +201,7 @@ a {
 	margin-left: calc(var(--target-depth, 0) * 1.15rem);
 }
 .sort-target-short {
-	width: 150px;
+	width: max-content;
 }
 
 .exercise-dnd-zone {

@@ -22,7 +22,7 @@ Explore how these parts form a complete document.
 
 </ExerciseBridge>
 
-<ExerciseCard question={getQuestion('body-element-tree')} />
+<ExerciseCard question={getQuestion('body-element-tree')} targetWidth="short" />
 
 <ExerciseBridge title="Further reading">
 

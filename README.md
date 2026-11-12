@@ -68,6 +68,11 @@ Markdown links in sections, exercises, and feedback open in a new tab with
 `rel="noopener noreferrer"`. Explicit HTML/Svelte navigation links are unchanged.
 
 The reusable quiz controls are in `src/lib/components/`. Drag-and-drop and sort
+exercises default to full-width targets. `ExerciseCard` forwards the optional
+`targetWidth="short"` prop to drag-and-drop exercises for content-sized targets;
+only Basic Website Structure currently opts in.
+
+Drag-and-drop and sort
 exercises show interaction hints in a shared top-right info tooltip. Hover, focus,
 or tap the icon to open it; press Escape, tap again, or tap outside to dismiss it.
 The HTML syntax diagram

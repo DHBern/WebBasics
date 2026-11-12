@@ -12,7 +12,10 @@
 	import ExerciseDebug from './ExerciseDebug.svelte';
 	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
-	let { question, targetWidth='full' }: { question: DragAndDropQuestion, targetWidth: 'short'|'full' } = $props();
+	let {
+		question,
+		targetWidth = 'full'
+	}: { question: DragAndDropQuestion; targetWidth?: 'short' | 'full' } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
 	let selectedItemId = $state('');
 	let shuffledItems = $state<DragAndDropQuestion['items']>([]);
@@ -179,7 +182,11 @@
 {#snippet targetSlot(targetId: string)}
 	{@const target = question.targets.find((candidate) => candidate.id === targetId)}
 	{@const placedItems = zones[targetId] ?? []}
-	<div class={['sort-target', targetWidth==='short' && 'sort-target-short']} role="group" aria-label={target?.label ?? 'Dropzone'}>
+	<div
+		class={['sort-target', targetWidth === 'short' && 'sort-target-short']}
+		role="group"
+		aria-label={target?.label ?? 'Dropzone'}
+	>
 		<div
 			class="exercise-dnd-zone flex flex-wrap gap-2"
 			use:dndzone={{

@@ -5,13 +5,16 @@
 	import SortExercise from './SortExercise.svelte';
 	import InputExercise from './InputExercise.svelte';
 
-	let { question }: { question?: CourseItem } = $props();
+	let {
+		question,
+		targetWidth = 'full'
+	}: { question?: CourseItem; targetWidth?: 'short' | 'full' } = $props();
 </script>
 
 {#if question?.type === 'multiple-choice'}
 	<MultipleChoice {question} />
 {:else if question?.type === 'drag-n-drop'}
-	<DragAndDropExercise {question} />
+	<DragAndDropExercise {question} {targetWidth} />
 {:else if question?.type === 'sort'}
 	<SortExercise {question} />
 {:else if question?.type === 'input'}
