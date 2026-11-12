@@ -244,7 +244,9 @@
 		{#if saved}
 			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
 		{/if}
-		<button class="button-secondary" disabled={dragging} onclick={removeAll}>Remove all</button>
+		{#if question.id !== 'heading-order'}
+			<button class="button-secondary" disabled={dragging} onclick={removeAll}>Remove all</button>
+		{/if}
 	</div>
 
 	{#if !saved}
