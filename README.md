@@ -65,6 +65,13 @@ uses SVG text, brackets, and HTML dropzones inside
 narrow screens to keep the bracket endpoints aligned with the code.
 Drag-and-drop cards can extend beyond the normal content width on wide screens;
 on narrow screens the diagram remains horizontally scrollable.
+Run `npm run lint` to check formatting with Prettier and then lint JavaScript,
+TypeScript, and Svelte with ESLint. Run `npm run format` to apply formatting.
+Prettier handles `.svx` section files as Markdown and `.svelte` components with
+the Svelte plugin. Generated output and dependencies are excluded. Existing
+formatting or lint violations must be resolved separately; installing the tools
+does not rewrite source files.
+
 Every section renders its content in `ExercisePath`, which connects consecutive
 top-level exercises and bridges with curved lines and generous vertical spacing.
 Use `<ExerciseBridge title="Short title">` with one or more paragraphs for
