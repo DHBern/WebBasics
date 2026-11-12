@@ -6,20 +6,24 @@
 
 ### Formatting Text (Headings, paragraphs, strong, emphasis)
 
-#### Sort the headings
+<ExerciseBridge title="Sort the headings">
 
 Sort the headings from small size to large size. Only move elements that really exist.
 
+</ExerciseBridge>
+
 <ExerciseCard question={getQuestion('heading-order')} />
 
-#### Block and inline elements
+<ExerciseBridge title="Block and inline elements">
 
 Sort these elements based on whether they act as blocks or inline elements.
 
+</ExerciseBridge>
+
 <ExerciseCard question={getQuestion('block-inline-elements')} />
 
-<ExerciseBridge final>
+<ExerciseBridge title="Further reading">
 
-**Further Reading:** [Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) · [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) · [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features)
+[Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) · [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) · [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features)
 
 </ExerciseBridge>

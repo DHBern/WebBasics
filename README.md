@@ -66,21 +66,25 @@ narrow screens to keep the bracket endpoints aligned with the code.
 Drag-and-drop cards can extend beyond the normal content width on wide screens;
 on narrow screens the diagram remains horizontally scrollable.
 Every section renders its content in `ExercisePath`, which connects consecutive
-top-level exercises with curved lines and generous vertical spacing. Wrap optional
-transition text in `<ExerciseBridge>` to show a narrow connected box; other loose
-content between exercises is connected as one full-width block. Bridge alignment
-and exercise attachment points (always within the middle half) are randomized
-once per mount. A line leaving an exercise is grey and dashed until its first
-answer is submitted. Put closing material such as Further Reading in
-`<ExerciseBridge final>`; it automatically contains the next-section or export
-button. Sections without one get a generated final bridge.
+top-level exercises and bridges with curved lines and generous vertical spacing.
+Use `<ExerciseBridge title="Short title">` with one or more paragraphs for
+transition or closing text. Every bridge has the same narrow white box and black
+border; multiple bridges can be placed consecutively. Keep Further Reading in
+its own bridge: `ExercisePath` always appends a separate navigation bridge with
+the next-section or export button. Bridge alignment and exercise attachment
+points (always within the middle half) are randomized once per mount. A line
+leaving an exercise is grey and dashed until its first answer is submitted.
 The button example distinguishes the class-attribute and class names, the
 style-attribute and CSS declarations, and the valueless boolean `disabled`
 attribute. Separate bracket rows and gaps distinguish nested and
 adjacent spans, with dropzones above and below the code.
-To debug the HTML-parts exercise, append `?debug=1` to its page URL to show
-**Debug: fill randomly**. Remove the query parameter to hide it. Filling does not
-submit an answer; submitting still saves the first attempt in browser storage.
+To debug any exercise (including bonus questions), append `?debug=1` to its page
+URL to show **Debug: fill randomly**. Course-section navigation preserves this
+flag; remove it to hide the controls. Filling selects random MCQ options,
+distributes all drag-and-drop or sort items, or inserts sample text. It does not
+submit an answer; submitting still saves it in browser storage. Already submitted
+answers remain locked: use **Try again** or **Edit answer** where available, or
+**Reset progress** to debug a fresh first attempt.
 
 Answers are saved in the current browser's local storage. At the end of HTML Questions, students can
 download an anonymous JSON submission. `/dashboard/` analyzes multiple JSON

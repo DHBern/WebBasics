@@ -1,31 +1,18 @@
 <script lang="ts">
-	import { getContext, onDestroy, onMount, untrack, type Snippet } from 'svelte';
-	import { sectionEndKey, type SectionEnd } from './section-end.js';
+	import { onMount, type Snippet } from 'svelte';
 
-	let {
-		children,
-		final = false,
-		generated = false
-	}: { children?: Snippet; final?: boolean; generated?: boolean } = $props();
-	const sectionEnd = getContext<SectionEnd | undefined>(sectionEndKey);
+	let { children, title }: { children: Snippet; title: string } = $props();
 	let alignment = $state(0.5);
-
-	if (untrack(() => final && !generated) && sectionEnd) {
-		sectionEnd.state.finalBridges += 1;
-		onDestroy(() => (sectionEnd.state.finalBridges -= 1));
-	}
 
 	onMount(() => {
 		alignment = Math.random();
 	});
 </script>
 
-<div class="exercise-bridge" class:exercise-bridge-final={final} style:--alignment={alignment}>
+<div class="exercise-bridge" style:--alignment={alignment}>
 	<div class="bridge-box">
-		{@render children?.()}
-		{#if final && sectionEnd}
-			<div class="bridge-navigation">{@render sectionEnd.navigation()}</div>
-		{/if}
+		<h4>{title}</h4>
+		{@render children()}
 	</div>
 </div>
 
@@ -47,13 +34,9 @@
 		margin-bottom: 0;
 	}
 
-	.bridge-navigation :global(a.button-primary) {
+	.bridge-box :global(a.button-primary) {
 		display: inline-block;
 		color: white;
 		text-decoration: none;
-	}
-
-	.bridge-navigation:not(:first-child) {
-		margin-top: 1rem;
 	}
 </style>

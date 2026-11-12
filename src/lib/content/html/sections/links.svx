@@ -1,5 +1,6 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
@@ -7,7 +8,7 @@
 
 The term **anchor** specifically refers to the `<a>` element's ability to mark a precise location in a webpage that can be jumped to, like bookmarking a spot within the same document. [MDN: Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links)
 
-#### Nesting anchors
+<ExerciseBridge title="Nesting anchors">
 
 Which of these are valid HTML?
 
@@ -19,15 +20,19 @@ Which of these are valid HTML?
 <a href="/index.html"><img src="pic.jpg" alt="image"></a>
 ```
 
+</ExerciseBridge>
+
 <ExerciseCard question={getQuestion('nesting-anchors')} />
 
-#### Hyperlinks and tabs
+<ExerciseBridge title="Hyperlinks and tabs">
 
 Where will this link open?
 
 ```html
 <a href="https://en.wikipedia.org/wiki/HTML" target="_blank">here</a>
 ```
+
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('link-target-blank')} />
 

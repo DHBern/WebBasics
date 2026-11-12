@@ -5,6 +5,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+	import ExerciseDebug from './ExerciseDebug.svelte';
 
 	let { question }: { question: InputQuestion } = $props();
 	let draft = $state('');
@@ -42,6 +43,9 @@
 
 <section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<ExerciseDebug disabled={Boolean(saved) && !editing} fill={() => {
+		draft = `Debug response ${Math.random().toString(36).slice(2, 8)}.`;
+	}} />
 	{#if question.description?.length}
 		<div class="exercise-description prose max-w-none">
 			{#each question.description as block}

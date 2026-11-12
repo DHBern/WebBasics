@@ -7,6 +7,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+	import ExerciseDebug from './ExerciseDebug.svelte';
 
 	let { question }: { question: SortQuestion } = $props();
 	let orderedItems = $state<SortItem[]>([]);
@@ -119,10 +120,24 @@
 		poolItems = [...initialItems];
 		submitError = '';
 	}
+
+	function distributeRandomly() {
+		const items = [...question.items];
+		for (let index = items.length - 1; index > 0; index--) {
+			const swapIndex = Math.floor(Math.random() * (index + 1));
+			[items[index], items[swapIndex]] = [items[swapIndex], items[index]];
+		}
+		orderedItems = items.filter(() => Math.random() < 0.75);
+		const orderedIds = new Set(orderedItems.map((item) => item.id));
+		invalidItems = items.filter((item) => !orderedIds.has(item.id));
+		poolItems = [];
+		submitError = '';
+	}
 </script>
 
 <section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging} />
 	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
 			{@html renderMarkdown(block)}

@@ -6,12 +6,10 @@
 
 ### Embeddings (iframe)
 
-#### Information exchange (CSS and trackers)
-
 <ExerciseCard question={getQuestion('iframe-css-and-tracking')} />
 
-<ExerciseBridge final>
+<ExerciseBridge title="Further reading">
 
-**Further Reading:** [MDN: Embedding technologies](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/General_embedding_technologies#using_iframes_to_embed_webpages) (do not read the full article).
+[MDN: Embedding technologies](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/General_embedding_technologies#using_iframes_to_embed_webpages) (do not read the full article).
 
 </ExerciseBridge>

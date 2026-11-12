@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { createDebugMode } from '#lib/debug.svelte.js';
 	import { resetProgress, progress, progressError } from '#lib/progress.js';
 	import { htmlSections, requiredQuestionList, bonusQuestionIds } from '#lib/content/course.js';
 	import type { Question } from '#lib/content/types.js';
 
 	let { activeSection = '' }: { activeSection?: string } = $props();
 	let navigationOpen = $state(false);
+	const debug = createDebugMode();
 
 	function sectionQuestions(sectionId: string): Question[] {
 		const section = htmlSections.find((item) => item.id === sectionId);
@@ -56,7 +58,7 @@
 				<a
 					class="section-link"
 					class:section-link-active={activeSection === section.id}
-					href={`/courses/html/${section.id}/`}
+					href={`/courses/html/${section.id}/${debug.query}`}
 					aria-current={activeSection === section.id ? 'page' : undefined}
 				>
 					<span class="min-w-0 flex-1">

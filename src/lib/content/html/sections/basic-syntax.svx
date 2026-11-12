@@ -10,26 +10,26 @@ HTML uses elements and attributes to describe a page. Start by identifying the p
 
 <ExerciseCard question={getQuestion('html-parts')} />
 
-<ExerciseBridge>
-	Not all elements have the same structure. Next, consider an image.
+<ExerciseBridge title="Void elements">
+	<p>Not all elements have the same structure. Next, consider an image.</p>
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('img-void-element')} />
 
-<ExerciseBridge>
-	Elements can also contain other elements. Their nesting determines how the parts fit together.
+<ExerciseBridge title="Nesting elements">
+	<p>Elements can also contain other elements. Their nesting determines how the parts fit together.</p>
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('overlapping-tags')} />
 
-<ExerciseBridge>
-	Finally, consider how formatting helps people read HTML.
+<ExerciseBridge title="Readable code">
+	<p>Finally, consider how formatting helps people read HTML.</p>
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('html-indentation')} />
 
-<ExerciseBridge final>
+<ExerciseBridge title="Further reading">
 
-**Further Reading:** [Elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [Attributes (MDN)](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)
+[Elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [Attributes (MDN)](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)
 
 </ExerciseBridge>

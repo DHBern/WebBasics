@@ -8,6 +8,7 @@
 	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+	import ExerciseDebug from './ExerciseDebug.svelte';
 
 	let { question }: { question: DragAndDropQuestion } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
@@ -17,7 +18,6 @@
 	let zones = $state<Record<string, SortItem[]>>({});
 	let submitError = $state('');
 	let dragging = $state(false);
-	let debugEnabled = $state(false);
 	let practicing = $state(false);
 	let practiceAnswer = $state<SubmittedAnswer>();
 	let firstAttempt = $derived($progress.answers[question.id]);
@@ -39,7 +39,6 @@
 	});
 
 	onMount(() => {
-		debugEnabled = question.id === 'html-parts' && new URLSearchParams(window.location.search).get('debug') === '1';
 		shuffledItems = [...question.items];
 		if (!$progress.answers[question.id]) {
 			for (let index = shuffledItems.length - 1; index > 0; index--) {
@@ -144,7 +143,8 @@
 
 	function distributeRandomly() {
 		if (saved || dragging) return;
-		const targets = question.targets.map((target) => target.id);
+		// Shuffle destination slots while preserving capacity for shared targets.
+		const targets = question.items.map((item) => question.answerKey[item.id]);
 		for (let index = targets.length - 1; index > 0; index--) {
 			const swapIndex = Math.floor(Math.random() * (index + 1));
 			[targets[index], targets[swapIndex]] = [targets[swapIndex], targets[index]];
@@ -318,13 +318,8 @@
 			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
 		{/if}
 		<button class="button-secondary" disabled={dragging || !shuffleReady} onclick={removeAll}>Remove all</button>
-		{#if debugEnabled && !saved}
-			<button class="button-secondary" disabled={dragging || !shuffleReady} onclick={distributeRandomly}>Debug: fill randomly</button>
-		{/if}
 	</div>
-	{#if debugEnabled && !saved}
-		<p class="mt-2 text-xs text-slate-500">Debug only: submitting a first attempt saves it to this browser.</p>
-	{/if}
+	<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging || !shuffleReady} />
 
 	{#if !saved}
 		<button class="button-primary mt-5" disabled={dragging} onclick={submit}>Submit answer</button>

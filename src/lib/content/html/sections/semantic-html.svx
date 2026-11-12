@@ -1,20 +1,33 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
 ### Semantic HTML
 
-#### Definition with examples and motivation
+<ExerciseBridge title="Meaning and motivation">
 
 Give a few examples of semantic HTML elements and explain why this is important. Answer in your own words.
 
-#### Website without CSS
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('html-without-css')} />
 
-> **Most important takeaway (especially for digital humanities students):** “HTML tags must be used for their semantic value, not their appearance. It's always possible to totally change the look and feel of a given tag using CSS so, when using HTML, take the time to focus on the meaning rather than the appearance.” [Source: MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Cheatsheet)
+<ExerciseBridge title="Meaning, not appearance">
 
-**Bonus: Micro-project.** With only HTML (no CSS), try to replicate a layout and compare Firefox and Chrome. Use `section`, `aside`, `ul`, `li`, `h1`, `h2`, `h3`, `p`, `strong`, `em`, `del`, `ins`, `a`, `form`, `input`, and `button`.
+“HTML tags must be used for their semantic value, not their appearance. It's always possible to totally change the look and feel of a given tag using CSS so, when using HTML, take the time to focus on the meaning rather than the appearance.” [Source: MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Cheatsheet)
 
-**Bonus:** [Mark up dates and times](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates)
+</ExerciseBridge>
+
+<ExerciseBridge title="Bonus: Micro-project">
+
+With only HTML (no CSS), try to replicate a layout and compare Firefox and Chrome. Use `section`, `aside`, `ul`, `li`, `h1`, `h2`, `h3`, `p`, `strong`, `em`, `del`, `ins`, `a`, `form`, `input`, and `button`.
+
+</ExerciseBridge>
+
+<ExerciseBridge title="Further reading">
+
+[Mark up dates and times](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates)
+
+</ExerciseBridge>

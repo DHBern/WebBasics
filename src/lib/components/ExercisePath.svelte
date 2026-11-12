@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { onMount, setContext, type Snippet } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import { progress } from '#lib/progress.js';
 	import ExerciseBridge from './ExerciseBridge.svelte';
-	import { sectionEndKey, type SectionEnd } from './section-end.js';
 
 	type PathNode = {
 		elements: HTMLElement[];
@@ -11,17 +10,14 @@
 	};
 	type PathLine = { d: string; questionId?: string };
 
-	let { children, navigation }: { children: Snippet; navigation: Snippet } = $props();
+	let { children, navigation, navigationTitle }: {
+		children: Snippet;
+		navigation: Snippet;
+		navigationTitle: string;
+	} = $props();
 	let root: HTMLDivElement;
 	let content: HTMLDivElement;
 	let lines = $state<PathLine[]>([]);
-	const sectionEndState = $state({ finalBridges: 0 });
-	setContext<SectionEnd>(sectionEndKey, {
-		get navigation() {
-			return navigation;
-		},
-		state: sectionEndState
-	});
 	const attachments = new WeakMap<Element, { top: number; bottom: number }>();
 
 	function attachment(element: Element, edge: 'top' | 'bottom') {
@@ -137,8 +133,9 @@
 	</svg>
 	<div bind:this={content} class="exercise-path-content prose max-w-none">
 		{@render children()}
-		{#if !sectionEndState.finalBridges}
-			<ExerciseBridge final generated />
-		{/if}
+		<ExerciseBridge title={navigationTitle}>
+			<p>Continue when you are ready.</p>
+			<div class="bridge-navigation">{@render navigation()}</div>
+		</ExerciseBridge>
 	</div>
 </div>

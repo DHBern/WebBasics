@@ -6,23 +6,21 @@
 
 ### Forms and Buttons
 
-#### Terminology
-
 <ExerciseCard question={getQuestion('form-control-terminology')} />
-
-#### Submitting a form
 
 <ExerciseCard question={getQuestion('form-needs-server')} />
 
 <ExerciseCard question={getQuestion('form-submit-behavior')} />
 
-#### Attribute without value
+<ExerciseBridge title="Attribute without value">
 
 Compare `<button disabled=true>` and `<button disabled>`.
 
+</ExerciseBridge>
+
 <ExerciseCard question={getQuestion('boolean-disabled')} />
 
-#### Labels and inputs
+<ExerciseBridge title="Labels and inputs">
 
 Which of the two codes is better?
 
@@ -48,10 +46,12 @@ Which of the two codes is better?
 </form>
 ```
 
+</ExerciseBridge>
+
 <ExerciseCard question={getQuestion('label-input-association')} />
 
-<ExerciseBridge final>
+<ExerciseBridge title="Further reading">
 
-**Further Reading:** [MDN: Forms and buttons](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_forms)
+[MDN: Forms and buttons](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_forms)
 
 </ExerciseBridge>

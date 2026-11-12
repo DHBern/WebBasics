@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createDebugMode } from '#lib/debug.svelte.js';
 	import CourseNavigation from '#lib/components/CourseNavigation.svelte';
 	import ExercisePath from '#lib/components/ExercisePath.svelte';
 	import UrlStructure from '#lib/content/html/sections/url-structure.svx';
@@ -20,6 +21,7 @@
 	let { data }: { data: PageData } = $props();
 	let downloadError = $state('');
 	let downloading = $state(false);
+	const debug = createDebugMode();
 	const sectionComponents = {
 		'url-structure': UrlStructure,
 		comments: Comments,
@@ -67,13 +69,13 @@
 			<p class="text-sm text-slate-500">{answeredCount} of {requiredQuestionList.length} questions answered</p>
 		</div>
 		{#key data.section.id}
-			<ExercisePath navigation={sectionNavigation}>
+			<ExercisePath navigation={sectionNavigation} navigationTitle={nextSection ? 'Next section' : 'Export your answers'}>
 				<Content />
 			</ExercisePath>
 		{/key}
 		{#if previousSection}
 			<div class="mt-10 border-t border-slate-200 pt-6">
-				<a class="button-secondary" href={`/courses/html/${previousSection.id}/`}>← Previous section</a>
+				<a class="button-secondary" href={`/courses/html/${previousSection.id}/${debug.query}`}>← Previous section</a>
 			</div>
 		{/if}
 	</main>
@@ -81,7 +83,7 @@
 
 {#snippet sectionNavigation()}
 	{#if nextSection}
-		<a class="button-primary" href={`/courses/html/${nextSection.id}/`}>Next section →</a>
+		<a class="button-primary" href={`/courses/html/${nextSection.id}/${debug.query}`}>Next section →</a>
 	{:else}
 		<div class="flex flex-col items-start gap-2">
 			<button class="button-primary" disabled={!complete || downloading} onclick={exportResults}>
