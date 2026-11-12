@@ -55,19 +55,10 @@ export type InputQuestion = QuestionBase & {
 export type PlacementQuestion = DragAndDropQuestion | SortQuestion;
 export type Question = MultipleChoiceQuestion | PlacementQuestion | InputQuestion;
 
-export type LessonBlock = {
-	id: string;
-	title: string;
-	type: 'lesson';
-	text: string;
-};
-
-export type CourseItem = Question | LessonBlock;
-
 export type CourseSection = {
 	id: string;
 	title: string;
-	questions: CourseItem[];
+	questions: Question[];
 	lesson?: string;
 };
 

@@ -24,7 +24,7 @@ What does a page communicate even without its visual styling.
 
 
 
-<ExerciseCard question={getQuestion('semantic-html')} />
+<ExerciseCard question={getQuestion('semantic-definition')} />
 
 
 <ExerciseCard question={getQuestion('html-without-css')} />

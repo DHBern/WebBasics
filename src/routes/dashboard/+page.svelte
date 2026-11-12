@@ -220,7 +220,7 @@
 			.find((strand) => strand.id === strandId)
 			?.sections.flatMap((section) => section.questions)
 			.find((question) => question.id === questionId);
-		return item?.type !== 'lesson' ? item : undefined;
+		return item;
 	}
 
 	let validCount = $derived(

@@ -1,71 +1,59 @@
 import type {
 	CourseSection,
+	DragAndDropQuestion,
 	InputQuestion,
 	MultipleChoiceQuestion,
 	PlacementQuestion,
 	Question,
 	SortItem,
+	SortQuestion,
 	SortTarget,
 	Strand
 } from './types';
 
 type Feedback = Question['feedback'];
 
-type McqArguments =
-	| [options: MultipleChoiceQuestion['options'], feedback?: Feedback, bonusId?: string]
-	| [
-			description: string | string[],
-			options: MultipleChoiceQuestion['options'],
-			feedback?: Feedback,
-			bonusId?: string
-	  ];
+type ExerciseConfig = {
+	slug: string;
+	title: string | string[];
+	question?: string | string[];
+	feedback?: Feedback;
+	bonusId?: string;
+};
 
-function hasMcqDescription(
-	args: McqArguments
-): args is [string | string[], MultipleChoiceQuestion['options'], Feedback?, string?] {
-	return (
-		typeof args[0] === 'string' ||
-		(args[0].length
-			? typeof args[0][0] === 'string'
-			: Array.isArray(args[1]) && args[1].every((item) => typeof item !== 'string'))
-	);
+type PlacementConfig = ExerciseConfig & {
+	question: string | string[];
+	items: SortItem[];
+	targets: SortTarget[];
+	answerKey: Record<string, string>;
+};
+
+function exerciseFields({ slug, title, feedback, bonusId }: ExerciseConfig) {
+	return {
+		id: slug,
+		prompt: Array.isArray(title) ? title.join('\n\n') : title,
+		feedback,
+		bonusId
+	};
+}
+
+function descriptionBlocks(question: ExerciseConfig['question']) {
+	return typeof question === 'string' ? [question] : question;
 }
 
 export const mcq = (
-	id: string,
-	prompt: string | string[],
-	...args: McqArguments
-): MultipleChoiceQuestion => {
-	prompt = Array.isArray(prompt) ? prompt.join('\n\n') : prompt;
-	if (hasMcqDescription(args)) {
-		const [description, options, feedback, bonusId] = args;
-		return {
-			id,
-			prompt,
-			type: 'multiple-choice',
-			description: typeof description === 'string' ? [description] : description,
-			options,
-			feedback,
-			bonusId
-		};
-	}
-	const [options, feedback, bonusId] = args;
-	return { id, prompt, type: 'multiple-choice', options, feedback, bonusId };
-};
+	config: ExerciseConfig & { options: MultipleChoiceQuestion['options'] }
+): MultipleChoiceQuestion => ({
+	...exerciseFields(config),
+	type: 'multiple-choice',
+	description: descriptionBlocks(config.question),
+	options: config.options
+});
 
-export const input = (
-	id: string,
-	prompt: string | string[],
-	description?: string | string[],
-	feedback?: Feedback,
-	bonusId?: string
-): InputQuestion => ({
-	id,
-	prompt: Array.isArray(prompt) ? prompt.join('\n\n') : prompt,
+export const input = (config: ExerciseConfig): InputQuestion => ({
+	...exerciseFields(config),
 	type: 'input',
-	description: typeof description === 'string' ? [description] : description,
-	feedback,
-	bonusId
+	description: descriptionBlocks(config.question)
 });
 
 const option = (id: string, text: string, correct: boolean) => ({
@@ -74,142 +62,22 @@ const option = (id: string, text: string, correct: boolean) => ({
 	correct
 });
 
-const sortAnswerKeys: Record<string, Record<string, string>> = {
-	'url-parts': {
-		protocol: 'url-protocol',
-		subdomain: 'url-subdomain',
-		domain: 'url-domain',
-		tld: 'url-tld',
-		path: 'url-path',
-		fragment: 'url-fragment'
-	},
-	'html-parts': {
-		element: 'element-slot',
-		'opening-tag': 'opening-slot',
-		'class-attribute': 'class-attribute-slot',
-		'class-name': 'class-name-slot',
-		'class-names': 'class-names-slot',
-		'style-attribute': 'style-attribute-slot',
-		'style-name': 'style-name-slot',
-		'style-value': 'style-value-slot',
-		disabled: 'disabled-slot',
-		content: 'content-slot',
-		'closing-tag': 'closing-slot'
-	},
-	'body-element-tree': {
-		head: 'invisible-target',
-		title: 'invisible-target',
-		body: 'body-target',
-		header: 'header-target',
-		nav: 'nav-target',
-		main: 'main-target',
-		article: 'article-target',
-		section: 'section-target',
-		aside: 'aside-target',
-		footer: 'footer-target'
-	},
-	'heading-order': {
-		h6: 'heading-position-1',
-		h5: 'heading-position-2',
-		h4: 'heading-position-3',
-		h3: 'heading-position-4',
-		h2: 'heading-position-5',
-		h1: 'heading-position-6'
-	},
-	'block-inline-elements': {
-		p: 'block',
-		h1: 'block',
-		h4: 'block',
-		strong: 'inline',
-		em: 'inline',
-		b: 'inline',
-		i: 'inline',
-		q: 'inline',
-		blockquote: 'block',
-		span: 'inline',
-		div: 'block',
-		a: 'inline',
-		img: 'inline',
-		main: 'block'
-	},
-	'list-table-elements': {
-		ul: 'list-category',
-		td: 'table-category',
-		ol: 'list-category',
-		th: 'table-category',
-		table: 'table-category',
-		tr: 'table-category',
-		li: 'list-category',
-		caption: 'table-category'
-	}
-};
+export const dragAndDrop = (config: PlacementConfig): DragAndDropQuestion => ({
+	...exerciseFields(config),
+	type: 'drag-n-drop',
+	instructions: config.question,
+	items: config.items,
+	targets: config.targets,
+	answerKey: config.answerKey
+});
 
-type PlacementArguments =
-	| [feedback: Feedback, bonusId?: string]
-	| [answerKey: Record<string, string>, feedback?: Feedback, bonusId?: string];
-
-function hasPlacementFeedback(args: PlacementArguments): args is [Feedback, string?] {
-	return args[0] === undefined || typeof args[0] === 'string' || Array.isArray(args[0]);
-}
-
-export const dragAndDrop = (
-	id: string,
-	prompt: string | string[],
-	instructions: string | string[],
-	items: SortItem[],
-	targets: SortTarget[],
-	...args: PlacementArguments
-) => {
-	prompt = Array.isArray(prompt) ? prompt.join('\n\n') : prompt;
-	if (hasPlacementFeedback(args)) {
-		const [feedback, bonusId] = args;
-		const answerKey = sortAnswerKeys[id];
-		if (!answerKey) throw new Error(`Missing answer key for "${id}".`);
-		return {
-			id,
-			prompt,
-			type: 'drag-n-drop' as const,
-			instructions,
-			items,
-			targets,
-			answerKey,
-			feedback,
-			bonusId
-		};
-	}
-	const [answerKey, feedback, bonusId] = args;
-	return {
-		id,
-		prompt,
-		type: 'drag-n-drop' as const,
-		instructions,
-		items,
-		targets,
-		answerKey,
-		feedback,
-		bonusId
-	};
-};
-
-export const sort = (
-	id: string,
-	prompt: string | string[],
-	instructions: string | string[],
-	items: SortItem[],
-	targets: SortTarget[],
-	answerKey: Record<string, string>,
-	feedback?: Feedback,
-	bonusId?: string
-) => ({
-	id,
-	prompt: Array.isArray(prompt) ? prompt.join('\n\n') : prompt,
-	type: 'sort' as const,
-	instructions,
-	items,
-	targets,
-	answerKey,
-	feedback,
-	bonusId
+export const sort = (config: PlacementConfig): SortQuestion => ({
+	...exerciseFields(config),
+	type: 'sort',
+	instructions: config.question,
+	items: config.items,
+	targets: config.targets,
+	answerKey: config.answerKey
 });
 
 export function isPlacementCorrect(
@@ -225,11 +93,20 @@ export const htmlSections: CourseSection[] = [
 		id: 'url-structure',
 		title: 'URLs',
 		questions: [
-			dragAndDrop(
-				'url-parts',
-				'Identify the parts of and URL.',
-        "URLs consists of different parts with different functions and names. Let's analyse [https://en.wikipedia.org/wiki/Digital_humanities#Digital_archives](https://en.wikipedia.org/wiki/Digital_humanities#Digital_archives). Do you know what each part stands for and how it's called?",
-				[
+			dragAndDrop({
+				answerKey: {
+					protocol: 'url-protocol',
+					subdomain: 'url-subdomain',
+					domain: 'url-domain',
+					tld: 'url-tld',
+					path: 'url-path',
+					fragment: 'url-fragment'
+				},
+				slug: 'url-parts',
+				title: 'Identify the parts of and URL.',
+				question:
+					"URLs consists of different parts with different functions and names. Let's analyse [https://en.wikipedia.org/wiki/Digital_humanities#Digital_archives](https://en.wikipedia.org/wiki/Digital_humanities#Digital_archives). Do you know what each part stands for and how it's called?",
+				items: [
 					{ id: 'protocol', text: 'Protocol' },
 					{ id: 'subdomain', text: 'Subdomain' },
 					{ id: 'domain', text: 'Domain' },
@@ -237,7 +114,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'path', text: 'Path' },
 					{ id: 'fragment', text: 'Fragment' }
 				],
-				[
+				targets: [
 					{
 						id: 'url-protocol',
 						label: 'Protocol',
@@ -269,24 +146,24 @@ export const htmlSections: CourseSection[] = [
 						displayText: 'Digital_archives'
 					}
 				],
-				[
+				feedback: [
 					'The complete answer, from left to right, is `https` (protocol), `en` (subdomain), `wikipedia` (domain), `org` (top-level domain), `/wiki/Digital_humanities` (path), and `Digital_archives` (fragment).',
 					'Formally, `https` is the URL scheme, often called its protocol. The path is one URL component; its `wiki` and `Digital_humanities` segments can be described as a route and subroute. The `#` symbol starts the fragment, and `Digital_archives` is its value. A fragment can identify a location within a page.'
 				]
-			),
-			dragAndDrop(
-				'url-query-params',
-				'Query parameters',
-				[
+			}),
+			dragAndDrop({
+				slug: 'url-query-params',
+				title: 'Query parameters',
+				question: [
 					'Consider the following URL for a simple web search: `https://duckduckgo.com/?q=Digital%20Humanities&df=d&ia=web`',
 					'After the `?` it contains three so called *query parameters*, separated by an `&`. Each of them carries information about the search. Read each query parameter as a name/value pair (written `name=value`). Can you guess the meaning of each query parameter?'
 				],
-				[
+				items: [
 					{ id: 'search-term', text: 'Search term' },
 					{ id: 'date-filter', text: 'Date filter' },
 					{ id: 'search-type', text: 'Search type' }
 				],
-				[
+				targets: [
 					{
 						id: 'query-search-term',
 						label: 'Search term parameter',
@@ -306,20 +183,21 @@ export const htmlSections: CourseSection[] = [
 						displayText: 'ia=web'
 					}
 				],
-				{
+				answerKey: {
 					'search-term': 'query-search-term',
 					'date-filter': 'query-date-filter',
 					'search-type': 'query-search-type'
 				},
-				'Each query parameter is a name/value pair. `q=Digital%20Humanities` uses the name `q` for the search term, whose value decodes to “Digital Humanities.” `df=d` uses `df` to request results from the past day. `ia=web` selects web results. The `?` starts the query string, `=` separates a name from its value, and `&` separates one parameter pair from the next. These are URL query parameters, not HTML attributes.'
-			),
+				feedback:
+					'Each query parameter is a name/value pair. `q=Digital%20Humanities` uses the name `q` for the search term, whose value decodes to “Digital Humanities.” `df=d` uses `df` to request results from the past day. `ia=web` selects web results. The `?` starts the query string, `=` separates a name from its value, and `&` separates one parameter pair from the next. These are URL query parameters, not HTML attributes.'
+			}),
 			{
 				id: 'url-encoding',
-				prompt:
-					'URL Encodings.',
+				prompt: 'URL Encodings.',
 				type: 'drag-n-drop',
-				instructions:
-					['The search term in the last exercise contains `Digital%20Humanities`. This is beause whitespaces are not allowed as part of URLs, so they must be encoded with `%20`. Use this [URL Encoder/Decoder Tool](https://www.urlencoder.io/) to find what the encoded symbols represent, then match each code to its decoded character.'],
+				instructions: [
+					'The search term in the last exercise contains `Digital%20Humanities`. This is beause whitespaces are not allowed as part of URLs, so they must be encoded with `%20`. Use this [URL Encoder/Decoder Tool](https://www.urlencoder.io/) to find what the encoded symbols represent, then match each code to its decoded character.'
+				],
 				items: [
 					{ id: 'encoded-space', text: '%20' },
 					{ id: 'encoded-slash', text: '%2F' },
@@ -350,41 +228,48 @@ export const htmlSections: CourseSection[] = [
 		id: 'comments',
 		title: 'Comments',
 		questions: [
-			mcq(
-				'valid-html-comments',
-				'HTML Comment Syntax',
-				['What are valid ways to wrap a comment in HTML?'],
-				[
+			mcq({
+				slug: 'valid-html-comments',
+				title: 'HTML Comment Syntax',
+				question: ['What are valid ways to wrap a comment in HTML?'],
+				options: [
 					option('html-comment', '`<!-- A comment -->`', true),
 					option('multiline-html-comment', '`<!-- A multiline comment -->`', true),
 					option('slash-comment', '`// ...`', false),
 					option('c-comment', '`/* ... */`', false)
 				],
-				['Answers 1 and 2 use the HTML comment delimiters `<!--` and `-->`; HTML comments can span more than one line, for example:\n\n```html\n<!--\n  This comment\n  spans more than\n  one line.\n-->\n```\n\n', 
-        '`//` is used for JavaScript comments, while `/* ... */` is used for comments in CSS and JavaScript.']
-			),
-			mcq(
-				'comment-visibility',
-				'Comments Visibility',
-				['"Comments in HTML are invisible to the user." True or false?'],
-				[option('true', 'True', true), option('false', 'False', true)],
-				'Well, this was a tricky one: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. This means that anyone can inspect the source and read them. So NEVER put passwords or other secrets in comments.',
-				'comment-visibility-bonus'
-			),
-			input('comment-visibility-bonus', "Let's test this on a real page!", [
-				'Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.'
-			])
+				feedback: [
+					'Answers 1 and 2 use the HTML comment delimiters `<!--` and `-->`; HTML comments can span more than one line, for example:\n\n```html\n<!--\n  This comment\n  spans more than\n  one line.\n-->\n```\n\n',
+					'`//` is used for JavaScript comments, while `/* ... */` is used for comments in CSS and JavaScript.'
+				]
+			}),
+			mcq({
+				slug: 'comment-visibility',
+				title: 'Comments Visibility',
+				question: ['"Comments in HTML are invisible to the user." True or false?'],
+				options: [option('true', 'True', true), option('false', 'False', true)],
+				feedback:
+					'Well, this was a tricky one: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. This means that anyone can inspect the source and read them. So NEVER put passwords or other secrets in comments.',
+				bonusId: 'comment-visibility-bonus'
+			}),
+			input({
+				slug: 'comment-visibility-bonus',
+				title: "Let's test this on a real page!",
+				question: [
+					'Inspect the source code of [Wikipedia](https://www.wikipedia.org/) and look for HTML comments. Try Ctrl+U (Windows/Linux) or Cmd+U (macOS; the shortcut may vary by browser) to view the source. Alternatively, press F12 or right-click and choose Inspect to open developer tools. Search for `<!--` and report your findings below.'
+				]
+			})
 		]
 	},
 	{
 		id: 'basic-syntax',
 		title: 'Basic Syntax (Elements and Attributes)',
 		questions: [
-			dragAndDrop(
-				'html-parts',
-				'Parts of an HTML element',
-				'Place each label at the matching bracket in the HTML example.',
-				[
+			dragAndDrop({
+				slug: 'html-parts',
+				title: 'Parts of an HTML element',
+				question: 'Place each label at the matching bracket in the HTML example.',
+				items: [
 					{ id: 'element', text: 'Element' },
 					{ id: 'opening-tag', text: 'Opening tag' },
 					{ id: 'closing-tag', text: 'Closing tag' },
@@ -397,7 +282,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'disabled', text: 'Boolean attribute (disabled)' },
 					{ id: 'content', text: 'Content' }
 				],
-				[
+				targets: [
 					{ id: 'element-slot', label: 'Whole element' },
 					{
 						id: 'opening-slot',
@@ -446,7 +331,7 @@ export const htmlSections: CourseSection[] = [
 						parentId: 'element-slot'
 					}
 				],
-				{
+				answerKey: {
 					element: 'element-slot',
 					'opening-tag': 'opening-slot',
 					'class-attribute': 'class-attribute-slot',
@@ -459,31 +344,32 @@ export const htmlSections: CourseSection[] = [
 					content: 'content-slot',
 					'closing-tag': 'closing-slot'
 				},
-				'In this example, the **element** consists of the opening tag, the content (`Click me`), and the closing tag. Attributes belong in the opening tag and provide additional information or settings.\n\nThe **`class` attribute** assigns class names, which CSS can use to select elements. Here, its value contains two class names: `link--external` and `text_large`. A space separates them; hyphens (`-`) and underscores (`_`) can be part of a class name. The name `link--external` follows a naming convention called **BEM**, where `--` indicates a variant. This convention helps people organize their code; HTML does not require it. Despite its name, the class does not make this button a link.\n\nThe **`style` attribute** contains CSS declarations applied directly to this element. In `border: 2px solid black;`, `border` is the property, and `2px solid black` is its value.\n\n**`disabled` is a boolean attribute:** its presence disables the button; leaving it out leaves the button enabled. A useful trap to remember: even `disabled="false"` disables the button—its presence, not the text of its value, is what matters.'
-			),
-			mcq(
-				'img-void-element',
-				'Debugging an image',
-				'What is wrong with this HTML?\n\n```html\n<img src="../img/icon.jpeg" alt="Icon"></img>\n```',
-				[
+				feedback:
+					'In this example, the **element** consists of the opening tag, the content (`Click me`), and the closing tag. Attributes belong in the opening tag and provide additional information or settings.\n\nThe **`class` attribute** assigns class names, which CSS can use to select elements. Here, its value contains two class names: `link--external` and `text_large`. A space separates them; hyphens (`-`) and underscores (`_`) can be part of a class name. The name `link--external` follows a naming convention called **BEM**, where `--` indicates a variant. This convention helps people organize their code; HTML does not require it. Despite its name, the class does not make this button a link.\n\nThe **`style` attribute** contains CSS declarations applied directly to this element. In `border: 2px solid black;`, `border` is the property, and `2px solid black` is its value.\n\n**`disabled` is a boolean attribute:** its presence disables the button; leaving it out leaves the button enabled. A useful trap to remember: even `disabled="false"` disables the button—its presence, not the text of its value, is what matters.'
+			}),
+			mcq({
+				slug: 'img-void-element',
+				title: 'Debugging an image',
+				question:
+					'What is wrong with this HTML?\n\n```html\n<img src="../img/icon.jpeg" alt="Icon"></img>\n```',
+				options: [
 					option('correct', 'Everything is correct.', false),
 					option('src', 'There is a mistake in the `src` attribute.', false),
 					option('alt', 'There is a mistake in the `alt` attribute.', false),
 					option('text', 'Text is missing between `<img>` and `</img>`.', false),
-					option(
-						'void',
-						'An `<img>` element must not have a closing tag.',
-						true
-					)
+					option('void', 'An `<img>` element must not have a closing tag.', true)
 				],
-				['`img` is a so called **void element** (also called **self-closing element**) and must not have an end tag. Write `<img src="..." alt="Icon">`. The optional trailing slash in `<img ... />` is permitted in HTML, but it is not required.',
-				'Other common examples for void elements are `<br>` (for breaks), `<hr>` (for thematic breaks), and `<input>` (for text-inputs in forms).']
-			),
-			mcq(
-				'overlapping-tags',
-				'Debugging Nested Elements',
-				"What went wrong here?\n\n```html\n<p>I didn't expect to find the <em>neighbor's <strong>cat</em></strong> here!</p>\n```",
-				[
+				feedback: [
+					'`img` is a so called **void element** (also called **self-closing element**) and must not have an end tag. Write `<img src="..." alt="Icon">`. The optional trailing slash in `<img ... />` is permitted in HTML, but it is not required.',
+					'Other common examples for void elements are `<br>` (for breaks), `<hr>` (for thematic breaks), and `<input>` (for text-inputs in forms).'
+				]
+			}),
+			mcq({
+				slug: 'overlapping-tags',
+				title: 'Debugging Nested Elements',
+				question:
+					"What went wrong here?\n\n```html\n<p>I didn't expect to find the <em>neighbor's <strong>cat</em></strong> here!</p>\n```",
+				options: [
 					option('works', 'Everything works just fine.', false),
 					option(
 						'closing-order',
@@ -497,13 +383,15 @@ export const htmlSections: CourseSection[] = [
 					),
 					option('invalid', 'This is invalid HTML.', true)
 				],
-				"Browsers indeed may repair misnested formatting elements, but the source is invalid HTML. It is better to write correct markup in the first place. Tools like [Mozilla's HTML validator](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML#html_validation) can help find errors."
-			),
-			mcq(
-				'html-indentation',
-				'Indentation',
-				'Compare these three code snippets.\n\n**1. One line**\n\n```html\n<html><body><p>Why should I care about formatting?</p></body></html>\n```\n\n**2. Separate lines**\n\n```html\n<html>\n<body>\n<p>\nWhy should I care about formatting?\n</p>\n</body>\n</html>\n```\n\n**3. Consistent indentation**\n\n```html\n<html>\n\t<body>\n\t\t<p>Why should I care about formatting?</p>\n\t</body>\n</html>\n```',
-				[
+				feedback:
+					"Browsers indeed may repair misnested formatting elements, but the source is invalid HTML. It is better to write correct markup in the first place. Tools like [Mozilla's HTML validator](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML#html_validation) can help find errors."
+			}),
+			mcq({
+				slug: 'html-indentation',
+				title: 'Indentation',
+				question:
+					'Compare these three code snippets.\n\n**1. One line**\n\n```html\n<html><body><p>Why should I care about formatting?</p></body></html>\n```\n\n**2. Separate lines**\n\n```html\n<html>\n<body>\n<p>\nWhy should I care about formatting?\n</p>\n</body>\n</html>\n```\n\n**3. Consistent indentation**\n\n```html\n<html>\n\t<body>\n\t\t<p>Why should I care about formatting?</p>\n\t</body>\n</html>\n```',
+				options: [
 					option('all-valid', 'All three versions are valid HTML.', true),
 					option('same-rendering', 'All three versions render the same in the browser.', true),
 					option(
@@ -522,8 +410,9 @@ export const htmlSections: CourseSection[] = [
 						true
 					)
 				],
-				'Consistent formatting makes code easier to read and collaborate on. Tools such as [Prettier](https://www.youtube.com/watch?v=RIFWADZzSjM) can format code on demand or on save. Standard formatting avoids noisy diffs caused by each contributor reformatting code to personal taste.'
-			)
+				feedback:
+					'Consistent formatting makes code easier to read and collaborate on. Tools such as [Prettier](https://www.youtube.com/watch?v=RIFWADZzSjM) can format code on demand or on save. Standard formatting avoids noisy diffs caused by each contributor reformatting code to personal taste.'
+			})
 		],
 		lesson:
 			'**Further Reading:** [HTML elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [MDN: Attributes](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)'
@@ -532,22 +421,26 @@ export const htmlSections: CourseSection[] = [
 		id: 'webpage-structure',
 		title: 'Webpage Structure',
 		questions: [
-			mcq(
-				'head-header-nav',
-				'The main navigation of a website lives inside…',
-				[
+			mcq({
+				slug: 'head-header-nav',
+				title: 'The main navigation of a website lives inside…',
+				options: [
 					option('head', '`<head>`', false),
 					option('header', '`<header>`', true),
 					option('nav', '`<nav>`', true)
 				],
-				['The `<head>` contains document metadata and is invisible to the user.',
-				 'A `<header>`, in turn, is rendered on the page and may contain a `<nav>` element. This is where you usually would place the main navigation.']
-			),
-			dragAndDrop(
-				'body-element-tree',
-				'Basic Website Structure',
-				['Use the provided elements to build up the given webpage structure. Put invisible elements to the corresponding area and all the remaining elements in the body tree.'],
-				[
+				feedback: [
+					'The `<head>` contains document metadata and is invisible to the user.',
+					'A `<header>`, in turn, is rendered on the page and may contain a `<nav>` element. This is where you usually would place the main navigation.'
+				]
+			}),
+			dragAndDrop({
+				slug: 'body-element-tree',
+				title: 'Basic Website Structure',
+				question: [
+					'Use the provided elements to build up the given webpage structure. Put invisible elements to the corresponding area and all the remaining elements in the body tree.'
+				],
+				items: [
 					{ id: 'head', text: '<head>' },
 					{ id: 'title', text: '<title>' },
 					{ id: 'body', text: '<body>' },
@@ -559,7 +452,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'article', text: '<article>' },
 					{ id: 'section', text: '<section>' }
 				],
-				[
+				targets: [
 					{ id: 'document', label: '<html>' },
 					{
 						id: 'invisible-target',
@@ -579,7 +472,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'aside-target', label: '<aside>', parentId: 'main-target' },
 					{ id: 'footer-target', label: '<footer>', parentId: 'body-target' }
 				],
-				{
+				answerKey: {
 					head: 'invisible-target',
 					title: 'invisible-target',
 					body: 'body-target',
@@ -591,10 +484,12 @@ export const htmlSections: CourseSection[] = [
 					aside: 'aside-target',
 					footer: 'footer-target'
 				},
-				['The `<head>` and `<title>` are not displayed in the page. A `<header>` contains the site navigation; `<main>` contains one or multiple `<article>` elements, each of which can be devided into sections using `<section>`. Related material like cross-references and related links belong inside the `<aside>` or `<footer>` block.',
-				"Note that `<aside>` will not automatically appear beside the article — by default it just sits below like any other element. Placing it on the side is CSS's job, not HTML's. What semantic elements give you instead is meaning: screen readers for visually impaired users can navigate by landmarks, and browser reading modes can tell content from clutter.", 
-				"**Try it yourself:** visit this [article by SRF Meteo](https://www.srf.ch/radio-srf-1/sieben-fakten-warum-nebel-hohe-toene-schluckt-und-gespenster-erscheinen-laesst) and toggle on the **Reading mode** of your browser. The ads, navigation, and asides disappear, leaving only the article — and that's thanks to `<main>`."]
-			)
+				feedback: [
+					'The `<head>` and `<title>` are not displayed in the page. A `<header>` contains the site navigation; `<main>` contains one or multiple `<article>` elements, each of which can be devided into sections using `<section>`. Related material like cross-references and related links belong inside the `<aside>` or `<footer>` block.',
+					"Note that `<aside>` will not automatically appear beside the article — by default it just sits below like any other element. Placing it on the side is CSS's job, not HTML's. What semantic elements give you instead is meaning: screen readers for visually impaired users can navigate by landmarks, and browser reading modes can tell content from clutter.",
+					"**Try it yourself:** visit this [article by SRF Meteo](https://www.srf.ch/radio-srf-1/sieben-fakten-warum-nebel-hohe-toene-schluckt-und-gespenster-erscheinen-laesst) and toggle on the **Reading mode** of your browser. The ads, navigation, and asides disappear, leaving only the article — and that's thanks to `<main>`."
+				]
+			})
 		],
 		lesson:
 			'**Further Reading:** [MDN: Structuring documents](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents) · [MDN: Website metadata](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Webpage_metadata)'
@@ -603,18 +498,20 @@ export const htmlSections: CourseSection[] = [
 		id: 'semantic-html',
 		title: 'Semantic HTML',
 		questions: [
-			input(
-				'semantic-definition',
-				'Definition with examples and motivation',
-				'Give a few examples of semantic HTML elements and explain why they are important. If unsure, read a definition and answer in your own words.'
-			),
-			mcq(
-				'html-without-css',
-				'Without CSS',
-				'"A website without CSS will appear completely unstyled."',
-				[option('true', 'True', false), option('false', 'False', true)],
-				'Browsers apply default styles to semantic HTML. Note, however, that the result will differ between browsers.'
-			)
+			input({
+				slug: 'semantic-definition',
+				title: 'Definition with examples and motivation',
+				question:
+					'Give a few examples of semantic HTML elements and explain why they are important. If unsure, read a definition and answer in your own words.'
+			}),
+			mcq({
+				slug: 'html-without-css',
+				title: 'Without CSS',
+				question: '"A website without CSS will appear completely unstyled."',
+				options: [option('true', 'True', false), option('false', 'False', true)],
+				feedback:
+					'Browsers apply default styles to semantic HTML. Note, however, that the result will differ between browsers.'
+			})
 		],
 		lesson:
 			'**Most important takeaway (especially for digital humanities students):** “HTML tags must be used for their semantic value, not their appearance. It’s always possible to totally change the look and feel of a given tag using CSS so, when using HTML, take the time to focus on the meaning rather than the appearance.” [Source: MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Cheatsheet)\n\n**Bonus: Micro-project.** With only HTML (no CSS), try to replicate a layout and compare Firefox and Chrome. Use `section`, `aside`, `ul`, `li`, headings, paragraphs, `strong`, `em`, `del`, `ins`, `a`, `form`, `input`, and `button`.\n\n**Bonus:** [Mark up dates and times](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates)'
@@ -623,11 +520,11 @@ export const htmlSections: CourseSection[] = [
 		id: 'formatting-text',
 		title: 'Formatting Text (Headings, paragraphs, strong, emphasis)',
 		questions: [
-			sort(
-				'heading-order',
-				'Sort the headings from smallest to largest.',
-				'Reorder the valid headings and move invalid elements into the discard area.',
-				[
+			sort({
+				slug: 'heading-order',
+				title: 'Sort the headings from smallest to largest.',
+				question: 'Reorder the valid headings and move invalid elements into the discard area.',
+				items: [
 					{ id: 'h1', text: '<h1>' },
 					{ id: 'h2', text: '<h2>' },
 					{ id: 'h3', text: '<h3>' },
@@ -637,7 +534,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'h7', text: '<h7>' },
 					{ id: 'h8', text: '<h8>' }
 				],
-				[
+				targets: [
 					{ id: 'heading-position-1', label: 'Smallest' },
 					{ id: 'heading-position-2', label: '2' },
 					{ id: 'heading-position-3', label: '3' },
@@ -646,7 +543,7 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'heading-position-6', label: 'Largest' },
 					{ id: 'invalid-headings', label: 'Not valid HTML headings' }
 				],
-				{
+				answerKey: {
 					h6: 'heading-position-1',
 					h5: 'heading-position-2',
 					h4: 'heading-position-3',
@@ -656,13 +553,15 @@ export const htmlSections: CourseSection[] = [
 					h7: 'invalid-headings',
 					h8: 'invalid-headings'
 				},
-				'The valid heading elements are `<h1>` through `<h6>`. `<h6>` is the smallest heading level and `<h1>` the largest; `<h7>` and `<h8>` do not exist.'
-			),
-			dragAndDrop(
-				'block-inline-elements',
-				'Place each element in its usual display category: block or inline.',
-				'These are the elements’ default browser display categories; CSS can change them.',
-				[
+				feedback:
+					'The valid heading elements are `<h1>` through `<h6>`. `<h6>` is the smallest heading level and `<h1>` the largest; `<h7>` and `<h8>` do not exist.'
+			}),
+			dragAndDrop({
+				slug: 'block-inline-elements',
+				title: 'Place each element in its usual display category: block or inline.',
+				question:
+					'These are the elements’ default browser display categories; CSS can change them.',
+				items: [
 					{ id: 'p', text: '<p>' },
 					{ id: 'h1', text: '<h1>' },
 					{ id: 'h4', text: '<h4>' },
@@ -678,11 +577,11 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'img', text: '<img>' },
 					{ id: 'main', text: '<main>' }
 				],
-				[
+				targets: [
 					{ id: 'block', label: 'Block' },
 					{ id: 'inline', label: 'Inline' }
 				],
-				{
+				answerKey: {
 					p: 'block',
 					h1: 'block',
 					h4: 'block',
@@ -698,19 +597,30 @@ export const htmlSections: CourseSection[] = [
 					img: 'inline',
 					main: 'block'
 				},
-				'The usual browser display is block for `<p>`, headings, `<blockquote>`, `<div>`, and `<main>`; inline for `<strong>`, `<em>`, `<b>`, `<i>`, `<q>`, `<span>`, `<a>`, and `<img>`. CSS can change display behavior. Prefer semantically correct tags; `<span>` and `<div>` have no semantic meaning.\n\n**Further Reading:** [Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) · [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) · [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features)'
-			)
+				feedback:
+					'The usual browser display is block for `<p>`, headings, `<blockquote>`, `<div>`, and `<main>`; inline for `<strong>`, `<em>`, `<b>`, `<i>`, `<q>`, `<span>`, `<a>`, and `<img>`. CSS can change display behavior. Prefer semantically correct tags; `<span>` and `<div>` have no semantic meaning.\n\n**Further Reading:** [Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) · [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) · [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features)'
+			})
 		]
 	},
 	{
 		id: 'lists-tables',
 		title: 'Lists and Tables',
 		questions: [
-			dragAndDrop(
-				'list-table-elements',
-				'Place the elements into table elements, list elements, both, or neither.',
-				'Each element belongs in the category describing its HTML role.',
-				[
+			dragAndDrop({
+				answerKey: {
+					ul: 'list-category',
+					td: 'table-category',
+					ol: 'list-category',
+					th: 'table-category',
+					table: 'table-category',
+					tr: 'table-category',
+					li: 'list-category',
+					caption: 'table-category'
+				},
+				slug: 'list-table-elements',
+				title: 'Place the elements into table elements, list elements, both, or neither.',
+				question: 'Each element belongs in the category describing its HTML role.',
+				items: [
 					{ id: 'ul', text: '<ul>' },
 					{ id: 'td', text: '<td>' },
 					{ id: 'ol', text: '<ol>' },
@@ -720,36 +630,39 @@ export const htmlSections: CourseSection[] = [
 					{ id: 'li', text: '<li>' },
 					{ id: 'caption', text: '<caption>' }
 				],
-				[
+				targets: [
 					{ id: 'table-category', label: 'Table elements' },
 					{ id: 'list-category', label: 'List elements' },
 					{ id: 'both-category', label: 'Both' },
 					{ id: 'neither-category', label: 'Neither' }
 				],
-				'List elements include `<ul>`, `<ol>`, and `<li>`. Table elements include `<table>`, `<caption>`, `<tr>`, `<th>`, and `<td>`.'
-			)
+				feedback:
+					'List elements include `<ul>`, `<ol>`, and `<li>`. Table elements include `<table>`, `<caption>`, `<tr>`, `<th>`, and `<td>`.'
+			})
 		]
 	},
 	{
 		id: 'links',
 		title: 'Links and Anchors',
 		questions: [
-			mcq(
-				'nesting-anchors',
-				'Which of the following anchors are valid HTML?',
-				[
+			mcq({
+				slug: 'nesting-anchors',
+				title: 'Which of the following anchors are valid HTML?',
+				options: [
 					option('anchor-paragraph', 'An anchor inside a paragraph.', true),
 					option('anchor-span', 'An anchor inside a `<span>`.', true),
 					option('span-anchor', 'An anchor that contains a `<span>`.', true),
 					option('heading-anchor', 'An anchor around an `<h1>`.', true),
 					option('image-anchor', 'An anchor around an image.', true)
 				],
-				'All five examples are valid. Wrapping an image in a link is common for a logo that links to the homepage. [MDN: Image links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#image_links)\n\nAn anchor can also identify a precise location in a page that can be jumped to. [MDN: Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links)'
-			),
-			mcq(
-				'link-target-blank',
-				'Where will this link open? `You can learn more about this <a href="https://en.wikipedia.org/wiki/HTML" target="_blank">here</a>.`',
-				[
+				feedback:
+					'All five examples are valid. Wrapping an image in a link is common for a logo that links to the homepage. [MDN: Image links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#image_links)\n\nAn anchor can also identify a precise location in a page that can be jumped to. [MDN: Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links)'
+			}),
+			mcq({
+				slug: 'link-target-blank',
+				title:
+					'Where will this link open? `You can learn more about this <a href="https://en.wikipedia.org/wiki/HTML" target="_blank">here</a>.`',
+				options: [
 					option('same-tab', 'In the existing browser tab.', false),
 					option('new-tab', 'In a new browser tab.', true),
 					option(
@@ -764,12 +677,13 @@ export const htmlSections: CourseSection[] = [
 						true
 					)
 				],
-				'`target="_blank"` opens the link in a new tab or window. Attribute order does not matter, although consistent formatting helps readability. Meaningful link text is preferable. [MDN: Links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Test_your_skills/Links#links_3)'
-			),
-			mcq(
-				'link-title-accessibility',
-				'Choose the correct statements about link titles.',
-				[
+				feedback:
+					'`target="_blank"` opens the link in a new tab or window. Attribute order does not matter, although consistent formatting helps readability. Meaningful link text is preferable. [MDN: Links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Test_your_skills/Links#links_3)'
+			}),
+			mcq({
+				slug: 'link-title-accessibility',
+				title: 'Choose the correct statements about link titles.',
+				options: [
 					option('title-tooltip', 'The optional `title` attribute can provide a tooltip.', true),
 					option(
 						'title-accessibility',
@@ -777,12 +691,13 @@ export const htmlSections: CourseSection[] = [
 						false
 					)
 				],
-				'Do not confuse an anchor’s `title` with an image’s `alt`. A link title is often revealed only on mouse hover, making it difficult for keyboard and touch users. Put important information in the visible link text instead. [MDN](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#adding_supporting_information_with_the_title_attribute)'
-			),
-			mcq(
-				'buttons-vs-anchors',
-				'Choose the correct statements about links, buttons, and appearance.',
-				[
+				feedback:
+					'Do not confuse an anchor’s `title` with an image’s `alt`. A link title is often revealed only on mouse hover, making it difficult for keyboard and touch users. Put important information in the visible link text instead. [MDN](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#adding_supporting_information_with_the_title_attribute)'
+			}),
+			mcq({
+				slug: 'buttons-vs-anchors',
+				title: 'Choose the correct statements about links, buttons, and appearance.',
+				options: [
 					option('anchors-style', 'Anchor elements can be styled to look like buttons.', true),
 					option(
 						'link-preview',
@@ -796,28 +711,32 @@ export const htmlSections: CourseSection[] = [
 					),
 					option('boring-links', 'Links must look boring because they are underlined text.', false)
 				],
-				'Use anchors for navigation, such as `<a href="/foo/bar">`, and buttons for actions. CSS can make anchors look like buttons without changing their meaning. [Buttons vs. links](https://a11yphant.com/challenges/buttons-vs-links)'
-			)
+				feedback:
+					'Use anchors for navigation, such as `<a href="/foo/bar">`, and buttons for actions. CSS can make anchors look like buttons without changing their meaning. [Buttons vs. links](https://a11yphant.com/challenges/buttons-vs-links)'
+			})
 		]
 	},
 	{
 		id: 'images',
 		title: 'Images',
 		questions: [
-			mcq(
-				'image-relative-absolute-paths',
-				'You are linking an image from `/about/team/teachers/andrea/index.html`. Which paths work?',
-				[
+			mcq({
+				slug: 'image-relative-absolute-paths',
+				title:
+					'You are linking an image from `/about/team/teachers/andrea/index.html`. Which paths work?',
+				options: [
 					option('deep-relative', '`../../../../img/cat.webp`', true),
 					option('root-relative', '`/img/cat.webp`', true),
 					option('local-relative', '`img/cat.webp`', false)
 				],
-				'The long relative path works, but is easy to break. A path beginning with `/` starts at the site root. `img/cat.webp` would look for an `img` folder inside `andrea`. This also applies to stylesheets and other assets.'
-			),
-			mcq(
-				'image-alt-title',
-				'For the dinosaur image with `alt`, `width`, `height`, and `title` attributes, choose the correct statement.',
-				[
+				feedback:
+					'The long relative path works, but is easy to break. A path beginning with `/` starts at the site root. `img/cat.webp` would look for an `img` folder inside `andrea`. This also applies to stylesheets and other assets.'
+			}),
+			mcq({
+				slug: 'image-alt-title',
+				title:
+					'For the dinosaur image with `alt`, `width`, `height`, and `title` attributes, choose the correct statement.',
+				options: [
 					option(
 						'alt-no-title',
 						'An image with an `alt` attribute does not need a `title` attribute.',
@@ -830,12 +749,13 @@ export const htmlSections: CourseSection[] = [
 					),
 					option('title-tooltip', 'The `title` attribute can appear as a tooltip.', true)
 				],
-				'The `title` attribute may appear as a tooltip; it is not a figure caption. Useful alternative text belongs in `alt`.'
-			),
-			mcq(
-				'image-dimensions',
-				'Choose the correct statements about the image `width` and `height` attributes.',
-				[
+				feedback:
+					'The `title` attribute may appear as a tooltip; it is not a figure caption. Useful alternative text belongs in `alt`.'
+			}),
+			mcq({
+				slug: 'image-dimensions',
+				title: 'Choose the correct statements about the image `width` and `height` attributes.',
+				options: [
 					option('css-properties', 'They are passed as CSS properties.', false),
 					option(
 						'style-alternative',
@@ -855,37 +775,47 @@ export const htmlSections: CourseSection[] = [
 					),
 					option('pixels', 'The HTML dimension values are in pixels.', true)
 				],
-				'HTML width and height values are CSS-pixel dimensions, not image resolution. They affect the displayed size; optimize the image file itself for the web. If only one dimension is set, the browser can preserve the intrinsic aspect ratio; if both are set inconsistently, the image can be distorted. WebP is one useful web image format. [MDN: Images](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_images)\n\n**Bonus:** [Audio and video](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_video_and_audio)'
-			)
+				feedback:
+					'HTML width and height values are CSS-pixel dimensions, not image resolution. They affect the displayed size; optimize the image file itself for the web. If only one dimension is set, the browser can preserve the intrinsic aspect ratio; if both are set inconsistently, the image can be distorted. WebP is one useful web image format. [MDN: Images](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_images)\n\n**Bonus:** [Audio and video](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_video_and_audio)'
+			})
 		]
 	},
 	{
 		id: 'forms-buttons',
 		title: 'Forms and Buttons',
 		questions: [
-			mcq('form-control-terminology', 'Choose the correct statements.', [
-				option(
-					'radio-multiple',
-					'A group of radio buttons can have multiple checked items.',
-					false
-				),
-				option('checkbox-multiple', 'A group of checkboxes can have multiple checked items.', true),
-				option(
-					'radio-input',
-					'A radio button is an `<input type="radio">`, not a `<button>` element.',
-					true
-				)
-			]),
-			mcq(
-				'form-needs-server',
-				'“For a form to work, we need a web server.”',
-				[option('true', 'True', false), option('false', 'False', true)],
-				'For common GET and POST forms, a server usually handles the request. A form can also use a `mailto:` action to open an email client with a prefilled address, subject, and message.'
-			),
-			mcq(
-				'form-submit-behavior',
-				'Choose the correct statements about submitting a form.',
-				[
+			mcq({
+				slug: 'form-control-terminology',
+				title: 'Choose the correct statements.',
+				options: [
+					option(
+						'radio-multiple',
+						'A group of radio buttons can have multiple checked items.',
+						false
+					),
+					option(
+						'checkbox-multiple',
+						'A group of checkboxes can have multiple checked items.',
+						true
+					),
+					option(
+						'radio-input',
+						'A radio button is an `<input type="radio">`, not a `<button>` element.',
+						true
+					)
+				]
+			}),
+			mcq({
+				slug: 'form-needs-server',
+				title: '“For a form to work, we need a web server.”',
+				options: [option('true', 'True', false), option('false', 'False', true)],
+				feedback:
+					'For common GET and POST forms, a server usually handles the request. A form can also use a `mailto:` action to open an email client with a prefilled address, subject, and message.'
+			}),
+			mcq({
+				slug: 'form-submit-behavior',
+				title: 'Choose the correct statements about submitting a form.',
+				options: [
 					option(
 						'action-reload',
 						'After submission, the page navigates/reloads at the route specified by the form’s `action`.',
@@ -902,31 +832,34 @@ export const htmlSections: CourseSection[] = [
 						false
 					)
 				],
-				'Buttons inside forms default to `type="submit"`. Set `type="button"` for a button that should not submit, and `type="reset"` only when resetting the form is intended.'
-			),
-			mcq(
-				'boolean-disabled',
-				'Compare `<button disabled=true>` and `<button disabled>`.',
-				[
+				feedback:
+					'Buttons inside forms default to `type="submit"`. Set `type="button"` for a button that should not submit, and `type="reset"` only when resetting the form is intended.'
+			}),
+			mcq({
+				slug: 'boolean-disabled',
+				title: 'Compare `<button disabled=true>` and `<button disabled>`.',
+				options: [
 					option('same-behavior', 'Both buttons behave the same.', true),
 					option('value-required', 'The `disabled` attribute must have a value.', false),
 					option('cannot-click', 'The user cannot activate the disabled button.', true),
 					option('cannot-hover', 'The user cannot hover over the disabled button.', false)
 				],
-				'Boolean attributes are true when present, regardless of their string value. Therefore `disabled="false"` is still disabled; omit the attribute to enable the button. The same applies to `required`.'
-			),
-			mcq(
-				'label-input-association',
-				'Which statement about the two label/input examples is correct?',
-				[
+				feedback:
+					'Boolean attributes are true when present, regardless of their string value. Therefore `disabled="false"` is still disabled; omit the attribute to enable the button. The same applies to `required`.'
+			}),
+			mcq({
+				slug: 'label-input-association',
+				title: 'Which statement about the two label/input examples is correct?',
+				options: [
 					option('first-better', 'The first snippet is better.', false),
 					option('second-better', 'The second snippet is better.', false),
 					option('only-first', 'Only the first snippet works as written.', true),
 					option('only-second', 'Only the second snippet works.', false),
 					option('neither', 'Nothing of the above.', false)
 				],
-				'Explicit `for`/`id` association and wrapping an input in a label can both work. The supplied second example has an extra `</label>` and its password input has no matching `id="pwd"` even though its label has a `for` attribute, so the example does not associate that label with the input. Label structure also affects layout and styling.'
-			)
+				feedback:
+					'Explicit `for`/`id` association and wrapping an input in a label can both work. The supplied second example has an extra `</label>` and its password input has no matching `id="pwd"` even though its label has a `for` attribute, so the example does not associate that label with the input. Label structure also affects layout and styling.'
+			})
 		],
 		lesson:
 			'**Further Reading:** [MDN: Forms and buttons](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_forms)'
@@ -935,10 +868,10 @@ export const htmlSections: CourseSection[] = [
 		id: 'embeddings',
 		title: 'Embeddings (iframe)',
 		questions: [
-			mcq(
-				'iframe-css-and-tracking',
-				'“An `<iframe>` inherits the CSS of its parent page.”',
-				[
+			mcq({
+				slug: 'iframe-css-and-tracking',
+				title: '“An `<iframe>` inherits the CSS of its parent page.”',
+				options: [
 					option('inherits-css', 'Yes.', false),
 					option(
 						'css-leaks',
@@ -951,8 +884,9 @@ export const htmlSections: CourseSection[] = [
 						true
 					)
 				],
-				'An iframe is a separate document, so styles do not mix. An iframe is not automatically “completely sandboxed”: the `sandbox` attribute adds restrictions. Embedded third-party content may track visitors when it loads. [SRF article reference in source: TODO]'
-			)
+				feedback:
+					'An iframe is a separate document, so styles do not mix. An iframe is not automatically “completely sandboxed”: the `sandbox` attribute adds restrictions. Embedded third-party content may track visitors when it loads. [SRF article reference in source: TODO]'
+			})
 		],
 		lesson:
 			'**Further Reading:** [MDN: Embedding technologies](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/General_embedding_technologies#using_iframes_to_embed_webpages) (do not read the full article).'
@@ -983,9 +917,7 @@ export const strands: Strand[] = [
 	}
 ];
 
-export const questionList: Question[] = htmlSections
-	.flatMap((section) => section.questions)
-	.filter((item): item is Question => item.type !== 'lesson');
+export const questionList: Question[] = htmlSections.flatMap((section) => section.questions);
 
 export const bonusQuestionIds = new Set(
 	questionList.flatMap((question) => (question.bonusId ? [question.bonusId] : []))
@@ -995,9 +927,6 @@ export const requiredQuestionList = questionList.filter(
 );
 
 export const getQuestion = (id: string) => questionList.find((question) => question.id === id);
-export const getCourseItem = (id: string) =>
-	htmlSections.flatMap((section) => section.questions).find((item) => item.id === id);
-
 export const questionSection = (questionId: string) =>
 	htmlSections.find((section) => section.questions.some((question) => question.id === questionId));
 

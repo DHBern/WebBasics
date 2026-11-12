@@ -10,11 +10,7 @@
 
 	function sectionQuestions(sectionId: string): Question[] {
 		const section = htmlSections.find((item) => item.id === sectionId);
-		return (
-			section?.questions.filter(
-				(item): item is Question => item.type !== 'lesson' && !bonusQuestionIds.has(item.id)
-			) ?? []
-		);
+		return section?.questions.filter((item) => !bonusQuestionIds.has(item.id)) ?? [];
 	}
 
 	function reset() {

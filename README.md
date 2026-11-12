@@ -24,36 +24,49 @@ stable when reordering content.
 All multiple-choice cards show a shared "Select all correct answers" note above
 the options, so prompts should not repeat it.
 
-For multiple-choice questions, an optional array of Markdown blocks can be
-placed between the title and options: `mcq('id', 'Title', ['Question text',
-'```html\n<p>Example</p>\n```'], [option(...)], 'Feedback')`. Each array item
-is rendered inside the exercise, before the options. Existing calls without a
-description remain supported. Description changes invalidate saved answers,
-and descriptions are included in exported submissions.
+All exercise helpers take one object with the same shared fields:
+`slug` (stable ID), `title`, optional `question` (the body), optional `feedback`,
+and optional `bonusId`. Text fields accept a Markdown string or an array of
+Markdown blocks, including fenced code. Keep titles short; put explanations and
+examples in `question`, which renders before the controls and is included in
+exports. Multiline titles remain supported. Body changes invalidate saved answers.
 
-All exercise bodies support a Markdown string with blank lines and fenced code
-blocks, or an array of Markdown blocks. Keep the title short and put the body in
-the third argument: `input('id', 'Title', ['First paragraph', '```html\n<p>Code</p>\n```',
-'Last paragraph'], ['Feedback paragraph', '```html\n<p>Explanation</p>\n```'], 'bonus-id')`.
-For `dragAndDrop(...)` and `sort(...)`, the third argument is the instructions
-body; items, targets, and the answer key follow it as before. These bodies render
-before the interactive controls and are retained in exported submissions.
+```ts
+input({
+	slug: 'semantic-definition',
+	title: 'Definition with examples and motivation',
+	question: [
+		'Give a few examples of semantic HTML elements and explain why they are important.',
+		'If unsure, read a definition and answer in your own words.'
+	]
+});
 
-The second argument (the question/title) also accepts an array of Markdown blocks,
-for example `sort('id', ['First paragraph', '```html\n<h1>Example</h1>\n```',
-'Another paragraph'], 'Instructions', items, targets, answerKey, feedback, 'bonus-id')`.
-Multiline questions render as block Markdown rather than inside a heading.
-Existing single-line titles remain headings.
+mcq({
+	slug: 'example',
+	title: 'Choose an element',
+	question: ['Which element represents a paragraph?'],
+	options: [
+		{ id: 'p', text: '`<p>`', correct: true },
+		{ id: 'span', text: '`<span>`', correct: false }
+	],
+	feedback: ['A paragraph uses `<p>`.']
+});
+```
 
-Feedback accepts a Markdown string (including multiple paragraphs and fenced
-code) or an array of Markdown blocks. Exercises can optionally link to a
-separately defined bonus exercise by passing its ID as their final argument,
-for example `mcq('id', 'Title', [option(...)], 'Feedback', 'bonus-id')`.
-Omitting the ID means there is no linked bonus. Define the bonus in the section's
-question list using `input(...)`, `mcq(...)`, or a placement exercise with that
-ID; it appears after the parent is answered and is not required for completion.
-Use `undefined` for omitted optional arguments before the bonus ID. `sort(...)`,
-`dragAndDrop(...)`, and `input(...)` also take the bonus ID as their final argument.
+`sort({...})` and `dragAndDrop({...})` additionally require `question`, `items`,
+`targets`, and `answerKey` (an item-ID-to-target-ID dictionary). Answer keys are
+defined directly in each exercise rather than looked up implicitly.
+Internally, `slug` maps to the existing `id`, `title` to `prompt`, and `question`
+to `description` or `instructions`; saved-answer and export formats are unchanged.
+
+Render an exercise in the section's `.svx` file using
+`<ExerciseCard question={getQuestion('semantic-definition')} />`.
+The ID must match its `slug`. An optional `bonusId` links to another exercise
+defined in the section's question list; it appears after the parent is answered
+and is excluded from required completion. Omit unused properties entirely.
+Lesson exercise types are no longer supported; existing section `lesson` strings
+in `course.ts` are retained as inactive reference text.
+
 Text input answers are ungraded, saved separately, and included in exports only
 when submitted. **Edit answer** reopens a submitted input response; **Save answer**
 replaces it, and JSON exports use the latest saved response. Unsaved edits do not

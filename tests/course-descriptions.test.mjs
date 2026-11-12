@@ -62,13 +62,13 @@ test('MCQ descriptions retain ordered paragraphs and code blocks inside the ques
 		'```html\n<p>Visible text</p><!-- internal note -->\n```',
 		'Which statement is correct?'
 	];
-	const exercise = mcq(
-		'example',
-		'Title',
-		blocks,
-		[{ id: 'a', text: 'A', correct: true }],
-		['Feedback paragraph.', '```html\n<p>Feedback example</p>\n```', 'Another paragraph.']
-	);
+	const exercise = mcq({
+		slug: 'example',
+		title: 'Title',
+		question: blocks,
+		options: [{ id: 'a', text: 'A', correct: true }],
+		feedback: ['Feedback paragraph.', '```html\n<p>Feedback example</p>\n```', 'Another paragraph.']
+	});
 	assert.deepEqual(exercise.description, blocks);
 	const html = exercise.description.map(renderMarkdown).join('');
 	assert.match(html, /<p>Consider the following HTML:<\/p>/);
@@ -83,35 +83,74 @@ test('MCQ descriptions retain ordered paragraphs and code blocks inside the ques
 		renderMarkdown('One paragraph.\n\n```html\n<p>Code</p>\n```\n\nAnother paragraph.'),
 		/<pre\b[^>]*><code class="language-html">/
 	);
-	const withoutDescription = mcq(
-		'example-2',
-		'Title',
-		[{ id: 'a', text: 'A', correct: true }],
-		exercise.feedback,
-		'bonus'
-	);
+	const withoutDescription = mcq({
+		slug: 'example-2',
+		title: 'Title',
+		options: [{ id: 'a', text: 'A', correct: true }],
+		feedback: exercise.feedback,
+		bonusId: 'bonus'
+	});
 	assert.equal(withoutDescription.options[0].id, 'a');
 	assert.deepEqual(withoutDescription.feedback, exercise.feedback);
 	assert.equal(withoutDescription.bonusId, 'bonus');
 });
 
-test('all exercise constructors accept an optional final bonus exercise ID', () => {
+test('all exercise constructors accept an optional named bonus exercise ID', () => {
 	const items = [{ id: 'item', text: 'Item' }];
 	const targets = [{ id: 'target', label: 'Target' }];
 	const answerKey = { item: 'target' };
-	assert.equal(mcq('m', 'Title', [], undefined, 'bonus').bonusId, 'bonus');
-	assert.equal(input('i', 'Title', undefined, undefined, 'bonus').bonusId, 'bonus');
 	assert.equal(
-		sort('s', 'Title', 'Instructions', items, targets, answerKey, undefined, 'bonus').bonusId,
+		mcq({
+			slug: 'm',
+			title: 'Title',
+			options: [],
+			bonusId: 'bonus'
+		}).bonusId,
 		'bonus'
 	);
 	assert.equal(
-		dragAndDrop('d', 'Title', 'Instructions', items, targets, answerKey, undefined, 'bonus')
-			.bonusId,
+		input({
+			slug: 'i',
+			title: 'Title',
+			bonusId: 'bonus'
+		}).bonusId,
 		'bonus'
 	);
 	assert.equal(
-		dragAndDrop('url-parts', 'Title', 'Instructions', items, targets, 'Feedback', 'bonus').bonusId,
+		sort({
+			slug: 's',
+			title: 'Title',
+			question: 'Instructions',
+			items: items,
+			targets: targets,
+			answerKey: answerKey,
+			bonusId: 'bonus'
+		}).bonusId,
+		'bonus'
+	);
+	assert.equal(
+		dragAndDrop({
+			slug: 'd',
+			title: 'Title',
+			question: 'Instructions',
+			items: items,
+			targets: targets,
+			answerKey: answerKey,
+			bonusId: 'bonus'
+		}).bonusId,
+		'bonus'
+	);
+	assert.equal(
+		dragAndDrop({
+			slug: 'url-parts',
+			title: 'Title',
+			question: 'Instructions',
+			items: items,
+			targets: targets,
+			answerKey: answerKey,
+			feedback: 'Feedback',
+			bonusId: 'bonus'
+		}).bonusId,
 		'bonus'
 	);
 });
@@ -186,7 +225,11 @@ test('comment visibility links to a standalone input with the edited Markdown bo
 	);
 	assert.ok(bonusQuestionIds.has(bonus.id));
 	assert.ok(!requiredQuestionList.some((item) => item.id === bonus.id));
-	const ordinary = mcq('other', 'Title', [{ id: 'a', text: 'A', correct: true }]);
+	const ordinary = mcq({
+		slug: 'other',
+		title: 'Title',
+		options: [{ id: 'a', text: 'A', correct: true }]
+	});
 	assert.equal(ordinary.bonusId, undefined);
 	assert.equal(questionRevision({ ...question, bonusId: undefined }), questionRevision(question));
 });
@@ -199,10 +242,41 @@ test('all exercise types preserve Markdown bodies, feedback and linked bonuses',
 	const key = { item: 'target' };
 	for (const body of [blocks, blocks.join('\n\n')]) {
 		const exercises = [
-			mcq('m', 'Title', body, [{ id: 'a', text: 'A', correct: true }], feedback, 'bonus'),
-			input('i', 'Title', body, feedback, 'bonus'),
-			dragAndDrop('d', 'Title', body, items, targets, key, feedback, 'bonus'),
-			sort('s', 'Title', body, items, targets, key, feedback, 'bonus')
+			mcq({
+				slug: 'm',
+				title: 'Title',
+				question: body,
+				options: [{ id: 'a', text: 'A', correct: true }],
+				feedback: feedback,
+				bonusId: 'bonus'
+			}),
+			input({
+				slug: 'i',
+				title: 'Title',
+				question: body,
+				feedback: feedback,
+				bonusId: 'bonus'
+			}),
+			dragAndDrop({
+				slug: 'd',
+				title: 'Title',
+				question: body,
+				items: items,
+				targets: targets,
+				answerKey: key,
+				feedback: feedback,
+				bonusId: 'bonus'
+			}),
+			sort({
+				slug: 's',
+				title: 'Title',
+				question: body,
+				items: items,
+				targets: targets,
+				answerKey: key,
+				feedback: feedback,
+				bonusId: 'bonus'
+			})
 		];
 		for (const exercise of exercises) {
 			const description = exercise.description ?? exercise.instructions;
@@ -223,16 +297,37 @@ test('all exercise types preserve Markdown bodies, feedback and linked bonuses',
 	}
 });
 
-test('all exercise types accept paragraph and code-block arrays as the question argument', () => {
+test('all exercise types preserve Markdown arrays in the title field', () => {
 	const prompt = ['First paragraph.', '```html\n<p>Code</p>\n```', 'Last paragraph.'];
 	const items = [{ id: 'item', text: 'Item' }];
 	const targets = [{ id: 'target', label: 'Target' }];
 	const key = { item: 'target' };
 	const questions = [
-		dragAndDrop('d', prompt, 'Instructions', items, targets, key),
-		sort('s', prompt, 'Instructions', items, targets, key),
-		input('i', prompt),
-		mcq('m', prompt, [{ id: 'a', text: 'A', correct: true }])
+		dragAndDrop({
+			slug: 'd',
+			title: prompt,
+			question: 'Instructions',
+			items: items,
+			targets: targets,
+			answerKey: key
+		}),
+		sort({
+			slug: 's',
+			title: prompt,
+			question: 'Instructions',
+			items: items,
+			targets: targets,
+			answerKey: key
+		}),
+		input({
+			slug: 'i',
+			title: prompt
+		}),
+		mcq({
+			slug: 'm',
+			title: prompt,
+			options: [{ id: 'a', text: 'A', correct: true }]
+		})
 	];
 	for (const question of questions) {
 		assert.equal(question.prompt, prompt.join('\n\n'));
