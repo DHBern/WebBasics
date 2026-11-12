@@ -203,7 +203,7 @@
 	</div>
 {/snippet}
 
-<section class="exercise-card" aria-labelledby={`${question.id}-prompt`}>
+<section class="exercise-card drag-and-drop-card" aria-labelledby={`${question.id}-prompt`}>
 	<h3 id={`${question.id}-prompt`} class="text-lg font-semibold text-slate-950">
 		{@html renderInline(question.prompt)}
 	</h3>

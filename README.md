@@ -27,6 +27,8 @@ The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
 uses SVG text, brackets, and HTML dropzones inside
 `foreignObject` elements in one coordinate system. It scrolls horizontally on
 narrow screens to keep the bracket endpoints aligned with the code.
+Drag-and-drop cards can extend beyond the normal content width on wide screens;
+on narrow screens the diagram remains horizontally scrollable.
 The button example distinguishes the class-attribute and class names, the
 style-attribute and CSS declarations, and the valueless boolean `disabled`
 attribute. Separate bracket rows and gaps distinguish nested and
