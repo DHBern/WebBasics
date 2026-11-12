@@ -242,7 +242,7 @@
 						</button>
 				{/each}
 			</div>
-			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination. Drop outside a destination to return an item here. To drag with the keyboard, press Space, use the arrow keys or Tab, then press Space to drop.</p>
+			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination.</p>
 		</div>
 
 		{#if question.id === 'url-parts' || question.id === 'url-query-params'}
