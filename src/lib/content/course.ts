@@ -578,10 +578,38 @@ export const htmlSections: CourseSection[] = [
 					'The valid heading elements are `<h1>` through `<h6>`. `<h1>` is the largest heading level and `<h6>` the smallest; `<h0>`, `<h7>` and `<h8>` do not exist.'
 			}),
 			dragAndDrop({
-				slug: 'block-inline-elements',
-				title: 'Place each element in its usual display category: block or inline.',
+				slug: 'text-elements',
+				title: 'Elements for textual mark-up',
 				question:
-					'These are the elements’ default browser display categories; CSS can change them.',
+					['Match each element with its meaning.'],
+				items: [
+					{ id: 'p', text: '<p>' },
+					{ id: 'strong', text: '<strong>' },
+					{ id: 'em', text: '<em>' },
+					{ id: 'b', text: '<b>' },
+					{ id: 'i', text: '<i>' }
+				],
+				targets: [
+					{ id: "p", label: 'paragraph'},
+					{ id: "strong", label: 'important'},
+					{ id: "em", label: 'emphasis'},
+					{ id: "b", label: 'bold'},
+					{ id: "i", label: 'italic'}
+				],
+				answerKey: {
+					p: "p",
+					strong: "strong",
+					em: "em",
+					b: "b",
+					i: "i"
+				},
+				feedback: ["COMMENT ON strong vs. em vs. b vs. i."]
+			}),
+			dragAndDrop({
+				slug: 'block-inline-elements',
+				title: 'Block and inline Elements',
+				question:
+					['Place each element in its usual display category: block or inline.'],
 				items: [
 					{ id: 'p', text: '<p>' },
 					{ id: 'h1', text: '<h1>' },
@@ -618,8 +646,7 @@ export const htmlSections: CourseSection[] = [
 					img: 'inline',
 					main: 'block'
 				},
-				feedback:
-					'The usual browser display is block for `<p>`, headings, `<blockquote>`, `<div>`, and `<main>`; inline for `<strong>`, `<em>`, `<b>`, `<i>`, `<q>`, `<span>`, `<a>`, and `<img>`. CSS can change display behavior. Prefer semantically correct tags; `<span>` and `<div>` have no semantic meaning.\n\n**Further Reading:** [Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) · [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) · [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features)'
+				feedback: ["Note, these are the elements’ default browser display categories. CSS can change them."]
 			})
 		]
 	},

@@ -10,28 +10,28 @@
 
 Headings, paragraphs, and emphasis give text a readable structure. In HTML, these choices describe the role of the text, not just how it looks.
 
-Explore heading levels and how different elements fit into the flow of a page.
-
-</ExerciseBridge>
-
-<ExerciseBridge title="Sort the headings">
-
-Sort the headings from small size to large size. Only move elements that really exist.
-
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('heading-order')} />
 
-<ExerciseBridge title="Block and inline elements">
+<ExerciseCard question={getQuestion('text-elements')} />
 
-Sort these elements based on whether they act as blocks or inline elements.
+<ExerciseBridge title="Flow" size="wide">
+
+An important aspect of semantic elements in HTML is their flow-behavior. We separate between **block elements** and **inline elements.**
+
+Watch this short [video by MDN on Flow] (just minute 1:00 until 2:30) for a great summary. Then return to the following exercise.
 
 </ExerciseBridge>
 
+
 <ExerciseCard question={getQuestion('block-inline-elements')} />
 
-<ExerciseBridge title="Further reading">
 
-[Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) · [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) · [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features)
+<ExerciseBridge title="Further reading" size="wide">
+
+- [Headings and paragraphs](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs) by MDN.
+- [Emphasis and importance](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Emphasis_and_importance) by MDN.
+- [Advanced text features](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features) by MDN.
 
 </ExerciseBridge>

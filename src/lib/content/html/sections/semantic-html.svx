@@ -23,7 +23,7 @@ In the previous section on the basic webpage structure we already got a glimpse 
 
 <ExerciseBridge title="It's about accessibility" size="wide">
 
-Consider, what a website communicates even without its visual styling. After all, semantic HTML is all about making a website **accessible**. 
+Consider, what a website communicates even without its visual styling. After all, semantic HTML is an important **key element for making a website accessible**. 
 
 - For humans, with their different needs and interests.
 - And for machines, be it screen readers, printers, web crawlers, search engines, ...
@@ -51,9 +51,11 @@ But now, let's turn to visual styling once again. If you carefully read the feed
 
 
 
-<ExerciseBridge title="Semantic Dates and Times", size="wide">
+<ExerciseBridge title="DH Focus: Semantic Dates and Times", size="wide">
 
-With semantic markup you can go really deep. For example, you can mark up dates and times, which is of high importance for many DH related tasks. Imagine you want to publish a heterogenous dataset where dates and times occur in various formats. [This is](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates) how you would serve it as unambiguous HTML, while preserving the source formatting.
+With semantic markup you can go really deep. Highly relevant, especially for DH related matters, is how to mark up dates and times.
+
+Imagine you want to publish a heterogenous dataset where dates and times occur in various formats. [This is](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates) how you would encode the dates as unambiguous, semantic HTML, while preserving the source formatting in the displayed text.
 
 </ExerciseBridge>
 
