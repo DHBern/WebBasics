@@ -1,11 +1,20 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
 ### URL Structure
 
-Web addresses appear before you begin writing HTML: a URL can point to a page and, sometimes, to a more specific place or search context. In these exercises, read each address as information the browser can use. Start with a Wikipedia article, then examine the settings attached to a search, and finally use a converter to explore how special characters are represented. Try each activity before reading its feedback; the explanations give the complete answers as well as the reasons behind them.
+<ExerciseBridge title="In this section...">
+
+Web addresses appear before you begin writing HTML: a URL can point to a page and, sometimes, to a more specific place or search context. 
+
+In these exercises, read each address as information the browser can use. 
+
+**Important reminder:** Try each activity before reading its feedback; the explanations give the complete answers as well as the reasons behind them.
+
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('url-parts')} />
 

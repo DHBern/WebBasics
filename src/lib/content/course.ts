@@ -173,8 +173,8 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			dragAndDrop(
 				'url-parts',
-				'Exercise 1: Identify the parts of `https://en.wikipedia.org/wiki/Digital_humanities#Definition`.',
-				'Drag each category label onto the matching text in the URL. Treat the displayed path as one piece.',
+				'Exercise 1: Identify the parts of and URL.',
+				['This exercise is about how to call the different parts of an URL, like e.g.  `https://en.wikipedia.org/wiki/Digital_humanities#Definition`. Drag each category label onto the matching text in the URL. Treat the displayed path as one piece.'],
 				[
 					{ id: 'protocol', text: 'Protocol' },
 					{ id: 'subdomain', text: 'Subdomain' },
