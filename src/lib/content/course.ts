@@ -352,7 +352,7 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			mcq(
 				'valid-html-comments',
-				'HTML comment syntax',
+				'HTML Comment Syntax',
 				['What are valid ways to wrap a comment in HTML?'],
 				[
 					option('html-comment', '`<!-- A comment -->`', true),
@@ -360,14 +360,15 @@ export const htmlSections: CourseSection[] = [
 					option('slash-comment', '`// ...`', false),
 					option('c-comment', '`/* ... */`', false)
 				],
-				'Answers 1 and 2 use the HTML comment delimiters `<!--` and `-->`; HTML comments can span more than one line, for example:\n\n```html\n<!--\n  This comment spans more than one line.\n-->\n```\n\n`//` is used for single-line JavaScript comments, while `/* ... */` is used for comments in CSS and JavaScript. None of these comment forms is displayed as page content.'
+				['Answers 1 and 2 use the HTML comment delimiters `<!--` and `-->`; HTML comments can span more than one line, for example:\n\n```html\n<!--\n  This comment\n  spans more than\n  one line.\n-->\n```\n\n', 
+        '`//` is used for JavaScript comments, while `/* ... */` is used for comments in CSS and JavaScript.']
 			),
 			mcq(
 				'comment-visibility',
 				'Comments Visibility',
 				['"Comments in HTML are invisible to the user." True or false?'],
 				[option('true', 'True', true), option('false', 'False', true)],
-				'Well, this is a tricky one: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. This means that anyone can inspect the source and read them. So NEVER put passwords or other secrets in comments.',
+				'Well, this was a tricky one: HTML comments are not displayed on the rendered page, but they remain visible in the HTML source. This means that anyone can inspect the source and read them. So NEVER put passwords or other secrets in comments.',
 				'comment-visibility-bonus'
 			),
 			input('comment-visibility-bonus', "Let's test this on a real page!", [
@@ -382,7 +383,7 @@ export const htmlSections: CourseSection[] = [
 			dragAndDrop(
 				'html-parts',
 				'Parts of an HTML element',
-				'Place each label at the matching bracket in the HTML example. Identify the button element, its `class` and `style` attributes, and its `disabled` boolean attribute. The `class` attribute contains two class names. The smaller brackets mark attribute names and values; `disabled` has no value here. Scroll horizontally if needed to see the whole example.',
+				'Place each label at the matching bracket in the HTML example.',
 				[
 					{ id: 'element', text: 'Element' },
 					{ id: 'opening-tag', text: 'Opening tag' },
@@ -462,7 +463,7 @@ export const htmlSections: CourseSection[] = [
 			),
 			mcq(
 				'img-void-element',
-				'Void elements',
+				'Debugging an image',
 				'What is wrong with this HTML?\n\n```html\n<img src="../img/icon.jpeg" alt="Icon"></img>\n```',
 				[
 					option('correct', 'Everything is correct.', false),
@@ -471,16 +472,17 @@ export const htmlSections: CourseSection[] = [
 					option('text', 'Text is missing between `<img>` and `</img>`.', false),
 					option(
 						'void',
-						'An `<img>` element is a void element and must not have a closing tag.',
+						'An `<img>` element must not have a closing tag.',
 						true
 					)
 				],
-				'`img` is a void element and must not have an end tag. Write `<img src="..." alt="Icon">`. The optional trailing slash in `<img ... />` is permitted in HTML, but it does not close the element and is not required.'
+				['`img` is a so called **void element** (also called **self-closing element**) and must not have an end tag. Write `<img src="..." alt="Icon">`. The optional trailing slash in `<img ... />` is permitted in HTML, but it is not required.',
+				'Other common examples for void elements are `<br>` (for breaks), `<hr>` (for thematic breaks), and `<input>` (for text-inputs in forms).']
 			),
 			mcq(
 				'overlapping-tags',
-				'Nesting elements',
-				"What went wrong here?\n\n```html\n<p>I didn't expect to find the <em>next-door neighbor's <strong>cat</em></strong> here!</p>\n```",
+				'Debugging Nested Elements',
+				"What went wrong here?\n\n```html\n<p>I didn't expect to find the <em>neighbor's <strong>cat</em></strong> here!</p>\n```",
 				[
 					option('works', 'Everything works just fine.', false),
 					option(
@@ -495,7 +497,7 @@ export const htmlSections: CourseSection[] = [
 					),
 					option('invalid', 'This is invalid HTML.', true)
 				],
-				'Browsers may repair misnested formatting elements, but the source is invalid HTML. It is better to write correct markup in the first place. The [HTML validator](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML#html_validation) can help find errors.'
+				"Browsers indeed may repair misnested formatting elements, but the source is invalid HTML. It is better to write correct markup in the first place. Tools like [Mozilla's HTML validator](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML#html_validation) can help find errors."
 			),
 			mcq(
 				'html-indentation',
@@ -538,12 +540,13 @@ export const htmlSections: CourseSection[] = [
 					option('header', '`<header>`', true),
 					option('nav', '`<nav>`', true)
 				],
-				'The `<head>` contains document metadata. A page’s visible header may contain a `<nav>` element; `<nav>` also has its own semantic meaning.'
+				['The `<head>` contains document metadata and is invisible to the user.',
+				 'A `<header>`, in turn, is rendered on the page and may contain a `<nav>` element. This is where you usually would place the main navigation.']
 			),
 			dragAndDrop(
 				'body-element-tree',
-				'Place the elements in a basic webpage structure. Put elements from the head in the invisible area and the remaining elements in the body tree.',
-				'Build the nested structure shown. Both `<head>` and `<title>` belong in the collective invisible area.',
+				'Basic Website Structure',
+				['Use the provided elements to build up the given webpage structure. Put invisible elements to the corresponding area and all the remaining elements in the body tree.'],
 				[
 					{ id: 'head', text: '<head>' },
 					{ id: 'title', text: '<title>' },
@@ -588,7 +591,8 @@ export const htmlSections: CourseSection[] = [
 					aside: 'aside-target',
 					footer: 'footer-target'
 				},
-				'The `<head>` and `<title>` are not displayed in the page. A `<header>` contains the site navigation; `<main>` contains the article and adjacent related-links `<aside>`, followed by the footer.'
+				['The `<head>` and `<title>` are not displayed in the page. A `<header>` contains the site navigation; `<main>` contains one or multiple `<article>` elements, each of which can be devided into sections using `<section>`. Related material like cross-references and related links belong inside the `<aside>` or `<footer>` block.',
+				"Note that `<aside>` will not automatically appear beside the article — by default it just sits below like any other element. Placing it on the side is CSS's job, not HTML's. What semantic elements give you instead is meaning: screen readers for visually impaired users can navigate by landmarks, and browser reading modes can tell content from clutter. Try it yourself: go to a newspaper page like republik.ch and toggle on the reading view of your browser (Firefox: page icon in the address bar; Safari: Show Reader). The ads, navigation, and asides disappear, leaving only the article — and that's thanks to <main>."]
 			)
 		],
 		lesson:

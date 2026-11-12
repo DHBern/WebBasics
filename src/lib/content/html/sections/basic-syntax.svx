@@ -4,7 +4,7 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-<ExerciseBridge title="Let's start with..." size="wide">
+<ExerciseBridge title="Next up:" size="wide">
 
 # Basic Syntax
 
@@ -16,26 +16,34 @@ Start by identifying the parts of an element, then explore how elements fit toge
 
 <ExerciseCard question={getQuestion('html-parts')} />
 
-<ExerciseBridge title="Void elements">
-	<p>Not all elements have the same structure. Next, consider an image.</p>
+<ExerciseBridge title="With these basics in mind...">
+	
+	Let's do some debugging!
+
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('img-void-element')} />
 
 <ExerciseBridge title="Nesting elements">
-	<p>Elements can also contain other elements. Their nesting determines how the parts fit together.</p>
+	
+	Elements can also contain other elements. But you have to be careful, since not every element can be a child or parent of any other element.
+
+	And there is another important trap, you should be aware of...
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('overlapping-tags')} />
 
 <ExerciseBridge title="Readable code">
-	<p>Finally, consider how formatting helps people read HTML.</p>
+	
+	Finally, consider how formatting helps people read HTML.
+
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('html-indentation')} />
 
-<ExerciseBridge title="Further reading">
+<ExerciseBridge title="Further reading" size="wide">
 
-[Elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [Attributes (MDN)](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)
+- [List of all HTML-Elements](https://www.w3schools.com/tags/ref_byfunc.asp) by W3Schools.
+- [List of all Attributes](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes) by MDN.
 
 </ExerciseBridge>

@@ -116,7 +116,7 @@ a {
 
 .exercise-feedback {
 	position: relative;
-	margin: 0.75rem 0 1.5rem 1.25rem;
+	margin: 2.75rem 0 1.5rem 1.25rem;
 	border: 1px solid #a5f3fc;
 	border-radius: 0.9rem;
 	background: #ecfeff;
@@ -126,10 +126,10 @@ a {
 
 .exercise-feedback::before {
 	position: absolute;
-	top: -0.75rem;
-	left: 1rem;
-	height: 0.75rem;
-	border-left: 2px solid #67e8f9;
+	top: -2.75rem;
+	left: 2rem;
+	height: 2.75rem;
+	border-left: 2px solid black;
 	content: '';
 }
 
@@ -194,11 +194,14 @@ a {
 
 .sort-target {
 	position: relative;
-	border: 1px dashed #cbd5e1;
+	/* border: 1px dashed #cbd5e1; */
 	border-radius: 0.7rem;
-	background: #f8fafc;
+	/* background: #f8fafc; */
 	padding: 0.45rem;
 	margin-left: calc(var(--target-depth, 0) * 1.15rem);
+}
+.sort-target-short {
+	width: 150px;
 }
 
 .exercise-dnd-zone {

@@ -12,7 +12,7 @@
 	import ExerciseDebug from './ExerciseDebug.svelte';
 	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
-	let { question }: { question: DragAndDropQuestion } = $props();
+	let { question, targetWidth='full' }: { question: DragAndDropQuestion, targetWidth: 'short'|'full' } = $props();
 	let draftPlacements = $state<Record<string, string>>({});
 	let selectedItemId = $state('');
 	let shuffledItems = $state<DragAndDropQuestion['items']>([]);
@@ -179,7 +179,7 @@
 {#snippet targetSlot(targetId: string)}
 	{@const target = question.targets.find((candidate) => candidate.id === targetId)}
 	{@const placedItems = zones[targetId] ?? []}
-	<div class="sort-target" role="group" aria-label={target?.label ?? 'Dropzone'}>
+	<div class={['sort-target', targetWidth==='short' && 'sort-target-short']} role="group" aria-label={target?.label ?? 'Dropzone'}>
 		<div
 			class="exercise-dnd-zone flex flex-wrap gap-2"
 			use:dndzone={{
@@ -306,25 +306,25 @@
 					{@render targetSlot('invisible-target')}
 				</div>
 				<div class="webpage-body-frame">
-					<div class="webpage-role-label">Page body</div>
+					<!-- <div class="webpage-role-label">Page body</div> -->
 					{@render targetSlot('body-target')}
 					<div class="webpage-header">
-						<div class="webpage-role-label">Site header</div>
+						<!-- <div class="webpage-role-label">Site header</div> -->
 						{@render targetSlot('header-target')}
 						<div class="webpage-nav">
-							<div class="webpage-role-label">Site navigation</div>
+							<!-- <div class="webpage-role-label">Site navigation</div> -->
 							{@render targetSlot('nav-target')}
 						</div>
 					</div>
 					<div class="webpage-main">
-						<div class="webpage-role-label">Primary content</div>
+						<!-- <div class="webpage-role-label">Primary content</div> -->
 						{@render targetSlot('main-target')}
 						<div class="webpage-columns">
 							<div class="webpage-article">
-								<div class="webpage-role-label">Article content</div>
+								<!-- <div class="webpage-role-label">Article content</div> -->
 								{@render targetSlot('article-target')}
 								<div class="webpage-section">
-									<div class="webpage-role-label">Article section</div>
+									<!-- <div class="webpage-role-label">Article section</div> -->
 									{@render targetSlot('section-target')}
 								</div>
 							</div>
@@ -335,7 +335,7 @@
 						</div>
 					</div>
 					<div class="webpage-footer">
-						<div class="webpage-role-label">Footer details</div>
+						<!-- <div class="webpage-role-label">Footer details</div> -->
 						{@render targetSlot('footer-target')}
 					</div>
 				</div>

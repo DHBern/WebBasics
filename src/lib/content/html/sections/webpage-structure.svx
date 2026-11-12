@@ -4,7 +4,7 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-<ExerciseBridge title="Let's start with..." size="wide">
+<ExerciseBridge title="Next up:" size="wide">
 
 # Webpage Structure
 
@@ -16,9 +16,9 @@ Explore how these parts form a complete document.
 
 <ExerciseCard question={getQuestion('head-header-nav')} />
 
-<ExerciseBridge title="Build the webpage structure">
+<ExerciseBridge title="And now...">
 
-The original exercise asks you to place body elements in a basic website layout and head elements in the invisible part of the document. Build the nested structure; CSS can place an `<aside>` next to `<main>`.
+ Let's build a full page!
 
 </ExerciseBridge>
 

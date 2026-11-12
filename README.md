@@ -85,7 +85,7 @@ does not rewrite source files.
 
 Every section renders its content in `ExercisePath`, which connects consecutive
 top-level exercises and bridges with curved lines and generous vertical spacing.
-Start each section with a wide bridge titled "Let's start with...", containing
+Start each section with a wide bridge titled "Next up:", containing
 the topic as a Markdown heading and a short introduction.
 Use `<ExerciseBridge title="Short title">` with one or more paragraphs for
 transition or closing text. Bridges have white backgrounds and the same border as

@@ -4,7 +4,7 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-<ExerciseBridge title="Let's start with..." size="wide">
+<ExerciseBridge title="Next up:" size="wide">
 
 # Links and Anchors
 
