@@ -10,7 +10,9 @@ import {
 	requiredQuestionList,
 	bonusQuestionIds
 } from '../src/lib/content/course.ts';
-import { renderMarkdown } from '../src/lib/content/markdown.ts';
+import { renderInline, renderMarkdown } from '../src/lib/content/markdown.ts';
+import { compile } from 'mdsvex';
+import markdownLinks from '../src/lib/content/markdown-links.js';
 import { analyzeSubmissions } from '../src/lib/content/analysis.ts';
 
 function codeText(html) {
@@ -22,6 +24,34 @@ function codeText(html) {
 		.replaceAll('&gt;', '>')
 		.replaceAll('&amp;', '&');
 }
+
+test('Markdown links open a new tab in block and inline exercise text', () => {
+	for (const render of [renderMarkdown, renderInline]) {
+		for (const destination of ['https://example.com/', '/courses/html/comments/', '#details']) {
+			const html = render(`[Read **more**](${destination} "Details")`);
+			assert.match(html, /target="_blank"/);
+			assert.match(html, /rel="noopener noreferrer"/);
+			assert.match(html, /title="Details"/);
+			assert.match(html, /Read <strong>more<\/strong>/);
+		}
+		assert.doesNotMatch(render('`[Example](https://example.com/)`'), /<a /);
+	}
+});
+
+test('section Markdown links open new tabs without changing explicit navigation links', async () => {
+	const result = await compile(
+		'[Read more](https://example.com/)\n\n<a href="/courses/html/comments/">Next section</a>\n\n`[Example](https://example.com/)`',
+		{ rehypePlugins: [markdownLinks] }
+	);
+	const link = result.code.match(/<a\s[^>]*>Read more<\/a>/)?.[0];
+	assert.ok(link);
+	assert.match(link, /href="https:\/\/example.com\/"/);
+	assert.match(link, /target="_blank"/);
+	assert.match(link, /rel="[^"]*\bnoopener\b[^"]*"/);
+	assert.match(link, /rel="[^"]*\bnoreferrer\b[^"]*"/);
+	assert.match(result.code, /<a href="\/courses\/html\/comments\/">Next section<\/a>/);
+	assert.equal((result.code.match(/target="_blank"/g) ?? []).length, 1);
+});
 
 test('MCQ descriptions retain ordered paragraphs and code blocks inside the question', () => {
 	const question = getQuestion('valid-html-comments');
@@ -152,7 +182,7 @@ test('comment visibility links to a standalone input with the edited Markdown bo
 	assert.ok(Array.isArray(bonus.description));
 	assert.match(
 		bonus.description.map(renderMarkdown).join(''),
-		/<a href="https:\/\/www\.wikipedia\.org\/">Wikipedia<\/a>/
+		/<a [^>]*href="https:\/\/www\.wikipedia\.org\/">Wikipedia<\/a>/
 	);
 	assert.ok(bonusQuestionIds.has(bonus.id));
 	assert.ok(!requiredQuestionList.some((item) => item.id === bonus.id));

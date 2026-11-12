@@ -63,6 +63,9 @@ Submitted exercises of every type use a green border and shadow, regardless of
 correctness. This completion marker remains while practising or editing a saved
 answer and clears when the saved answer is reset or invalidated.
 
+Markdown links in sections, exercises, and feedback open in a new tab with
+`rel="noopener noreferrer"`. Explicit HTML/Svelte navigation links are unchanged.
+
 The reusable quiz controls are in `src/lib/components/`. Drag-and-drop and sort
 exercises show interaction hints in a shared top-right info tooltip. Hover, focus,
 or tap the icon to open it; press Escape, tap again, or tap outside to dismiss it.

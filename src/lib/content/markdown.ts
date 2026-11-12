@@ -1,8 +1,13 @@
-import { Marked } from 'marked';
+import { Marked, Renderer } from 'marked';
 import Prism from 'prismjs';
 
 const marked = new Marked({
 	renderer: {
+		link(token) {
+			return Renderer.prototype.link
+				.call(this, token)
+				.replace('<a ', '<a target="_blank" rel="noopener noreferrer" ');
+		},
 		code({ text, lang }) {
 			const language = lang?.split(/\s+/)[0].toLowerCase();
 			if (!language || !Object.hasOwn(Prism.languages, language)) return false;

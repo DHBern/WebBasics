@@ -3,6 +3,7 @@ import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import markdownLinks from './src/lib/content/markdown-links.js';
 
 export default defineConfig({
 	plugins: [
@@ -11,6 +12,7 @@ export default defineConfig({
 			extensions: ['.svelte', '.svx'],
 			preprocess: mdsvex({
 				extensions: ['.svx'],
+				rehypePlugins: [markdownLinks],
 				highlight: { alias: { html: 'markup' } }
 			}),
 			compilerOptions: {
