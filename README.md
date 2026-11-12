@@ -59,6 +59,10 @@ when submitted. **Edit answer** reopens a submitted input response; **Save answe
 replaces it, and JSON exports use the latest saved response. Unsaved edits do not
 change the exported answer. Previously saved comment bonus responses are migrated.
 
+Submitted exercises of every type use a green border and shadow, regardless of
+correctness. This completion marker remains while practising or editing a saved
+answer and clears when the saved answer is reset or invalidated.
+
 The reusable quiz controls are in `src/lib/components/`. Drag-and-drop and sort
 exercises show interaction hints in a shared top-right info tooltip. Hover, focus,
 or tap the icon to open it; press Escape, tap again, or tap outside to dismiss it.

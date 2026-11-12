@@ -48,6 +48,7 @@
 
 <section
 	class="exercise-card"
+	class:exercise-submitted={Boolean(saved)}
 	data-question-id={question.id}
 	aria-labelledby={`${question.id}-prompt`}
 >

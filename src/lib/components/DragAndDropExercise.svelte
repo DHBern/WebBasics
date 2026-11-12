@@ -230,6 +230,7 @@
 
 <section
 	class="exercise-card drag-and-drop-card"
+	class:exercise-submitted={Boolean(firstAttempt)}
 	data-question-id={question.id}
 	aria-labelledby={`${question.id}-prompt`}
 >
