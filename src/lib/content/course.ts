@@ -296,8 +296,8 @@ export const htmlSections: CourseSection[] = [
       dragAndDrop(
         "url-query-params",
         "Exercise 2: Query parameters",
-        ["Consider the following URL for a simple web search with DuckDuckGo: `https://duckduckgo.com/?q=Digital%20Humanities&df=d&ia=web`. It contains three so called query parameters that contain details about the search. Read each query parameter as an attribute/value pair (also called a name/value pair), written `name=value`.",
-		"Place the description on the pair it represents; `&` separates the pairs."],
+        ["Consider the following URL for a simple web search: `https://duckduckgo.com/?q=Digital%20Humanities&df=d&ia=web`",
+         "After the `?` it contains three so called *query parameters*, separated by an `&`. Each of them carries information about the search. Read each query parameter as a name/value pair (written `name=value`). Can you guess the meaning of each query parameter?"],
         [
           { id: "search-term", text: "Search term" },
           { id: "date-filter", text: "Date filter" },

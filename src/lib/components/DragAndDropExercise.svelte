@@ -218,8 +218,10 @@
 	{#if !shuffleReady}
 		<p class="mt-5 text-sm text-slate-500" role="status">Preparing shuffled items…</p>
 	{:else}
-		<div class="mt-5">
-			<h4 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h4>
+	<div class="mt-5 bg-gray-50 rounded-xl p-5">
+		
+		<h6 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h6>
+			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination.</p>
 			<div
 				class="exercise-dnd-zone flex flex-wrap gap-2"
 				aria-label="Items to place"
@@ -240,7 +242,6 @@
 						</button>
 				{/each}
 			</div>
-			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination.</p>
 		</div>
 
 		{#if question.id === 'url-parts' || question.id === 'url-query-params'}
