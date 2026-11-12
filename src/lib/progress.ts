@@ -1,6 +1,10 @@
 import { browser } from '$app/env';
 import { get, writable } from 'svelte/store';
-import { getQuestion, legacyCommentVisibilityRevision, questionRevision } from './content/course.js';
+import {
+	getQuestion,
+	legacyCommentVisibilityRevision,
+	questionRevision
+} from './content/course.js';
 import type { SavedProgress, SubmittedAnswer } from './content/types.js';
 
 const STORAGE_KEY = 'webbasics.progress.v1';
@@ -25,8 +29,13 @@ function isSubmittedAnswer(value: unknown): value is SubmittedAnswer {
 		typeof value.questionId === 'string' &&
 		typeof value.revision === 'string' &&
 		typeof value.submittedAt === 'string' &&
-		(value.type === 'multiple-choice' || value.type === 'drag-n-drop' || value.type === 'sort' || value.type === 'input') &&
-		(value.type === 'input' ? value.isCorrect === null && typeof value.textResponse === 'string' : typeof value.isCorrect === 'boolean') &&
+		(value.type === 'multiple-choice' ||
+			value.type === 'drag-n-drop' ||
+			value.type === 'sort' ||
+			value.type === 'input') &&
+		(value.type === 'input'
+			? value.isCorrect === null && typeof value.textResponse === 'string'
+			: typeof value.isCorrect === 'boolean') &&
 		(value.selectedOptionIds === undefined || isStringArray(value.selectedOptionIds)) &&
 		(value.placements === undefined ||
 			(isRecord(value.placements) &&
@@ -42,7 +51,9 @@ function persist(next: SavedProgress) {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 	} catch (error) {
 		progressError.set(
-			error instanceof Error ? `Could not save progress: ${error.message}` : 'Could not save progress.'
+			error instanceof Error
+				? `Could not save progress: ${error.message}`
+				: 'Could not save progress.'
 		);
 		throw error;
 	}
@@ -76,7 +87,10 @@ export function hydrateProgress() {
 			if (!question) continue;
 			if (id === 'comment-visibility' && question.type === 'multiple-choice') {
 				const bonus = getQuestion('comment-visibility-bonus');
-				if (bonus?.type === 'input' && value.revision === legacyCommentVisibilityRevision(question, bonus)) {
+				if (
+					bonus?.type === 'input' &&
+					value.revision === legacyCommentVisibilityRevision(question, bonus)
+				) {
 					const { bonusResponse, bonusSubmittedAt, ...answer } = value;
 					restored.answers[id] = { ...answer, revision: questionRevision(question) };
 					if (bonusResponse?.trim()) {

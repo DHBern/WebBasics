@@ -1,5 +1,5 @@
 <script lang="ts">
-	let {changed}: {changed:boolean} = $props();
+	let { changed }: { changed: boolean } = $props();
 </script>
 
 {#if changed}

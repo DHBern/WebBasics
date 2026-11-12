@@ -8,7 +8,7 @@
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
 	import ExerciseDebug from './ExerciseDebug.svelte';
-  import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
+	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
 	let { question }: { question: SortQuestion } = $props();
 	let orderedItems = $state<SortItem[]>([]);
@@ -52,7 +52,10 @@
 		initialItems = [...question.items];
 		for (let index = initialItems.length - 1; index > 0; index--) {
 			const swapIndex = Math.floor(Math.random() * (index + 1));
-			[initialItems[index], initialItems[swapIndex]] = [initialItems[swapIndex], initialItems[index]];
+			[initialItems[index], initialItems[swapIndex]] = [
+				initialItems[swapIndex],
+				initialItems[index]
+			];
 		}
 		if (saved?.placements) {
 			restoreSavedOrder(saved.placements);
@@ -136,7 +139,11 @@
 	}
 </script>
 
-<section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
+<section
+	class="exercise-card"
+	data-question-id={question.id}
+	aria-labelledby={`${question.id}-prompt`}
+>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
 	<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging} />
 	<div class="exercise-description prose max-w-none">
@@ -152,8 +159,18 @@
 		<div
 			class="exercise-dnd-zone flex flex-wrap gap-2"
 			aria-label="Items to place"
-			use:dndzone={{ items: poolItems, type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
-			onconsider={(event) => { poolItems = event.detail.items; dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED; }}
+			use:dndzone={{
+				items: poolItems,
+				type: question.id,
+				dragDisabled: Boolean(saved),
+				morphDisabled: true,
+				centreDraggedOnCursor: true,
+				delayTouchStart: true
+			}}
+			onconsider={(event) => {
+				poolItems = event.detail.items;
+				dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED;
+			}}
 			onfinalize={(event) => finalize(event, 'pool')}
 		>
 			{#each poolItems as item (item.id)}
@@ -169,22 +186,39 @@
 			<ol
 				class="sort-order-list exercise-dnd-zone"
 				aria-label="Heading order"
-				use:dndzone={{ items: orderedItems, type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
-				onconsider={(event) => { orderedItems = event.detail.items; dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED; }}
+				use:dndzone={{
+					items: orderedItems,
+					type: question.id,
+					dragDisabled: Boolean(saved),
+					morphDisabled: true,
+					centreDraggedOnCursor: true,
+					delayTouchStart: true
+				}}
+				onconsider={(event) => {
+					orderedItems = event.detail.items;
+					dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED;
+				}}
 				onfinalize={(event) => finalize(event, 'order')}
 			>
 				{#each orderedItems as item, index (item.id)}
-					{@const itemCorrect = saved && saved.placements?.[item.id] === question.answerKey[item.id]}
+					{@const itemCorrect =
+						saved && saved.placements?.[item.id] === question.answerKey[item.id]}
 					<li class="sort-order-row">
 						<span class="sort-position">{index + 1}</span>
-						<span class="sort-chip" class:answer-correct={Boolean(saved) && itemCorrect} class:answer-incorrect={Boolean(saved) && !itemCorrect}>
+						<span
+							class="sort-chip"
+							class:answer-correct={Boolean(saved) && itemCorrect}
+							class:answer-incorrect={Boolean(saved) && !itemCorrect}
+						>
 							{#if saved}<span aria-hidden="true">{itemCorrect ? '✓' : '✗'}</span>{/if}
 							{item.text}
 						</span>
 					</li>
 				{/each}
 			</ol>
-			{#if !orderedItems.length}<p class="mt-2 text-xs text-slate-500">Drop valid headings here.</p>{/if}
+			{#if !orderedItems.length}<p class="mt-2 text-xs text-slate-500">
+					Drop valid headings here.
+				</p>{/if}
 		</div>
 
 		<div class="sort-invalid-target">
@@ -193,13 +227,28 @@
 			<div
 				class="exercise-dnd-zone mt-3 flex flex-wrap gap-2"
 				aria-label="Not valid HTML headings"
-				use:dndzone={{ items: invalidItems, type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
-				onconsider={(event) => { invalidItems = event.detail.items; dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED; }}
+				use:dndzone={{
+					items: invalidItems,
+					type: question.id,
+					dragDisabled: Boolean(saved),
+					morphDisabled: true,
+					centreDraggedOnCursor: true,
+					delayTouchStart: true
+				}}
+				onconsider={(event) => {
+					invalidItems = event.detail.items;
+					dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED;
+				}}
 				onfinalize={(event) => finalize(event, 'invalid')}
 			>
 				{#each invalidItems as item (item.id)}
-					{@const itemCorrect = saved && saved.placements?.[item.id] === question.answerKey[item.id]}
-					<div class="sort-chip" class:answer-correct={Boolean(saved) && itemCorrect} class:answer-incorrect={Boolean(saved) && !itemCorrect}>
+					{@const itemCorrect =
+						saved && saved.placements?.[item.id] === question.answerKey[item.id]}
+					<div
+						class="sort-chip"
+						class:answer-correct={Boolean(saved) && itemCorrect}
+						class:answer-incorrect={Boolean(saved) && !itemCorrect}
+					>
 						{#if saved}<span aria-hidden="true">{itemCorrect ? '✓' : '✗'}</span>{/if}
 						{item.text}
 					</div>
@@ -211,21 +260,26 @@
 	<div class="mt-5 flex flex-wrap gap-2">
 		{#if saved}
 			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
-			{/if}
-			<button class="button-secondary" disabled={dragging} onclick={removeAll}>Remove all</button>
+		{/if}
+		<button class="button-secondary" disabled={dragging} onclick={removeAll}>Remove all</button>
 	</div>
 
 	{#if !saved}
 		<button class="button-primary mt-5" disabled={dragging} onclick={submit}>Submit answer</button>
 	{:else}
-		<p class="mt-3 text-sm font-semibold" class:text-emerald-800={saved.isCorrect} class:text-rose-800={!saved.isCorrect}>
+		<p
+			class="mt-3 text-sm font-semibold"
+			class:text-emerald-800={saved.isCorrect}
+			class:text-rose-800={!saved.isCorrect}
+		>
 			{saved.isCorrect ? 'Correct' : 'Not quite'}
 		</p>
 	{/if}
 
 	{#if firstAttempt}
 		<p class="mt-3 text-xs text-slate-500">
-			Your first attempt has been saved for the JSON export so we can discuss it during our consultation hour. Feel free to practise as often as you like afterwards.
+			Your first attempt has been saved for the JSON export so we can discuss it during our
+			consultation hour. Feel free to practise as often as you like afterwards.
 		</p>
 	{/if}
 

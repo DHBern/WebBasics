@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
 
-	let { children, title, size = 'small' }: {
+	let {
+		children,
+		title,
+		size = 'small'
+	}: {
 		children: Snippet;
 		title: string;
 		size?: 'small' | 'wide';

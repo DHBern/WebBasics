@@ -25,7 +25,15 @@
 	let saved = $derived(firstAttempt ? (practicing ? practiceAnswer : firstAttempt) : undefined);
 	let placements = $derived(saved?.placements ?? draftPlacements);
 	let changed = $derived($progress.changeNotices.includes(question.id));
-	const multiTargetIds = new Set(['block', 'inline', 'table-category', 'list-category', 'both-category', 'neither-category', 'invisible-target']);
+	const multiTargetIds = new Set([
+		'block',
+		'inline',
+		'table-category',
+		'list-category',
+		'both-category',
+		'neither-category',
+		'invisible-target'
+	]);
 
 	$effect(() => {
 		if (!firstAttempt) {
@@ -44,7 +52,10 @@
 		if (!$progress.answers[question.id]) {
 			for (let index = shuffledItems.length - 1; index > 0; index--) {
 				const swapIndex = Math.floor(Math.random() * (index + 1));
-				[shuffledItems[index], shuffledItems[swapIndex]] = [shuffledItems[swapIndex], shuffledItems[index]];
+				[shuffledItems[index], shuffledItems[swapIndex]] = [
+					shuffledItems[swapIndex],
+					shuffledItems[index]
+				];
 			}
 		}
 		shuffleReady = true;
@@ -84,7 +95,12 @@
 	}
 
 	function finalize(event: CustomEvent<DndEvent<SortItem>>, targetId: string) {
-		if (!saved && [TRIGGERS.DROPPED_INTO_ZONE, TRIGGERS.DROPPED_OUTSIDE_OF_ANY].includes(event.detail.info.trigger)) {
+		if (
+			!saved &&
+			[TRIGGERS.DROPPED_INTO_ZONE, TRIGGERS.DROPPED_OUTSIDE_OF_ANY].includes(
+				event.detail.info.trigger
+			)
+		) {
 			const itemId = event.detail.info.id;
 			if (targetId === 'pool' || event.detail.info.trigger === TRIGGERS.DROPPED_OUTSIDE_OF_ANY) {
 				const next = { ...draftPlacements };
@@ -150,7 +166,9 @@
 			const swapIndex = Math.floor(Math.random() * (index + 1));
 			[targets[index], targets[swapIndex]] = [targets[swapIndex], targets[index]];
 		}
-		draftPlacements = Object.fromEntries(question.items.map((item, index) => [item.id, targets[index]]));
+		draftPlacements = Object.fromEntries(
+			question.items.map((item, index) => [item.id, targets[index]])
+		);
 		selectedItemId = '';
 		submitError = '';
 		syncZones();
@@ -160,20 +178,24 @@
 {#snippet targetSlot(targetId: string)}
 	{@const target = question.targets.find((candidate) => candidate.id === targetId)}
 	{@const placedItems = zones[targetId] ?? []}
-	<div
-		class="sort-target"
-		role="group"
-		aria-label={target?.label ?? 'Dropzone'}
-	>
+	<div class="sort-target" role="group" aria-label={target?.label ?? 'Dropzone'}>
 		<div
 			class="exercise-dnd-zone flex flex-wrap gap-2"
-			use:dndzone={{ items: placedItems, type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
+			use:dndzone={{
+				items: placedItems,
+				type: question.id,
+				dragDisabled: Boolean(saved),
+				morphDisabled: true,
+				centreDraggedOnCursor: true,
+				delayTouchStart: true
+			}}
 			onconsider={(event) => consider(event, targetId)}
 			onfinalize={(event) => finalize(event, targetId)}
 			aria-label={target?.label ?? 'Dropzone'}
 		>
 			{#each placedItems as item (item.id)}
-				{@const itemCorrect = saved && isPlacementCorrect(question, item.id, saved.placements?.[item.id] ?? '')}
+				{@const itemCorrect =
+					saved && isPlacementCorrect(question, item.id, saved.placements?.[item.id] ?? '')}
 				<button
 					type="button"
 					class="sort-chip"
@@ -205,7 +227,11 @@
 	</div>
 {/snippet}
 
-<section class="exercise-card drag-and-drop-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
+<section
+	class="exercise-card drag-and-drop-card"
+	data-question-id={question.id}
+	aria-labelledby={`${question.id}-prompt`}
+>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
 	<div class="exercise-description prose max-w-none">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
@@ -214,92 +240,99 @@
 	</div>
 	<ExerciseChangeAlert {changed} />
 
-
 	{#if !shuffleReady}
 		<p class="mt-5 text-sm text-slate-500" role="status">Preparing shuffled items…</p>
 	{:else}
-	<div class="mt-5 bg-gray-50 rounded-xl p-5">
-		
-		<h6 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h6>
-			<p class="mt-2 text-xs text-slate-500">Drag an item, or select it and then choose a destination.</p>
+		<div class="mt-5 bg-gray-50 rounded-xl p-5">
+			<h6 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h6>
+			<p class="mt-2 text-xs text-slate-500">
+				Drag an item, or select it and then choose a destination.
+			</p>
 			<div
 				class="exercise-dnd-zone flex flex-wrap gap-2"
 				aria-label="Items to place"
-				use:dndzone={{ items: zones.pool ?? [], type: question.id, dragDisabled: Boolean(saved), morphDisabled: true, centreDraggedOnCursor: true, delayTouchStart: true }}
+				use:dndzone={{
+					items: zones.pool ?? [],
+					type: question.id,
+					dragDisabled: Boolean(saved),
+					morphDisabled: true,
+					centreDraggedOnCursor: true,
+					delayTouchStart: true
+				}}
 				onconsider={(event) => consider(event, 'pool')}
 				onfinalize={(event) => finalize(event, 'pool')}
 			>
 				{#each zones.pool ?? [] as item (item.id)}
-						<button
-							type="button"
-							class="sort-chip"
-							class:sort-chip-selected={selectedItemId === item.id}
-							disabled={Boolean(saved)}
-							aria-pressed={selectedItemId === item.id}
-							onclick={() => (selectedItemId = selectedItemId === item.id ? '' : item.id)}
-						>
-							{item.text}
-						</button>
+					<button
+						type="button"
+						class="sort-chip"
+						class:sort-chip-selected={selectedItemId === item.id}
+						disabled={Boolean(saved)}
+						aria-pressed={selectedItemId === item.id}
+						onclick={() => (selectedItemId = selectedItemId === item.id ? '' : item.id)}
+					>
+						{item.text}
+					</button>
 				{/each}
 			</div>
 		</div>
 
 		{#if question.id === 'url-parts' || question.id === 'url-query-params'}
 			<div class="url-exercise mt-5">
-			<div class="url-string" aria-label="URL template">
-				{#each question.targets as target (target.id)}
-					{#if target.prefix}<span class="url-literal">{target.prefix}</span>{/if}
-					<div class="url-drop-slot">
-						<span class="sr-only">{target.label}</span>
-						{@render targetSlot(target.id)}
-					</div>
-					{#if target.suffix}<span class="url-literal">{target.suffix}</span>{/if}
-				{/each}
+				<div class="url-string" aria-label="URL template">
+					{#each question.targets as target (target.id)}
+						{#if target.prefix}<span class="url-literal">{target.prefix}</span>{/if}
+						<div class="url-drop-slot">
+							<span class="sr-only">{target.label}</span>
+							{@render targetSlot(target.id)}
+						</div>
+						{#if target.suffix}<span class="url-literal">{target.suffix}</span>{/if}
+					{/each}
+				</div>
 			</div>
-		</div>
 		{:else if question.id === 'html-parts'}
 			<HtmlSyntaxDiagram {targetSlot} />
 		{:else if question.id === 'body-element-tree'}
-		<div class="webpage-diagram mt-5">
-			<div class="webpage-invisible">
-				<strong>Invisible to the user</strong>
-				{@render targetSlot('invisible-target')}
-			</div>
-			<div class="webpage-body-frame">
-				<div class="webpage-role-label">Page body</div>
-				{@render targetSlot('body-target')}
-				<div class="webpage-header">
-					<div class="webpage-role-label">Site header</div>
-					{@render targetSlot('header-target')}
-					<div class="webpage-nav">
-						<div class="webpage-role-label">Site navigation</div>
-						{@render targetSlot('nav-target')}
-					</div>
+			<div class="webpage-diagram mt-5">
+				<div class="webpage-invisible">
+					<strong>Invisible to the user</strong>
+					{@render targetSlot('invisible-target')}
 				</div>
-				<div class="webpage-main">
-					<div class="webpage-role-label">Primary content</div>
-					{@render targetSlot('main-target')}
-					<div class="webpage-columns">
-						<div class="webpage-article">
-							<div class="webpage-role-label">Article content</div>
-							{@render targetSlot('article-target')}
-							<div class="webpage-section">
-								<div class="webpage-role-label">Article section</div>
-								{@render targetSlot('section-target')}
+				<div class="webpage-body-frame">
+					<div class="webpage-role-label">Page body</div>
+					{@render targetSlot('body-target')}
+					<div class="webpage-header">
+						<div class="webpage-role-label">Site header</div>
+						{@render targetSlot('header-target')}
+						<div class="webpage-nav">
+							<div class="webpage-role-label">Site navigation</div>
+							{@render targetSlot('nav-target')}
+						</div>
+					</div>
+					<div class="webpage-main">
+						<div class="webpage-role-label">Primary content</div>
+						{@render targetSlot('main-target')}
+						<div class="webpage-columns">
+							<div class="webpage-article">
+								<div class="webpage-role-label">Article content</div>
+								{@render targetSlot('article-target')}
+								<div class="webpage-section">
+									<div class="webpage-role-label">Article section</div>
+									{@render targetSlot('section-target')}
+								</div>
+							</div>
+							<div class="webpage-aside">
+								<div class="webpage-role-label">Related links</div>
+								{@render targetSlot('aside-target')}
 							</div>
 						</div>
-						<div class="webpage-aside">
-							<div class="webpage-role-label">Related links</div>
-							{@render targetSlot('aside-target')}
-						</div>
+					</div>
+					<div class="webpage-footer">
+						<div class="webpage-role-label">Footer details</div>
+						{@render targetSlot('footer-target')}
 					</div>
 				</div>
-				<div class="webpage-footer">
-					<div class="webpage-role-label">Footer details</div>
-					{@render targetSlot('footer-target')}
-				</div>
 			</div>
-		</div>
 		{:else}
 			<div class="dropzone-grid mt-5" aria-label="Dropzones">
 				{#each question.targets.filter((target) => target.id !== 'document') as target (target.id)}
@@ -316,21 +349,31 @@
 		{#if saved}
 			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
 		{/if}
-		<button class="button-secondary" disabled={dragging || !shuffleReady} onclick={removeAll}>Remove all</button>
-		<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging || !shuffleReady} />
+		<button class="button-secondary" disabled={dragging || !shuffleReady} onclick={removeAll}
+			>Remove all</button
+		>
+		<ExerciseDebug
+			fill={distributeRandomly}
+			disabled={Boolean(saved) || dragging || !shuffleReady}
+		/>
 	</div>
 
 	{#if !saved}
 		<button class="button-primary mt-5" disabled={dragging} onclick={submit}>Submit answer</button>
 	{:else}
-		<p class="mt-3 text-sm font-semibold" class:text-emerald-800={saved.isCorrect} class:text-rose-800={!saved.isCorrect}>
+		<p
+			class="mt-3 text-sm font-semibold"
+			class:text-emerald-800={saved.isCorrect}
+			class:text-rose-800={!saved.isCorrect}
+		>
 			{saved.isCorrect ? 'Correct' : 'Not quite'}
 		</p>
 	{/if}
 
 	{#if firstAttempt}
 		<p class="mt-3 text-xs text-slate-500">
-			Your first attempt has been saved for the JSON export so we can discuss it during our consultation hour. Feel free to practise as often as you like afterwards.
+			Your first attempt has been saved for the JSON export so we can discuss it during our
+			consultation hour. Feel free to practise as often as you like afterwards.
 		</p>
 	{/if}
 

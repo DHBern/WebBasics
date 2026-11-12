@@ -6,5 +6,7 @@
 </script>
 
 {#if debug.enabled}
-	<button class="button-secondary bg-blue-100" type="button" onclick={fill} {disabled}>Debug: fill randomly</button>
+	<button class="button-secondary bg-blue-100" type="button" onclick={fill} {disabled}
+		>Debug: fill randomly</button
+	>
 {/if}

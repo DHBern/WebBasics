@@ -4,12 +4,11 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-
 <ExerciseBridge title="Let's start with..." size="wide">
 
 # URLs
 
-Web addresses appear before you begin writing HTML: a URL can point to a page and, sometimes, to a more specific place or search context. 
+Web addresses appear before you begin writing HTML: a URL can point to a page and, sometimes, to a more specific place or search context.
 
 This is why we start with URLs and their structure.
 

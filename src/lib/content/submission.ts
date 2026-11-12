@@ -1,5 +1,12 @@
 import { get } from 'svelte/store';
-import { htmlStrand, isPlacementCorrect, questionList, questionRevision, questionSection, requiredQuestionList } from './course.js';
+import {
+	htmlStrand,
+	isPlacementCorrect,
+	questionList,
+	questionRevision,
+	questionSection,
+	requiredQuestionList
+} from './course.js';
 import { progress } from '#lib/progress.js';
 import type { SubmissionFile, SubmissionPayload } from './types.js';
 
@@ -20,67 +27,74 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 		strandId: htmlStrand.id,
 		strandTitle: htmlStrand.title,
 		createdAt: new Date().toISOString(),
-		answers: questionList.filter((question) => answers[question.id]).map((question) => {
-			const section = questionSection(question.id);
-			const submitted = answers[question.id];
-			if (!section || !submitted) throw new Error(`Missing data for question "${question.id}".`);
-			const base = {
-				questionId: question.id,
-				questionRevision: questionRevision(question),
-				sectionId: section.id,
-				sectionTitle: section.title,
-				question: question.prompt,
-				type: question.type,
-				isCorrect: submitted.isCorrect
-			};
-			if (question.type === 'input') {
-				if (submitted.textResponse === undefined) throw new Error(`Missing response for question "${question.id}".`);
-				return {
-					...base,
-					...(question.description?.length ? { description: question.description } : {}),
-					response: { text: submitted.textResponse, submittedAt: submitted.submittedAt },
-					correctResponse: {}
+		answers: questionList
+			.filter((question) => answers[question.id])
+			.map((question) => {
+				const section = questionSection(question.id);
+				const submitted = answers[question.id];
+				if (!section || !submitted) throw new Error(`Missing data for question "${question.id}".`);
+				const base = {
+					questionId: question.id,
+					questionRevision: questionRevision(question),
+					sectionId: section.id,
+					sectionTitle: section.title,
+					question: question.prompt,
+					type: question.type,
+					isCorrect: submitted.isCorrect
 				};
-			}
-			if (question.type === 'multiple-choice') {
-				const selected = new Set(submitted.selectedOptionIds ?? []);
+				if (question.type === 'input') {
+					if (submitted.textResponse === undefined)
+						throw new Error(`Missing response for question "${question.id}".`);
+					return {
+						...base,
+						...(question.description?.length ? { description: question.description } : {}),
+						response: { text: submitted.textResponse, submittedAt: submitted.submittedAt },
+						correctResponse: {}
+					};
+				}
+				if (question.type === 'multiple-choice') {
+					const selected = new Set(submitted.selectedOptionIds ?? []);
+					return {
+						...base,
+						...(question.description?.length ? { description: question.description } : {}),
+						response: { selectedOptionIds: [...selected] },
+						correctResponse: {
+							selectedOptionIds: question.options
+								.filter((option) => option.correct)
+								.map((option) => option.id)
+						},
+						options: question.options.map((option) => ({
+							id: option.id,
+							text: option.text,
+							correct: option.correct,
+							selected: selected.has(option.id)
+						}))
+					};
+				}
+				const placements = submitted.placements ?? {};
 				return {
 					...base,
-					...(question.description?.length ? { description: question.description } : {}),
-					response: { selectedOptionIds: [...selected] },
-					correctResponse: {
-						selectedOptionIds: question.options
-							.filter((option) => option.correct)
-							.map((option) => option.id)
-					},
-					options: question.options.map((option) => ({
-						id: option.id,
-						text: option.text,
-						correct: option.correct,
-						selected: selected.has(option.id)
+					description: Array.isArray(question.instructions)
+						? question.instructions
+						: [question.instructions],
+					response: { placements },
+					correctResponse: { placements: question.answerKey },
+					items: question.items.map((item) => ({
+						id: item.id,
+						text: item.text,
+						correctTargetId: question.answerKey[item.id] ?? '',
+						selectedTargetId: placements[item.id] ?? null,
+						correct: isPlacementCorrect(question, item.id, placements[item.id] ?? '')
 					}))
 				};
-			}
-			const placements = submitted.placements ?? {};
-			return {
-				...base,
-				description: Array.isArray(question.instructions) ? question.instructions : [question.instructions],
-				response: { placements },
-				correctResponse: { placements: question.answerKey },
-				items: question.items.map((item) => ({
-					id: item.id,
-					text: item.text,
-					correctTargetId: question.answerKey[item.id] ?? '',
-					selectedTargetId: placements[item.id] ?? null,
-					correct: isPlacementCorrect(question, item.id, placements[item.id] ?? '')
-				}))
-			};
-		})
+			})
 	};
 
 	const canonicalPayload = JSON.stringify(payload);
 	const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonicalPayload));
-	const checksum = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+	const checksum = Array.from(new Uint8Array(digest), (byte) =>
+		byte.toString(16).padStart(2, '0')
+	).join('');
 	return { payload, checksum: { algorithm: 'SHA-256', value: checksum } };
 }
 

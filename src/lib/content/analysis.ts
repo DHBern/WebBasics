@@ -54,7 +54,8 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 				grouped.set(key, metric);
 			}
 			let version = metric.versions.find(
-				(candidate) => candidate.revision === answer.questionRevision && candidate.type === answer.type
+				(candidate) =>
+					candidate.revision === answer.questionRevision && candidate.type === answer.type
 			);
 			if (!version) {
 				version = {
@@ -116,7 +117,8 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 	}
 	for (const metric of grouped.values()) {
 		metric.versions.sort(
-			(a, b) => b.lastExportedAt.localeCompare(a.lastExportedAt) || a.revision.localeCompare(b.revision)
+			(a, b) =>
+				b.lastExportedAt.localeCompare(a.lastExportedAt) || a.revision.localeCompare(b.revision)
 		);
 	}
 	return [...grouped.values()];

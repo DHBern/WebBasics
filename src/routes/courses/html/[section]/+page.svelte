@@ -39,7 +39,9 @@
 	let currentIndex = $derived(htmlSections.findIndex((section) => section.id === data.section.id));
 	let nextSection = $derived(htmlSections[currentIndex + 1]);
 	let previousSection = $derived(htmlSections[currentIndex - 1]);
-	let answeredCount = $derived(requiredQuestionList.filter((question) => $progress.answers[question.id]).length);
+	let answeredCount = $derived(
+		requiredQuestionList.filter((question) => $progress.answers[question.id]).length
+	);
 	let complete = $derived(requiredQuestionList.every((question) => $progress.answers[question.id]));
 
 	async function exportResults() {
@@ -48,7 +50,8 @@
 		try {
 			await downloadSubmission();
 		} catch (error) {
-			downloadError = error instanceof Error ? error.message : 'The submission could not be exported.';
+			downloadError =
+				error instanceof Error ? error.message : 'The submission could not be exported.';
 		} finally {
 			downloading = false;
 		}
@@ -63,19 +66,29 @@
 	<CourseNavigation activeSection={data.section.id} />
 	<main class="course-content">
 		<div class="mb-8 flex items-center justify-between gap-4">
-			<a class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950" href="/courses/html/welcome/">
+			<a
+				class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950"
+				href="/courses/html/welcome/"
+			>
 				← Course introduction
 			</a>
-			<p class="text-sm text-slate-500">{answeredCount} of {requiredQuestionList.length} questions answered</p>
+			<p class="text-sm text-slate-500">
+				{answeredCount} of {requiredQuestionList.length} questions answered
+			</p>
 		</div>
 		{#key data.section.id}
-			<ExercisePath navigation={sectionNavigation} navigationTitle={nextSection ? 'Next section' : 'Export your answers'}>
+			<ExercisePath
+				navigation={sectionNavigation}
+				navigationTitle={nextSection ? 'Next section' : 'Export your answers'}
+			>
 				<Content />
 			</ExercisePath>
 		{/key}
 		{#if previousSection}
 			<div class="mt-10 border-t border-slate-200 pt-6">
-				<a class="button-secondary" href={`/courses/html/${previousSection.id}/${debug.query}`}>← Previous section</a>
+				<a class="button-secondary" href={`/courses/html/${previousSection.id}/${debug.query}`}
+					>← Previous section</a
+				>
 			</div>
 		{/if}
 	</main>
@@ -83,7 +96,9 @@
 
 {#snippet sectionNavigation()}
 	{#if nextSection}
-		<a class="button-primary" href={`/courses/html/${nextSection.id}/${debug.query}`}>Next section →</a>
+		<a class="button-primary" href={`/courses/html/${nextSection.id}/${debug.query}`}
+			>Next section →</a
+		>
 	{:else}
 		<div class="flex flex-col items-start gap-2">
 			<button class="button-primary" disabled={!complete || downloading} onclick={exportResults}>

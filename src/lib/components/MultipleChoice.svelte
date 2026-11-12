@@ -5,7 +5,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
-  import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
+	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
 	let { question }: { question: MultipleChoiceQuestion } = $props();
 	let draftSelectedIds = $state<string[]>([]);
@@ -31,7 +31,9 @@
 			revision: questionRevision(question),
 			submittedAt: new Date().toISOString(),
 			type: question.type,
-			selectedOptionIds: question.options.filter((option) => selected.has(option.id)).map((option) => option.id),
+			selectedOptionIds: question.options
+				.filter((option) => selected.has(option.id))
+				.map((option) => option.id),
 			isCorrect
 		};
 		try {
@@ -44,58 +46,64 @@
 	}
 </script>
 
-<section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
-		<ExercisePrompt id={question.id} prompt={question.prompt} />
+<section
+	class="exercise-card"
+	data-question-id={question.id}
+	aria-labelledby={`${question.id}-prompt`}
+>
+	<ExercisePrompt id={question.id} prompt={question.prompt} />
 
-		{#if question.description?.length}
-			<div class="exercise-description prose max-w-none">
-				{#each question.description as block}
-					{@html renderMarkdown(block)}
-				{/each}
-			</div>
-		{/if}
-
-		<ExerciseChangeAlert {changed} />
-
-		<p class="mt-4 text-right text-xs text-slate-500" aria-hidden="true">Select all correct answers</p>
-		<fieldset class="mt-2 space-y-2" disabled={Boolean(saved)}>
-			<legend class="sr-only">Select all correct answers</legend>
-			{#each question.options as option (option.id)}
-				{@const selected = selectedIds.includes(option.id)}
-				{@const matches = saved ? selected === option.correct : false}
-				<label
-					class="answer-option"
-					class:answer-correct={Boolean(saved) && matches}
-					class:answer-incorrect={Boolean(saved) && !matches}
-				>
-					{#if saved}
-						<span class="answer-icon" aria-hidden="true">{matches ? '✓' : '✗'}</span>
-					{:else}
-						<input
-							type="checkbox"
-							checked={selected}
-							onchange={() => toggle(option.id)}
-						/>
-					{/if}
-					<span>{@html renderInline(option.text)}</span>
-					{#if saved}
-						<span class="sr-only">{matches ? 'Correct' : 'Incorrect'}</span>
-					{/if}
-				</label>
+	{#if question.description?.length}
+		<div class="exercise-description prose max-w-none">
+			{#each question.description as block}
+				{@html renderMarkdown(block)}
 			{/each}
-		</fieldset>
+		</div>
+	{/if}
 
-		{#if !saved}
-			<button class="button-primary mt-4" onclick={submit}>Submit answer</button>
-		{:else}
-			<p class="mt-3 text-sm font-semibold" class:text-emerald-800={saved.isCorrect} class:text-rose-800={!saved.isCorrect}>
-				{saved.isCorrect ? 'Correct' : 'Not quite'}
-			</p>
-		{/if}
+	<ExerciseChangeAlert {changed} />
 
-		{#if submitError}
-			<p class="mt-3 text-sm text-rose-800" role="alert">{submitError}</p>
-		{/if}
+	<p class="mt-4 text-right text-xs text-slate-500" aria-hidden="true">
+		Select all correct answers
+	</p>
+	<fieldset class="mt-2 space-y-2" disabled={Boolean(saved)}>
+		<legend class="sr-only">Select all correct answers</legend>
+		{#each question.options as option (option.id)}
+			{@const selected = selectedIds.includes(option.id)}
+			{@const matches = saved ? selected === option.correct : false}
+			<label
+				class="answer-option"
+				class:answer-correct={Boolean(saved) && matches}
+				class:answer-incorrect={Boolean(saved) && !matches}
+			>
+				{#if saved}
+					<span class="answer-icon" aria-hidden="true">{matches ? '✓' : '✗'}</span>
+				{:else}
+					<input type="checkbox" checked={selected} onchange={() => toggle(option.id)} />
+				{/if}
+				<span>{@html renderInline(option.text)}</span>
+				{#if saved}
+					<span class="sr-only">{matches ? 'Correct' : 'Incorrect'}</span>
+				{/if}
+			</label>
+		{/each}
+	</fieldset>
+
+	{#if !saved}
+		<button class="button-primary mt-4" onclick={submit}>Submit answer</button>
+	{:else}
+		<p
+			class="mt-3 text-sm font-semibold"
+			class:text-emerald-800={saved.isCorrect}
+			class:text-rose-800={!saved.isCorrect}
+		>
+			{saved.isCorrect ? 'Correct' : 'Not quite'}
+		</p>
+	{/if}
+
+	{#if submitError}
+		<p class="mt-3 text-sm text-rose-800" role="alert">{submitError}</p>
+	{/if}
 </section>
 
 {#if saved && (question.feedback || question.bonusId)}

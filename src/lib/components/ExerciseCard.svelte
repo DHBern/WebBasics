@@ -11,7 +11,7 @@
 {#if question?.type === 'multiple-choice'}
 	<MultipleChoice {question} />
 {:else if question?.type === 'drag-n-drop'}
-	<DragAndDropExercise question={question} />
+	<DragAndDropExercise {question} />
 {:else if question?.type === 'sort'}
 	<SortExercise {question} />
 {:else if question?.type === 'input'}

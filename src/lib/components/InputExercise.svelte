@@ -42,11 +42,18 @@
 	}
 </script>
 
-<section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
+<section
+	class="exercise-card"
+	data-question-id={question.id}
+	aria-labelledby={`${question.id}-prompt`}
+>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
-	<ExerciseDebug disabled={Boolean(saved) && !editing} fill={() => {
-		draft = `Debug response ${Math.random().toString(36).slice(2, 8)}.`;
-	}} />
+	<ExerciseDebug
+		disabled={Boolean(saved) && !editing}
+		fill={() => {
+			draft = `Debug response ${Math.random().toString(36).slice(2, 8)}.`;
+		}}
+	/>
 	{#if question.description?.length}
 		<div class="exercise-description prose max-w-none">
 			{#each question.description as block}
@@ -60,9 +67,17 @@
 		<p class="mt-3 whitespace-pre-wrap" role="status">Submitted response: {saved.textResponse}</p>
 		<button class="button-secondary mt-2" onclick={edit}>Edit answer</button>
 	{:else}
-		<label class="mt-3 block text-sm font-semibold" for={`${question.id}-response`}>Your response</label>
-		<textarea id={`${question.id}-response`} class="mt-1 w-full rounded-lg border border-amber-300 bg-white p-3 text-sm" rows="4" bind:value={draft}></textarea>
-		<button class="button-secondary mt-2" disabled={!draft.trim()} onclick={submit}>{editing ? 'Save answer' : 'Submit response'}</button>
+		<label class="mt-3 block text-sm font-semibold" for={`${question.id}-response`}
+			>Your response</label
+		>
+		<textarea
+			id={`${question.id}-response`}
+			class="mt-1 w-full rounded-lg border border-amber-300 bg-white p-3 text-sm"
+			rows="4"
+			bind:value={draft}></textarea>
+		<button class="button-secondary mt-2" disabled={!draft.trim()} onclick={submit}
+			>{editing ? 'Save answer' : 'Submit response'}</button
+		>
 	{/if}
 	{#if submitError}<p class="mt-2 text-sm text-rose-800" role="alert">{submitError}</p>{/if}
 </section>

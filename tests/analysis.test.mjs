@@ -88,13 +88,15 @@ test('retains sort-item error counts and separates courses sharing a question ID
 		response: { placements: { a: 'wrong-target' } },
 		correctResponse: { placements: { a: 'target' } },
 		options: undefined,
-		items: [{
-			id: 'a',
-			text: 'Item',
-			correctTargetId: 'target',
-			selectedTargetId: 'wrong-target',
-			correct: false
-		}],
+		items: [
+			{
+				id: 'a',
+				text: 'Item',
+				correctTargetId: 'target',
+				selectedTargetId: 'wrong-target',
+				correct: false
+			}
+		],
 		isCorrect: false
 	});
 	const metrics = analyzeSubmissions([
@@ -136,8 +138,10 @@ test('keeps standalone input responses ungraded across exercise type changes', (
 	assert.equal(metric.attempts, 2);
 	assert.equal(metric.gradedAttempts, 1);
 	assert.equal(metric.wrong, 1);
-	assert.deepEqual(metric.versions.find((version) => version.type === 'input').textResponses, [{
-		response: '<!-- A comment -->',
-		submittedAt: '2026-11-11T12:00:00Z'
-	}]);
+	assert.deepEqual(metric.versions.find((version) => version.type === 'input').textResponses, [
+		{
+			response: '<!-- A comment -->',
+			submittedAt: '2026-11-11T12:00:00Z'
+		}
+	]);
 });

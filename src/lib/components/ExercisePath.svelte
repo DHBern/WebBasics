@@ -10,7 +10,11 @@
 	};
 	type PathLine = { d: string; questionId?: string };
 
-	let { children, navigation, navigationTitle }: {
+	let {
+		children,
+		navigation,
+		navigationTitle
+	}: {
 		children: Snippet;
 		navigation: Snippet;
 		navigationTitle: string;
@@ -58,8 +62,12 @@
 		const first = (node.bridgeBox ?? node.elements[0]).getBoundingClientRect();
 		const last = (node.bridgeBox ?? node.elements.at(-1)!).getBoundingClientRect();
 		const left = Math.min(...node.elements.map((element) => element.getBoundingClientRect().left));
-		const right = Math.max(...node.elements.map((element) => element.getBoundingClientRect().right));
-		return node.bridgeBox ? first : { left, right, width: right - left, top: first.top, bottom: last.bottom };
+		const right = Math.max(
+			...node.elements.map((element) => element.getBoundingClientRect().right)
+		);
+		return node.bridgeBox
+			? first
+			: { left, right, width: right - left, top: first.top, bottom: last.bottom };
 	}
 
 	function curve(x1: number, y1: number, x2: number, y2: number) {

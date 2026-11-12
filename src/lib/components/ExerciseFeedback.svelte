@@ -3,12 +3,16 @@
 	import { getQuestion } from '#lib/content/course.js';
 	import ExerciseCard from './ExerciseCard.svelte';
 
-	let { feedback, id, bonusId }: { feedback?: string | string[]; id: string; bonusId?: string } = $props();
+	let { feedback, id, bonusId }: { feedback?: string | string[]; id: string; bonusId?: string } =
+		$props();
 	let bonus = $derived(bonusId ? getQuestion(bonusId) : undefined);
 </script>
 
 <aside class="exercise-feedback" aria-labelledby={`${id}-feedback-title`}>
-	<h4 id={`${id}-feedback-title`} class="mb-2 text-sm font-bold uppercase tracking-wide text-cyan-950">
+	<h4
+		id={`${id}-feedback-title`}
+		class="mb-2 text-sm font-bold uppercase tracking-wide text-cyan-950"
+	>
 		{feedback ? 'Feedback' : 'Bonus'}
 	</h4>
 	{#if feedback}

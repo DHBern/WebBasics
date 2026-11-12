@@ -17,7 +17,7 @@ Which of these are valid HTML?
 <span class="inline"><a href="page.html">click here</a></span>
 <a href="page.html"><span class="highlight">styled link</span></a>
 <h1><a href="/home">Welcome to our page!</a></h1>
-<a href="/index.html"><img src="pic.jpg" alt="image"></a>
+<a href="/index.html"><img src="pic.jpg" alt="image" /></a>
 ```
 
 </ExerciseBridge>

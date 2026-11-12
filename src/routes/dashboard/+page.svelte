@@ -31,7 +31,8 @@
 	}
 
 	function isQuestionAnswer(value: unknown): value is SubmissionPayload['answers'][number] {
-		if (!isObject(value) || !isObject(value.response) || !isObject(value.correctResponse)) return false;
+		if (!isObject(value) || !isObject(value.response) || !isObject(value.correctResponse))
+			return false;
 		if (
 			typeof value.questionId !== 'string' ||
 			typeof value.questionRevision !== 'string' ||
@@ -97,11 +98,17 @@
 			);
 		}
 		if (value.type === 'input') {
-			return typeof value.response.text === 'string' &&
+			return (
+				typeof value.response.text === 'string' &&
 				typeof value.response.submittedAt === 'string' &&
-				Number.isFinite(Date.parse(value.response.submittedAt));
+				Number.isFinite(Date.parse(value.response.submittedAt))
+			);
 		}
-		return isStringMap(value.response.placements) && isStringMap(value.correctResponse.placements) && Array.isArray(value.items);
+		return (
+			isStringMap(value.response.placements) &&
+			isStringMap(value.correctResponse.placements) &&
+			Array.isArray(value.items)
+		);
 	}
 
 	function isSubmissionFile(value: unknown): value is SubmissionFile {
@@ -124,7 +131,9 @@
 
 	async function sha256(value: string): Promise<string> {
 		const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
-		return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+		return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join(
+			''
+		);
 	}
 
 	async function importFiles(event: Event) {
@@ -192,11 +201,13 @@
 	}
 
 	let analyzableFiles = $derived(
-		files.filter((file) => file.payload && !file.duplicate && (file.checksumValid || file.includeInvalid))
+		files.filter(
+			(file) => file.payload && !file.duplicate && (file.checksumValid || file.includeInvalid)
+		)
 	);
 
 	let metrics = $derived.by(() => {
-		const payloads = analyzableFiles.flatMap((file) => file.payload ? [file.payload] : []);
+		const payloads = analyzableFiles.flatMap((file) => (file.payload ? [file.payload] : []));
 		return analyzeSubmissions(payloads).sort((a, b) => {
 			const first = sortColumn === 'wrong' ? a.wrong : a.wrong / a.attempts;
 			const second = sortColumn === 'wrong' ? b.wrong : b.wrong / b.attempts;
@@ -212,21 +223,31 @@
 		return item?.type !== 'lesson' ? item : undefined;
 	}
 
-	let validCount = $derived(files.filter((file) => file.payload && file.checksumValid && !file.duplicate).length);
-	let invalidCount = $derived(files.filter((file) => file.payload && !file.checksumValid && !file.duplicate).length);
+	let validCount = $derived(
+		files.filter((file) => file.payload && file.checksumValid && !file.duplicate).length
+	);
+	let invalidCount = $derived(
+		files.filter((file) => file.payload && !file.checksumValid && !file.duplicate).length
+	);
 	let duplicateCount = $derived(files.filter((file) => file.duplicate).length);
 </script>
 
 <svelte:head>
 	<title>Instructor analysis — WebBasics</title>
-	<meta name="description" content="Analyze anonymized course submissions locally in your browser." />
+	<meta
+		name="description"
+		content="Analyze anonymized course submissions locally in your browser."
+	/>
 </svelte:head>
 
 <main class="min-h-screen bg-slate-50 text-slate-900">
 	<header class="border-b border-slate-200 bg-white">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 			<a href="/" class="text-lg font-bold tracking-tight">WebBasics</a>
-			<a class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950" href="/">
+			<a
+				class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950"
+				href="/"
+			>
 				← Courses
 			</a>
 		</div>
@@ -235,15 +256,21 @@
 		<p class="text-sm font-semibold tracking-widest text-orange-700 uppercase">Instructor tools</p>
 		<h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Submission analysis</h1>
 		<p class="mt-4 max-w-3xl leading-relaxed text-slate-600">
-			Upload multiple JSON submissions to compare question and option error rates. Files are read and analyzed in this browser only; they are not sent to a server or saved by this dashboard.
+			Upload multiple JSON submissions to compare question and option error rates. Files are read
+			and analyzed in this browser only; they are not sent to a server or saved by this dashboard.
 		</p>
-		<p class="mt-3 max-w-3xl rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
-			The SHA-256 checksum detects accidental corruption only. Because the app is static, a student can edit a file and calculate a new checksum; this is not tamper-proof verification.
+		<p
+			class="mt-3 max-w-3xl rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950"
+		>
+			The SHA-256 checksum detects accidental corruption only. Because the app is static, a student
+			can edit a file and calculate a new checksum; this is not tamper-proof verification.
 		</p>
 
 		<section class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 			<label for="submission-files" class="block font-semibold">Upload student JSON files</label>
-			<p class="mt-1 text-sm text-slate-600">Multiple submissions can be selected at once. Exact duplicate files are excluded.</p>
+			<p class="mt-1 text-sm text-slate-600">
+				Multiple submissions can be selected at once. Exact duplicate files are excluded.
+			</p>
 			<input
 				id="submission-files"
 				class="mt-4 block w-full max-w-xl rounded-lg border border-slate-300 p-2 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:font-semibold"
@@ -268,7 +295,9 @@
 				<h2 class="font-semibold">Files requiring attention</h2>
 				<ul class="mt-3 space-y-3">
 					{#each files.filter((file) => !file.checksumValid || file.duplicate) as file, index (file.name + index)}
-						<li class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 text-sm">
+						<li
+							class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 text-sm"
+						>
 							<span><strong>{file.name}</strong> — {file.error}</span>
 							{#if file.payload && !file.checksumValid && !file.duplicate}
 								<label class="inline-flex items-center gap-2">
@@ -286,11 +315,18 @@
 			<div class="flex flex-wrap items-end justify-between gap-3">
 				<div>
 					<h2 class="text-2xl font-bold">Question results and Bonus responses</h2>
-					<p class="mt-1 text-sm text-slate-600">Results are grouped by question ID within each course, with separate revision breakdowns. Each revision keeps its original grading, options, and any submitted Bonus text responses. Dates refer to JSON exports, not answer times.</p>
+					<p class="mt-1 text-sm text-slate-600">
+						Results are grouped by question ID within each course, with separate revision
+						breakdowns. Each revision keeps its original grading, options, and any submitted Bonus
+						text responses. Dates refer to JSON exports, not answer times.
+					</p>
 				</div>
 				<label class="text-sm font-medium">
 					Rank by
-					<select class="ml-2 rounded-md border border-slate-300 bg-white px-2 py-1" bind:value={sortColumn}>
+					<select
+						class="ml-2 rounded-md border border-slate-300 bg-white px-2 py-1"
+						bind:value={sortColumn}
+					>
 						<option value="wrong">Wrong count</option>
 						<option value="rate">Wrong percentage</option>
 					</select>
@@ -298,7 +334,9 @@
 			</div>
 
 			{#if !metrics.length}
-				<p class="mt-5 rounded-xl border border-dashed border-slate-300 bg-white p-6 text-slate-600">
+				<p
+					class="mt-5 rounded-xl border border-dashed border-slate-300 bg-white p-6 text-slate-600"
+				>
 					Upload valid submissions to see aggregate results.
 				</p>
 			{:else}
@@ -307,17 +345,33 @@
 						{@const current = currentQuestion(metric.strandId, metric.questionId)}
 						{@const latest = metric.versions[0]}
 						<details class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-							<summary class="grid cursor-pointer grid-cols-[minmax(0,1fr)_5rem_6rem_5rem] items-center gap-3 p-4 text-sm">
+							<summary
+								class="grid cursor-pointer grid-cols-[minmax(0,1fr)_5rem_6rem_5rem] items-center gap-3 p-4 text-sm"
+							>
 								<span class="min-w-0">
-									<span class="block text-xs font-semibold text-orange-700">{latest.sectionTitle} · {latest.type}</span>
-									<span class="mt-1 block font-semibold text-slate-900">{current?.prompt ?? latest.question}</span>
-									<span class="mt-1 block text-xs text-slate-500">ID: {metric.questionId} · {metric.versions.length} revision(s)</span>
+									<span class="block text-xs font-semibold text-orange-700"
+										>{latest.sectionTitle} · {latest.type}</span
+									>
+									<span class="mt-1 block font-semibold text-slate-900"
+										>{current?.prompt ?? latest.question}</span
+									>
+									<span class="mt-1 block text-xs text-slate-500"
+										>ID: {metric.questionId} · {metric.versions.length} revision(s)</span
+									>
 									{#if metric.versions.some((version) => !current || questionRevision(current) !== version.revision)}
-										<span class="mt-1 block text-xs font-semibold text-amber-800">Includes historical or unavailable versions — expand for export dates</span>
+										<span class="mt-1 block text-xs font-semibold text-amber-800"
+											>Includes historical or unavailable versions — expand for export dates</span
+										>
 									{/if}
 								</span>
-								<span class="text-right font-semibold">{metric.gradedAttempts ? `${metric.wrong} wrong` : 'Ungraded'}</span>
-								<span class="text-right">{metric.gradedAttempts ? `${((metric.wrong / metric.gradedAttempts) * 100).toFixed(1)}%` : '—'}</span>
+								<span class="text-right font-semibold"
+									>{metric.gradedAttempts ? `${metric.wrong} wrong` : 'Ungraded'}</span
+								>
+								<span class="text-right"
+									>{metric.gradedAttempts
+										? `${((metric.wrong / metric.gradedAttempts) * 100).toFixed(1)}%`
+										: '—'}</span
+								>
 								<span class="text-right text-slate-500">{metric.attempts} tries</span>
 							</summary>
 							{#each metric.versions as version (version.revision + version.type)}
@@ -326,7 +380,11 @@
 									<h3 class="text-sm font-semibold">
 										Revision {version.revision}
 										<span class={outdated || !current ? 'text-amber-800' : 'text-emerald-800'}>
-											— {outdated ? 'Outdated question/options' : current ? 'Current version' : 'Question no longer available in this course'}
+											— {outdated
+												? 'Outdated question/options'
+												: current
+													? 'Current version'
+													: 'Question no longer available in this course'}
 										</span>
 									</h3>
 									<p class="mt-2 text-sm font-medium">{version.question}</p>
@@ -338,40 +396,66 @@
 										</div>
 									{/if}
 									<p class="mt-1 text-xs text-slate-600">
-										Exported: <time datetime={version.firstExportedAt}>{version.firstExportedAt}</time>
+										Exported: <time datetime={version.firstExportedAt}
+											>{version.firstExportedAt}</time
+										>
 										{#if version.firstExportedAt !== version.lastExportedAt}
 											to <time datetime={version.lastExportedAt}>{version.lastExportedAt}</time>
 										{/if}
 									</p>
 									{#if version.type !== 'input'}
-									<p class="mt-2 text-sm">{version.wrong} wrong · {((version.wrong / version.attempts) * 100).toFixed(1)}% · {version.attempts} tries</p>
-									<h4 class="mt-4 text-sm font-semibold">{version.type === 'multiple-choice' ? 'Option selections' : 'Item errors'}</h4>
-									{#if version.items.length}
-										<ul class="mt-3 space-y-2">
-											{#each version.items as item (item.id)}
-												<li class="flex flex-wrap items-center justify-between gap-3 rounded-lg p-2 text-sm" class:bg-emerald-100={item.correctOption}>
-													<span class:font-bold={item.correctOption} class:text-emerald-900={item.correctOption}>
-														{item.text}
-														{#if item.correctOption}<span class="ml-1 text-xs">(Correct answer)</span>{/if}
-													</span>
-													{#if version.type === 'multiple-choice'}
-														<span class="font-semibold">{item.checked} checked / {item.attempts - item.checked} unchecked</span>
-													{:else}
-														<span>{item.wrong} wrong · {((item.wrong / item.attempts) * 100).toFixed(1)}% · {item.attempts} tries</span>
-													{/if}
-												</li>
-											{/each}
-										</ul>
-									{:else}
-										<p class="mt-2 text-sm text-slate-600">This question has no individually analyzable choices/items.</p>
-									{/if}
+										<p class="mt-2 text-sm">
+											{version.wrong} wrong · {((version.wrong / version.attempts) * 100).toFixed(
+												1
+											)}% · {version.attempts} tries
+										</p>
+										<h4 class="mt-4 text-sm font-semibold">
+											{version.type === 'multiple-choice' ? 'Option selections' : 'Item errors'}
+										</h4>
+										{#if version.items.length}
+											<ul class="mt-3 space-y-2">
+												{#each version.items as item (item.id)}
+													<li
+														class="flex flex-wrap items-center justify-between gap-3 rounded-lg p-2 text-sm"
+														class:bg-emerald-100={item.correctOption}
+													>
+														<span
+															class:font-bold={item.correctOption}
+															class:text-emerald-900={item.correctOption}
+														>
+															{item.text}
+															{#if item.correctOption}<span class="ml-1 text-xs"
+																	>(Correct answer)</span
+																>{/if}
+														</span>
+														{#if version.type === 'multiple-choice'}
+															<span class="font-semibold"
+																>{item.checked} checked / {item.attempts - item.checked} unchecked</span
+															>
+														{:else}
+															<span
+																>{item.wrong} wrong · {((item.wrong / item.attempts) * 100).toFixed(
+																	1
+																)}% · {item.attempts} tries</span
+															>
+														{/if}
+													</li>
+												{/each}
+											</ul>
+										{:else}
+											<p class="mt-2 text-sm text-slate-600">
+												This question has no individually analyzable choices/items.
+											</p>
+										{/if}
 									{:else}
 										<h4 class="mt-4 text-sm font-semibold">Text responses (ungraded)</h4>
 										<ul class="mt-2 space-y-2">
 											{#each version.textResponses as response, index (`${response.submittedAt}-${index}`)}
 												<li class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
 													<p class="whitespace-pre-wrap">{response.response}</p>
-													<p class="mt-2 text-xs text-slate-600">Submitted: {response.submittedAt}</p>
+													<p class="mt-2 text-xs text-slate-600">
+														Submitted: {response.submittedAt}
+													</p>
 												</li>
 											{/each}
 										</ul>
