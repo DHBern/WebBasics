@@ -68,8 +68,10 @@ on narrow screens the diagram remains horizontally scrollable.
 Every section renders its content in `ExercisePath`, which connects consecutive
 top-level exercises and bridges with curved lines and generous vertical spacing.
 Use `<ExerciseBridge title="Short title">` with one or more paragraphs for
-transition or closing text. Every bridge has the same narrow white box and black
-border; multiple bridges can be placed consecutively. Keep Further Reading in
+transition or closing text. Bridges have white backgrounds and the same border as
+exercises. The optional `size="small"` (default) uses one-third of the normal
+exercise width; `size="wide"` uses half. Both retain a 16rem minimum where space
+permits and fit smaller screens. Multiple bridges can be placed consecutively. Keep Further Reading in
 its own bridge: `ExercisePath` always appends a separate navigation bridge with
 the next-section or export button. Bridge alignment and exercise attachment
 points (always within the middle half) are randomized once per mount. A line
