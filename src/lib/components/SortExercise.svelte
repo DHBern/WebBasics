@@ -8,6 +8,7 @@
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
 	import ExerciseDebug from './ExerciseDebug.svelte';
+  import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
 	let { question }: { question: SortQuestion } = $props();
 	let orderedItems = $state<SortItem[]>([]);
@@ -145,9 +146,7 @@
 	</div>
 	<p class="mt-2 text-xs text-slate-500">Drag to reorder or move between areas.</p>
 	{#if changed}
-		<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
-			This question changed since your last visit, so your previous answer was cleared. Please answer the updated question.
-		</p>
+		<ExerciseChangeAlert />
 	{/if}
 
 	<div class="mt-5">

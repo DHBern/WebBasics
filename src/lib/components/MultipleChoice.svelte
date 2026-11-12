@@ -5,6 +5,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+  import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
 	let { question }: { question: MultipleChoiceQuestion } = $props();
 	let draftSelectedIds = $state<string[]>([]);
@@ -54,10 +55,8 @@
 			</div>
 		{/if}
 
-		{#if changed}
-			<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
-				This question changed since your last visit, so your previous answer was cleared. Please answer the updated question.
-			</p>
+		{#if true}
+			<ExerciseChangeAlert />
 		{/if}
 
 		<p class="mt-4 text-right text-xs text-slate-500" aria-hidden="true">Select all correct answers</p>
