@@ -1,8 +1,17 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Lists and Tables
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Lists and Tables
+
+Some information is easier to understand as a group of items or a grid of related values. Lists and tables give these relationships an explicit structure.
+
+Explore the elements used to build each one.
+
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('list-table-elements')} />

@@ -4,10 +4,14 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Basic Syntax (Elements and Attributes)
+<ExerciseBridge title="Let's start with..." size="wide">
 
-<ExerciseBridge title="In this section...">
-<p>HTML uses elements and attributes to describe a page. Start by identifying the parts of an element.</p>
+# Basic Syntax
+
+HTML uses elements and attributes to describe a page. Tags mark its parts, while attributes provide additional information.
+
+Start by identifying the parts of an element, then explore how elements fit together.
+
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('html-parts')} />

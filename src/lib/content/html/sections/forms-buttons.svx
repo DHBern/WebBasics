@@ -4,7 +4,15 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Forms and Buttons
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Forms and Buttons
+
+Forms let readers take part: search a collection, enter information, or send a request. Inputs, labels, and buttons each have a role in that interaction.
+
+Explore how these controls work together and what happens when a form is submitted.
+
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('form-control-terminology')} />
 

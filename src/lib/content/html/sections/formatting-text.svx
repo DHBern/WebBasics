@@ -4,7 +4,15 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Formatting Text (Headings, paragraphs, strong, emphasis)
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Formatting Text
+
+Headings, paragraphs, and emphasis give text a readable structure. In HTML, these choices describe the role of the text, not just how it looks.
+
+Explore heading levels and how different elements fit into the flow of a page.
+
+</ExerciseBridge>
 
 <ExerciseBridge title="Sort the headings">
 

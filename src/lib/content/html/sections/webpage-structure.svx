@@ -4,7 +4,15 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Webpage Structure
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Webpage Structure
+
+An HTML document contains both information about the page and the content readers encounter. Within that content, elements can identify navigation, a main text, or supporting material.
+
+Explore how these parts form a complete document.
+
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('head-header-nav')} />
 

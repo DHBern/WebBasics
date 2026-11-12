@@ -4,7 +4,15 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Semantic HTML
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Semantic HTML
+
+A document has more than an appearance: it has headings, navigation, main content, and other meaningful parts. Semantic HTML makes those roles explicit for people and software.
+
+Consider what a page communicates even without its visual styling.
+
+</ExerciseBridge>
 
 <ExerciseBridge title="Meaning and motivation">
 

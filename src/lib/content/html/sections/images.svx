@@ -4,7 +4,15 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Images
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Images
+
+Images can document objects, illustrate an argument, or bring a digital collection to life. A browser needs to know where an image is and how it should be described.
+
+Explore image paths, alternative text, and dimensions.
+
+</ExerciseBridge>
 
 <ExerciseBridge title="Relative vs. absolute paths">
 

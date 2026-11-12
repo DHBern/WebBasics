@@ -1,9 +1,18 @@
 <script>
 	import ExerciseCard from '#lib/components/ExerciseCard.svelte';
+	import ExerciseBridge from '#lib/components/ExerciseBridge.svelte';
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Comments
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Comments
+
+HTML files can contain notes that do not appear as page content. Comments help people explain code or leave reminders for later.
+
+Explore how comments are written and who can still read them.
+
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('valid-html-comments')} />
 

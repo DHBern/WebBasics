@@ -4,9 +4,15 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Links and Anchors
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Links and Anchors
+
+Links connect documents, sources, and places within a page. The `<a>` element turns part of your content into a destination readers can follow.
 
 The term **anchor** specifically refers to the `<a>` element's ability to mark a precise location in a webpage that can be jumped to, like bookmarking a spot within the same document. [MDN: Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links)
+
+</ExerciseBridge>
 
 <ExerciseBridge title="Nesting anchors">
 

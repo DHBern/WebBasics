@@ -4,7 +4,15 @@
 	import { getQuestion } from '#lib/content/course.js';
 </script>
 
-### Embeddings (iframe)
+<ExerciseBridge title="Let's start with..." size="wide">
+
+# Embeddings
+
+A page can display content from another page using an `<iframe>`. This brings outside material into your document, but it does not make the two pages one.
+
+Consider what stays separate and what information might be exchanged.
+
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('iframe-css-and-tracking')} />
 
