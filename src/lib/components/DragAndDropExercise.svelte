@@ -222,7 +222,7 @@
 				disabled={Boolean(saved)}
 				onclick={() => selectedItemId && placeItem(selectedItemId, targetId)}
 			>
-				{target?.displayText ?? (question.id === 'url-parts' ? '___' : 'Drop here')}
+				{target?.displayText ?? (question.id === 'url-parts' ? '&nbsp;&nbsp;&nbsp;' : 'Drop here')}
 			</button>
 		{/if}
 	</div>

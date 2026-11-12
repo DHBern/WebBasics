@@ -163,32 +163,6 @@
 	</div>
 	<ExerciseChangeAlert {changed} />
 
-	<div class="mt-5">
-		<h4 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h4>
-		<div
-			class="exercise-dnd-zone flex flex-wrap gap-2"
-			aria-label="Items to place"
-			use:dndzone={{
-				items: poolItems,
-				type: question.id,
-				dragDisabled: Boolean(saved),
-				morphDisabled: true,
-				centreDraggedOnCursor: true,
-				delayTouchStart: true
-			}}
-			onconsider={(event) => {
-				poolItems = event.detail.items;
-				dragging = event.detail.info.trigger !== TRIGGERS.DRAG_STOPPED;
-			}}
-			onfinalize={(event) => finalize(event, 'pool')}
-		>
-			{#each poolItems as item (item.id)}
-				<div class="sort-chip">{item.text}</div>
-			{/each}
-		</div>
-		<p class="mt-2 text-xs text-slate-500">Drop outside a destination to return an item here.</p>
-	</div>
-
 	<div class="sort-exercise-layout">
 		<div>
 			<h4 class="mb-2 text-sm font-semibold text-slate-700">Order from smallest to largest</h4>

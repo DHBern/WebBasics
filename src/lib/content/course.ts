@@ -227,10 +227,8 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			dragAndDrop(
 				'url-parts',
-				'Exercise 1: Identify the parts of and URL.',
-				[
-					'This exercise is about how to call the different parts of an URL, like e.g.  `https://en.wikipedia.org/wiki/Digital_humanities#Definition`. Drag each category label onto the matching text in the URL. Treat the displayed path as one piece.'
-				],
+				'Identify the parts of and URL.',
+        "URLs consists of different parts with different functions and names. Let's analyse [https://en.wikipedia.org/wiki/Digital_humanities#Digital_archives](https://en.wikipedia.org/wiki/Digital_humanities#Digital_archives). Do you know what each part stands for and how it's called?",
 				[
 					{ id: 'protocol', text: 'Protocol' },
 					{ id: 'subdomain', text: 'Subdomain' },
@@ -268,17 +266,17 @@ export const htmlSections: CourseSection[] = [
 						id: 'url-fragment',
 						label: 'Fragment',
 						prefix: '#',
-						displayText: 'Definition'
+						displayText: 'Digital_archives'
 					}
 				],
 				[
-					'The complete answer, from left to right, is `https` (protocol), `en` (subdomain), `wikipedia` (domain), `org` (top-level domain), `/wiki/Digital_humanities` (path), and `Definition` (fragment).',
-					'Formally, `https` is the URL scheme, often called its protocol. The path is one URL component; its `wiki` and `Digital_humanities` segments can be described as a route and subroute. The `#` symbol starts the fragment, and `Definition` is its value. A fragment can identify a location within a page.'
+					'The complete answer, from left to right, is `https` (protocol), `en` (subdomain), `wikipedia` (domain), `org` (top-level domain), `/wiki/Digital_humanities` (path), and `Digital_archives` (fragment).',
+					'Formally, `https` is the URL scheme, often called its protocol. The path is one URL component; its `wiki` and `Digital_humanities` segments can be described as a route and subroute. The `#` symbol starts the fragment, and `Digital_archives` is its value. A fragment can identify a location within a page.'
 				]
 			),
 			dragAndDrop(
 				'url-query-params',
-				'Exercise 2: Query parameters',
+				'Query parameters',
 				[
 					'Consider the following URL for a simple web search: `https://duckduckgo.com/?q=Digital%20Humanities&df=d&ia=web`',
 					'After the `?` it contains three so called *query parameters*, separated by an `&`. Each of them carries information about the search. Read each query parameter as a name/value pair (written `name=value`). Can you guess the meaning of each query parameter?'
@@ -318,10 +316,10 @@ export const htmlSections: CourseSection[] = [
 			{
 				id: 'url-encoding',
 				prompt:
-					'Exercise 3: Decode common URL encodings. The search term in Exercise 2 contains `Digital%20Humanities`. Use the [URL Encoder/Decoder](https://www.urlencoder.io/) to find what the encoded symbols represent, then match each code to its decoded character.',
+					'URL Encodings.',
 				type: 'drag-n-drop',
 				instructions:
-					'Paste each code into the decoder, or enter its character and use the encoder. Use the linked tool to solve the matches; you do not need to memorize an encoding table.',
+					['The search term in the last exercise contains `Digital%20Humanities`. This is beause whitespaces are not allowed as part of URLs, so they must be encoded with `%20`. Use this [URL Encoder/Decoder Tool](https://www.urlencoder.io/) to find what the encoded symbols represent, then match each code to its decoded character.'],
 				items: [
 					{ id: 'encoded-space', text: '%20' },
 					{ id: 'encoded-slash', text: '%2F' },
@@ -344,7 +342,7 @@ export const htmlSections: CourseSection[] = [
 					'encoded-equals': 'decoded-equals'
 				},
 				feedback:
-					'In `Digital%20Humanities`, `%20` decodes to a space, producing “Digital Humanities.” Other useful examples are `%2F` for `/`, `%3F` for `?`, `%26` for `&`, and `%3D` for `=`. These percent-encoded forms represent a byte using `%` followed by two hexadecimal digits. Encoding reserved characters inside a value keeps them from being mistaken for URL separators: for example, `&` separates query parameters and `=` separates each name from its value. You can use the [URL Encoder/Decoder](https://www.urlencoder.io/) to encode or decode other text.'
+					'In `Digital%20Humanities`, `%20` decodes to a space, producing “Digital Humanities.” Other useful examples are `%2F` for `/`, `%3F` for `?`, `%26` for `&`, and `%3D` for `=`. These percent-encoded forms represent a byte using `%` followed by two hexadecimal digits. Encoding reserved characters inside a value keeps them from being mistaken for URL separators: for example, `&` separates query parameters and `=` separates each name from its value.'
 			}
 		]
 	},

@@ -14,7 +14,7 @@ This is why we start with URLs and their structure.
 
 </ExerciseBridge>
 
-<ExerciseBridge title="Feedback" size="wide">
+<ExerciseBridge title="You'll get Feedback!" size="wide">
 
 After you submit an exercise a feedback block will pop up with explanations about the correct answers, as well as further material you are expected to learn. **Hence, these feedbacks are an integral part of this course**&mdash;so please read them carefully!
 
