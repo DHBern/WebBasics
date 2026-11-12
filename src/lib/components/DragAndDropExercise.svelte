@@ -5,7 +5,7 @@
 	import { isPlacementCorrect, questionRevision } from '#lib/content/course.js';
 	import { onMount, untrack } from 'svelte';
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
-	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
+	import PlacementLayout from './PlacementLayout.svelte';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
 	import ExerciseHelp from './ExerciseHelp.svelte';
@@ -291,72 +291,7 @@
 			</div>
 		</div>
 
-		{#if question.id === 'url-parts' || question.id === 'url-query-params'}
-			<div class="url-exercise mt-5">
-				<div class="url-string" aria-label="URL template">
-					{#each question.targets as target (target.id)}
-						{#if target.prefix}<span class="url-literal">{target.prefix}</span>{/if}
-						<div class="url-drop-slot">
-							<span class="sr-only">{target.label}</span>
-							{@render targetSlot(target.id)}
-						</div>
-						{#if target.suffix}<span class="url-literal">{target.suffix}</span>{/if}
-					{/each}
-				</div>
-			</div>
-		{:else if question.id === 'html-parts'}
-			<HtmlSyntaxDiagram {targetSlot} />
-		{:else if question.id === 'body-element-tree'}
-			<div class="webpage-diagram mt-5">
-				<div class="webpage-invisible">
-					<strong>Invisible to the user</strong>
-					{@render targetSlot('invisible-target')}
-				</div>
-				<div class="webpage-body-frame">
-					<!-- <div class="webpage-role-label">Page body</div> -->
-					{@render targetSlot('body-target')}
-					<div class="webpage-header">
-						<!-- <div class="webpage-role-label">Site header</div> -->
-						{@render targetSlot('header-target')}
-						<div class="webpage-nav">
-							<div class="webpage-role-label">Site navigation</div>
-							{@render targetSlot('nav-target')}
-						</div>
-					</div>
-					<div class="webpage-main">
-						<!-- <div class="webpage-role-label">Primary content</div> -->
-						{@render targetSlot('main-target')}
-						<div class="webpage-columns">
-							<div class="webpage-article">
-								<!-- <div class="webpage-role-label">Article content</div> -->
-								{@render targetSlot('article-target')}
-								<div class="webpage-section">
-									<!-- <div class="webpage-role-label">Article section</div> -->
-									{@render targetSlot('section-target')}
-								</div>
-							</div>
-							<div class="webpage-aside">
-								<div class="webpage-role-label">Related links</div>
-								{@render targetSlot('aside-target')}
-							</div>
-						</div>
-					</div>
-					<div class="webpage-footer">
-						<!-- <div class="webpage-role-label">Footer details</div> -->
-						{@render targetSlot('footer-target')}
-					</div>
-				</div>
-			</div>
-		{:else}
-			<div class="dropzone-grid mt-5" aria-label="Dropzones">
-				{#each question.targets.filter((target) => target.id !== 'document') as target (target.id)}
-					<div class="dropzone-card">
-						<span class="dropzone-label">{target.label}</span>
-						{@render targetSlot(target.id)}
-					</div>
-				{/each}
-			</div>
-		{/if}
+		<PlacementLayout questionId={question.id} targets={question.targets} {targetSlot} />
 	{/if}
 
 	<div class="mt-5 flex flex-wrap gap-2">

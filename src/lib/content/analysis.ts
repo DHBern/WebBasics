@@ -22,6 +22,11 @@ type RevisionMetric = {
 	items: ItemMetric[];
 	bonusResponses: Array<{ prompt: string; response: string; submittedAt: string }>;
 	textResponses: Array<{ response: string; submittedAt: string }>;
+	placementResponses: Array<{
+		submission: number;
+		exportedAt: string;
+		answer: SubmissionPayload['answers'][number];
+	}>;
 };
 
 export type QuestionMetric = {
@@ -36,7 +41,7 @@ export type QuestionMetric = {
 
 export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetric[] {
 	const grouped = new Map<string, QuestionMetric>();
-	for (const payload of payloads) {
+	for (const [submissionIndex, payload] of payloads.entries()) {
 		const exportedAt = new Date(payload.createdAt).toISOString();
 		for (const answer of payload.answers) {
 			const key = JSON.stringify([payload.strandId, answer.questionId]);
@@ -70,7 +75,8 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 					wrong: 0,
 					items: [],
 					bonusResponses: [],
-					textResponses: []
+					textResponses: [],
+					placementResponses: []
 				};
 				metric.versions.push(version);
 			}
@@ -84,6 +90,13 @@ export function analyzeSubmissions(payloads: SubmissionPayload[]): QuestionMetri
 				version.textResponses.push({
 					response: answer.response.text,
 					submittedAt: answer.response.submittedAt ?? exportedAt
+				});
+			}
+			if (answer.type === 'sort' || answer.type === 'drag-n-drop') {
+				version.placementResponses.push({
+					submission: submissionIndex + 1,
+					exportedAt,
+					answer
 				});
 			}
 

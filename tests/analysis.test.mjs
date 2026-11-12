@@ -162,6 +162,7 @@ test('totals wrong subtasks across submissions and revisions instead of failed a
 		],
 		isCorrect: false
 	});
+
 	const placement = answer({
 		questionRevision: 'placement',
 		type: 'drag-n-drop',
@@ -173,6 +174,47 @@ test('totals wrong subtasks across submissions and revisions instead of failed a
 			{ id: 'b', text: 'B', correctTargetId: 'target', selectedTargetId: null, correct: false }
 		],
 		isCorrect: false
+	});
+
+	test('keeps individual placement submissions and historical target labels for the gallery', () => {
+		const targets = [{ id: 'old-target', label: 'Original destination' }];
+		const first = answer({
+			type: 'drag-n-drop',
+			options: undefined,
+			targets,
+			response: { placements: { a: 'old-target' } },
+			correctResponse: { placements: { a: 'old-target' } },
+			items: [
+				{
+					id: 'a',
+					text: 'Original item',
+					correctTargetId: 'old-target',
+					selectedTargetId: 'old-target',
+					correct: true
+				}
+			]
+		});
+		const second = {
+			...first,
+			response: { placements: {} },
+			items: [{ ...first.items[0], selectedTargetId: null, correct: false }],
+			isCorrect: false
+		};
+		const [metric] = analyzeSubmissions([
+			payload('2026-11-01T08:00:00Z', [first]),
+			payload('2026-11-02T08:00:00Z', [second])
+		]);
+		const responses = metric.versions[0].placementResponses;
+		assert.equal(responses.length, 2);
+		assert.deepEqual(
+			responses.map((response) => response.submission),
+			[1, 2]
+		);
+		assert.deepEqual(responses[0].answer.targets, targets);
+		assert.equal(responses[0].answer.items[0].correct, true);
+		assert.equal(responses[1].answer.items[0].selectedTargetId, null);
+		assert.equal(responses[1].answer.items[0].correct, false);
+		assert.equal(responses[1].exportedAt, '2026-11-02T08:00:00.000Z');
 	});
 	const [metric] = analyzeSubmissions([
 		payload('2026-11-01T08:00:00Z', [incorrect]),

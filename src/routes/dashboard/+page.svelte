@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { strands, questionRevision } from '#lib/content/course.js';
 	import { analyzeSubmissions } from '#lib/content/analysis.js';
+	import PlacementSubmission from '#lib/components/PlacementSubmission.svelte';
 	import type { SubmissionFile, SubmissionPayload } from '#lib/content/types.js';
 
 	type ImportedFile = {
@@ -16,6 +17,12 @@
 	let files = $state<ImportedFile[]>([]);
 	let importError = $state('');
 	let importing = $state(false);
+	let sortBy = $state<'wrong' | 'course'>('wrong');
+	const exerciseOrder = strands.flatMap((strand) =>
+		strand.sections.flatMap((section) =>
+			section.questions.map((question) => JSON.stringify([strand.id, question.id]))
+		)
+	);
 
 	function isObject(value: unknown): value is Record<string, unknown> {
 		return typeof value === 'object' && value !== null;
@@ -48,6 +55,21 @@
 		}
 
 		if (value.description !== undefined && !isStringArray(value.description)) {
+			return false;
+		}
+		if (
+			value.targets !== undefined &&
+			(!Array.isArray(value.targets) ||
+				!value.targets.every(
+					(target) =>
+						isObject(target) &&
+						typeof target.id === 'string' &&
+						typeof target.label === 'string' &&
+						['parentId', 'prefix', 'suffix', 'displayText'].every(
+							(key) => target[key] === undefined || typeof target[key] === 'string'
+						)
+				))
+		) {
 			return false;
 		}
 		if (
@@ -208,6 +230,15 @@
 	let metrics = $derived.by(() => {
 		const payloads = analyzableFiles.flatMap((file) => (file.payload ? [file.payload] : []));
 		return analyzeSubmissions(payloads).sort((a, b) => {
+			if (sortBy === 'course') {
+				const first = exerciseOrder.indexOf(a.key);
+				const second = exerciseOrder.indexOf(b.key);
+				return (
+					(first < 0 ? Infinity : first) - (second < 0 ? Infinity : second) ||
+					a.versions[0].sectionTitle.localeCompare(b.versions[0].sectionTitle) ||
+					a.versions[0].question.localeCompare(b.versions[0].question)
+				);
+			}
 			return b.wrong - a.wrong || a.questionId.localeCompare(b.questionId);
 		});
 	});
@@ -316,9 +347,20 @@
 						Results are grouped by question ID within each course, with separate revision
 						breakdowns. Each revision keeps its original grading, options, and any submitted Bonus
 						text responses. Wrong subtasks are summed across all submissions, and exercises are
-						ranked by this total. Dates refer to JSON exports, not answer times.
+						ranked by this total or by course order. Each gallery card represents one anonymous
+						submission, not an identified student. Dates refer to JSON exports, not answer times.
 					</p>
 				</div>
+				<label class="text-sm font-medium">
+					Sort by
+					<select
+						class="ml-2 rounded-md border border-slate-300 bg-white px-2 py-1"
+						bind:value={sortBy}
+					>
+						<option value="wrong">Wrong subtasks</option>
+						<option value="course">Section and exercise order</option>
+					</select>
+				</label>
 			</div>
 
 			{#if !metrics.length}
@@ -386,35 +428,48 @@
 											to <time datetime={version.lastExportedAt}>{version.lastExportedAt}</time>
 										{/if}
 									</p>
-									{#if version.type !== 'input'}
+									{#if version.type === 'sort' || version.type === 'drag-n-drop'}
 										<p class="mt-2 text-sm">
 											{version.wrong} wrong subtasks · {version.attempts} tries
 										</p>
-										<h4 class="mt-4 text-sm font-semibold">
-											{version.type === 'multiple-choice' ? 'Option selections' : 'Item errors'}
-										</h4>
+										<h4 class="mt-4 text-sm font-semibold">Student placements</h4>
+										<div class="placement-gallery mt-3">
+											{#each version.placementResponses as response, index (index)}
+												<article class="min-w-0 rounded-lg border border-slate-200 bg-white p-3">
+													<h5 class="text-sm font-semibold">Submission {response.submission}</h5>
+													<p class="mb-2 text-xs text-slate-500">Exported: {response.exportedAt}</p>
+													<PlacementSubmission
+														answer={response.answer}
+														current={current?.type === 'sort' || current?.type === 'drag-n-drop'
+															? current
+															: undefined}
+													/>
+												</article>
+											{/each}
+										</div>
+									{:else if version.type === 'multiple-choice'}
+										<p class="mt-2 text-sm">
+											{version.wrong} wrong subtasks · {version.attempts} tries
+										</p>
+										<h4 class="mt-4 text-sm font-semibold">Option selections</h4>
 										{#if version.items.length}
-											<ul class="mt-3 space-y-2">
+											<ul class="mt-3 divide-y divide-slate-200">
 												{#each version.items as item (item.id)}
 													<li
-														class="flex flex-wrap items-center justify-between gap-3 rounded-lg p-2 text-sm"
+														class="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"
 													>
 														<span>{item.text}</span>
-														{#if version.type === 'multiple-choice'}
-															<span class="font-semibold">
-																<span
-																	class={item.correctOption ? 'text-emerald-800' : 'text-rose-800'}
-																	>{item.checked} checked</span
-																>
-																/
-																<span
-																	class={item.correctOption ? 'text-rose-800' : 'text-emerald-800'}
-																	>{item.attempts - item.checked} unchecked</span
-																>
-															</span>
-														{:else}
-															<span>{item.wrong} wrong · {item.attempts} tries</span>
-														{/if}
+														<span class="font-semibold">
+															<span
+																class={item.correctOption ? 'text-emerald-800' : 'text-rose-800'}
+																>{item.checked} checked</span
+															>
+															/
+															<span
+																class={item.correctOption ? 'text-rose-800' : 'text-emerald-800'}
+																>{item.attempts - item.checked} unchecked</span
+															>
+														</span>
 													</li>
 												{/each}
 											</ul>
@@ -425,9 +480,9 @@
 										{/if}
 									{:else}
 										<h4 class="mt-4 text-sm font-semibold">Text responses (ungraded)</h4>
-										<ul class="mt-2 space-y-2">
+										<ul class="mt-2 divide-y divide-slate-200">
 											{#each version.textResponses as response, index (`${response.submittedAt}-${index}`)}
-												<li class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+												<li class="py-3 text-sm">
 													<p class="whitespace-pre-wrap">{response.response}</p>
 													<p class="mt-2 text-xs text-slate-600">
 														Submitted: {response.submittedAt}
@@ -438,9 +493,9 @@
 									{/if}
 									{#if version.bonusResponses.length}
 										<h4 class="mt-5 text-sm font-semibold">Bonus text responses</h4>
-										<ul class="mt-2 space-y-2">
+										<ul class="mt-2 divide-y divide-slate-200">
 											{#each version.bonusResponses as bonus, index (`${bonus.submittedAt}-${index}`)}
-												<li class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+												<li class="py-3 text-sm">
 													<p class="font-semibold">{bonus.prompt}</p>
 													<p class="mt-1 whitespace-pre-wrap">{bonus.response}</p>
 													<p class="mt-2 text-xs text-slate-600">Submitted: {bonus.submittedAt}</p>
@@ -457,3 +512,15 @@
 		</section>
 	</div>
 </main>
+
+<style>
+	.placement-gallery {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+		gap: 1rem;
+	}
+
+	.placement-gallery article {
+		overflow-x: auto;
+	}
+</style>

@@ -82,6 +82,11 @@ submissions and revisions: each mismatched MCQ selection or placement counts onc
 Input responses remain ungraded. Percentages are not shown. For MCQ options,
 only checked/unchecked counts are colored according to whether that action is correct.
 Submitted MCQs retain the student's disabled checkboxes alongside correctness feedback.
+The dashboard can also sort by section and exercise order. Dividers separate
+options and text responses. Placement exercises show read-only galleries of
+individual anonymous submissions with the same task layouts and feedback colors.
+Exports include target labels and layout metadata; older exports use a matching
+current revision or explicitly show target IDs when the old layout is unavailable.
 
 Markdown links in sections, exercises, and feedback open in a new tab with
 `rel="noopener noreferrer"`. Explicit HTML/Svelte navigation links are unchanged.

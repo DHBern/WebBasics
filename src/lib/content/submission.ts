@@ -79,6 +79,7 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 						: [question.instructions],
 					response: { placements },
 					correctResponse: { placements: question.answerKey },
+					targets: question.targets,
 					items: question.items.map((item) => ({
 						id: item.id,
 						text: item.text,

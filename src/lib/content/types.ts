@@ -125,6 +125,7 @@ export type SubmissionPayload = {
 			selectedTargetId: string | null;
 			correct: boolean;
 		}>;
+		targets?: SortTarget[];
 		bonusResponse?: {
 			prompt: string;
 			response: string;
