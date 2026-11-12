@@ -319,7 +319,7 @@
 						<!-- <div class="webpage-role-label">Site header</div> -->
 						{@render targetSlot('header-target')}
 						<div class="webpage-nav">
-							<!-- <div class="webpage-role-label">Site navigation</div> -->
+							<div class="webpage-role-label">Site navigation</div>
 							{@render targetSlot('nav-target')}
 						</div>
 					</div>

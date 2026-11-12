@@ -592,7 +592,8 @@ export const htmlSections: CourseSection[] = [
 					footer: 'footer-target'
 				},
 				['The `<head>` and `<title>` are not displayed in the page. A `<header>` contains the site navigation; `<main>` contains one or multiple `<article>` elements, each of which can be devided into sections using `<section>`. Related material like cross-references and related links belong inside the `<aside>` or `<footer>` block.',
-				"Note that `<aside>` will not automatically appear beside the article — by default it just sits below like any other element. Placing it on the side is CSS's job, not HTML's. What semantic elements give you instead is meaning: screen readers for visually impaired users can navigate by landmarks, and browser reading modes can tell content from clutter. Try it yourself: go to a newspaper page like republik.ch and toggle on the reading view of your browser (Firefox: page icon in the address bar; Safari: Show Reader). The ads, navigation, and asides disappear, leaving only the article — and that's thanks to <main>."]
+				"Note that `<aside>` will not automatically appear beside the article — by default it just sits below like any other element. Placing it on the side is CSS's job, not HTML's. What semantic elements give you instead is meaning: screen readers for visually impaired users can navigate by landmarks, and browser reading modes can tell content from clutter.", 
+				"**Try it yourself:** visit this [article by SRF Meteo](https://www.srf.ch/radio-srf-1/sieben-fakten-warum-nebel-hohe-toene-schluckt-und-gespenster-erscheinen-laesst) and toggle on the **Reading mode** of your browser. The ads, navigation, and asides disappear, leaving only the article — and that's thanks to `<main>`."]
 			)
 		],
 		lesson:
@@ -602,17 +603,17 @@ export const htmlSections: CourseSection[] = [
 		id: 'semantic-html',
 		title: 'Semantic HTML',
 		questions: [
-			{
-				id: 'semantic-definition',
-				title: 'Definition with examples and motivation',
-				type: 'lesson',
-				text: 'Give a few examples of semantic HTML elements and explain why they are important. If unsure, read a definition and answer in your own words.'
-			},
+			input(
+				'semantic-definition',
+				'Definition with examples and motivation',
+				'Give a few examples of semantic HTML elements and explain why they are important. If unsure, read a definition and answer in your own words.'
+			),
 			mcq(
 				'html-without-css',
-				'A website without CSS will appear completely unstyled.',
+				'Without CSS',
+				'"A website without CSS will appear completely unstyled."',
 				[option('true', 'True', false), option('false', 'False', true)],
-				'Browsers apply default styles to semantic HTML. The result can differ between browsers.'
+				'Browsers apply default styles to semantic HTML. Note, however, that the result will differ between browsers.'
 			)
 		],
 		lesson:

@@ -24,8 +24,9 @@ Explore how these parts form a complete document.
 
 <ExerciseCard question={getQuestion('body-element-tree')} targetWidth="short" />
 
-<ExerciseBridge title="Further reading">
+<ExerciseBridge title="Further reading", size="wide">
 
-[MDN: Structuring documents](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents) · [MDN: Website metadata](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Webpage_metadata)
+- ["How to plan a basic website structure"](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents) by MDN.
+- ["What's in the head? Web page metadata"](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Webpage_metadata) by MDN.
 
 </ExerciseBridge>

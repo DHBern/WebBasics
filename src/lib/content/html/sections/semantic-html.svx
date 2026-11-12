@@ -8,19 +8,28 @@
 
 # Semantic HTML
 
-A document has more than an appearance: it has headings, navigation, main content, and other meaningful parts. Semantic HTML makes those roles explicit for people and software.
+In short, semantic HTML is all about the right choice of HTML elements. 
 
-Consider what a page communicates even without its visual styling.
+In the previous section on the Basic Page Structure we already got a glimpse of what's possible with semantic HTML. Now, let's turn to headings, lists, emphasis, and other meaningful parts.
+
+</ExerciseBridge>
+
+
+
+<ExerciseBridge title="An important question you should ask:">
+
+What does a page communicate even without its visual styling.
 
 </ExerciseBridge>
 
-<ExerciseBridge title="Meaning and motivation">
 
-Give a few examples of semantic HTML elements and explain why this is important. Answer in your own words.
 
-</ExerciseBridge>
+<ExerciseCard question={getQuestion('semantic-html')} />
+
 
 <ExerciseCard question={getQuestion('html-without-css')} />
+
+
 
 <ExerciseBridge title="Meaning, not appearance">
 
@@ -28,11 +37,15 @@ Give a few examples of semantic HTML elements and explain why this is important.
 
 </ExerciseBridge>
 
+
+
 <ExerciseBridge title="Bonus: Micro-project">
 
 With only HTML (no CSS), try to replicate a layout and compare Firefox and Chrome. Use `section`, `aside`, `ul`, `li`, `h1`, `h2`, `h3`, `p`, `strong`, `em`, `del`, `ins`, `a`, `form`, `input`, and `button`.
 
 </ExerciseBridge>
+
+
 
 <ExerciseBridge title="Further reading">
 
