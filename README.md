@@ -93,7 +93,9 @@ permits and fit smaller screens. Multiple bridges can be placed consecutively. K
 its own bridge: `ExercisePath` always appends a separate navigation bridge with
 the next-section or export button. Bridge alignment and exercise attachment
 points (always within the middle half) are randomized once per mount. A line
-leaving an exercise is grey and dashed until its first answer is submitted.
+leaving an exercise is grey and dashed until its first answer is submitted, then
+solid black regardless of correctness. Practising or editing a saved answer does
+not reset its outgoing connector.
 The button example distinguishes the class-attribute and class names, the
 style-attribute and CSS declarations, and the valueless boolean `disabled`
 attribute. Separate bracket rows and gaps distinguish nested and

@@ -131,10 +131,11 @@
 		{#each lines as line}
 			{@const pending = Boolean(line.questionId && !$progress.answers[line.questionId])}
 			<path
+				data-question-id={line.questionId}
 				d={line.d}
 				fill="none"
 				stroke={pending ? '#94a3b8' : 'black'}
-				stroke-dasharray={pending ? '7 7' : undefined}
+				stroke-dasharray={pending ? '7 7' : 'none'}
 				stroke-width="2"
 			/>
 		{/each}
