@@ -32,7 +32,7 @@
 	}
 
 	.bridge-box-wide {
-		--bridge-width: max(50%, min(16rem, 100%));
+		--bridge-width: max(70%, min(16rem, 100%));
 	}
 
 	.bridge-box > :global(:first-child) {
