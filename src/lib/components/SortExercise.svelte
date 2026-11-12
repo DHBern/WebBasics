@@ -143,7 +143,7 @@
 			{@html renderMarkdown(block)}
 		{/each}
 	</div>
-	<p class="mt-2 text-xs text-slate-500">Drag to reorder or move between areas. With the keyboard, press Space to pick up an item, use arrow keys to reorder or Tab to change area, then press Space to drop.</p>
+	<p class="mt-2 text-xs text-slate-500">Drag to reorder or move between areas.</p>
 	{#if changed}
 		<p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-950" role="status">
 			This question changed since your last visit, so your previous answer was cleared. Please answer the updated question.

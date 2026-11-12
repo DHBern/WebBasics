@@ -6,7 +6,9 @@
 
 ### Basic Syntax (Elements and Attributes)
 
-HTML uses elements and attributes to describe a page. Start by identifying the parts of an element.
+<ExerciseBridge title="In this section...">
+<p>HTML uses elements and attributes to describe a page. Start by identifying the parts of an element.</p>
+</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('html-parts')} />
 

@@ -5,7 +5,6 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
-	import ExerciseDebug from './ExerciseDebug.svelte';
 
 	let { question }: { question: MultipleChoiceQuestion } = $props();
 	let draftSelectedIds = $state<string[]>([]);
@@ -46,10 +45,6 @@
 
 <section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
 		<ExercisePrompt id={question.id} prompt={question.prompt} />
-		<ExerciseDebug disabled={Boolean(saved)} fill={() => {
-			draftSelectedIds = question.options.filter(() => Math.random() < 0.5).map((option) => option.id);
-			if (!draftSelectedIds.length) draftSelectedIds = [question.options[Math.floor(Math.random() * question.options.length)].id];
-		}} />
 
 		{#if question.description?.length}
 			<div class="exercise-description prose max-w-none">
