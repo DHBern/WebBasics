@@ -59,7 +59,10 @@ when submitted. **Edit answer** reopens a submitted input response; **Save answe
 replaces it, and JSON exports use the latest saved response. Unsaved edits do not
 change the exported answer. Previously saved comment bonus responses are migrated.
 
-The reusable quiz controls are in `src/lib/components/`. The HTML syntax diagram
+The reusable quiz controls are in `src/lib/components/`. Drag-and-drop and sort
+exercises show interaction hints in a shared top-right info tooltip. Hover, focus,
+or tap the icon to open it; press Escape, tap again, or tap outside to dismiss it.
+The HTML syntax diagram
 uses SVG text, brackets, and HTML dropzones inside
 `foreignObject` elements in one coordinate system. It scrolls horizontally on
 narrow screens to keep the bracket endpoints aligned with the code.

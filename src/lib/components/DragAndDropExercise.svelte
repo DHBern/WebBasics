@@ -8,6 +8,7 @@
 	import HtmlSyntaxDiagram from './HtmlSyntaxDiagram.svelte';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+	import ExerciseHelp from './ExerciseHelp.svelte';
 	import ExerciseDebug from './ExerciseDebug.svelte';
 	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
@@ -232,7 +233,15 @@
 	data-question-id={question.id}
 	aria-labelledby={`${question.id}-prompt`}
 >
-	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<div class="flex items-start justify-between gap-3">
+		<div class="min-w-0">
+			<ExercisePrompt id={question.id} prompt={question.prompt} />
+		</div>
+		<ExerciseHelp
+			id={question.id}
+			text="Drag an item, or select it and then choose a destination."
+		/>
+	</div>
 	<div class="exercise-description prose max-w-none">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
 			{@html renderMarkdown(block)}
@@ -245,9 +254,6 @@
 	{:else}
 		<div class="mt-5 bg-gray-50 rounded-xl p-5">
 			<h6 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h6>
-			<p class="mt-2 text-xs text-slate-500">
-				Drag an item, or select it and then choose a destination.
-			</p>
 			<div
 				class="exercise-dnd-zone flex flex-wrap gap-2"
 				aria-label="Items to place"

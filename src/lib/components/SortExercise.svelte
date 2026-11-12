@@ -7,6 +7,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+	import ExerciseHelp from './ExerciseHelp.svelte';
 	import ExerciseDebug from './ExerciseDebug.svelte';
 	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
@@ -144,14 +145,21 @@
 	data-question-id={question.id}
 	aria-labelledby={`${question.id}-prompt`}
 >
-	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<div class="flex items-start justify-between gap-3">
+		<div class="min-w-0">
+			<ExercisePrompt id={question.id} prompt={question.prompt} />
+		</div>
+		<ExerciseHelp
+			id={question.id}
+			text="Drag to reorder or move between areas. With the keyboard, press Space to pick up an item, use arrow keys to reorder or Tab to change area, then press Space to drop."
+		/>
+	</div>
 	<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging} />
 	<div class="exercise-description prose max-w-none">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
 			{@html renderMarkdown(block)}
 		{/each}
 	</div>
-	<p class="mt-2 text-xs text-slate-500">Drag to reorder or move between areas.</p>
 	<ExerciseChangeAlert {changed} />
 
 	<div class="mt-5">
