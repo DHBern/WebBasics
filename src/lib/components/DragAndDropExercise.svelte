@@ -207,14 +207,13 @@
 
 <section class="exercise-card drag-and-drop-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
-	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
+	<div class="exercise-description prose max-w-none">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
 			{@html renderMarkdown(block)}
 		{/each}
 	</div>
-	{#if changed}
-		<ExerciseChangeAlert />
-	{/if}
+	<ExerciseChangeAlert {changed} />
+
 
 	{#if !shuffleReady}
 		<p class="mt-5 text-sm text-slate-500" role="status">Preparing shuffled items…</p>
@@ -317,8 +316,8 @@
 			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
 		{/if}
 		<button class="button-secondary" disabled={dragging || !shuffleReady} onclick={removeAll}>Remove all</button>
+		<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging || !shuffleReady} />
 	</div>
-	<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging || !shuffleReady} />
 
 	{#if !saved}
 		<button class="button-primary mt-5" disabled={dragging} onclick={submit}>Submit answer</button>

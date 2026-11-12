@@ -55,9 +55,7 @@
 			</div>
 		{/if}
 
-		{#if true}
-			<ExerciseChangeAlert />
-		{/if}
+		<ExerciseChangeAlert {changed} />
 
 		<p class="mt-4 text-right text-xs text-slate-500" aria-hidden="true">Select all correct answers</p>
 		<fieldset class="mt-2 space-y-2" disabled={Boolean(saved)}>

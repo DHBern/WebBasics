@@ -54,9 +54,8 @@
 			{/each}
 		</div>
 	{/if}
-	{#if changed}
-		<ExerciseChangeAlert />
-	{/if}
+	<ExerciseChangeAlert {changed} />
+
 	{#if saved && !editing}
 		<p class="mt-3 whitespace-pre-wrap" role="status">Submitted response: {saved.textResponse}</p>
 		<button class="button-secondary mt-2" onclick={edit}>Edit answer</button>

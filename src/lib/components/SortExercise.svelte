@@ -139,15 +139,13 @@
 <section class="exercise-card" data-question-id={question.id} aria-labelledby={`${question.id}-prompt`}>
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
 	<ExerciseDebug fill={distributeRandomly} disabled={Boolean(saved) || dragging} />
-	<div class="exercise-description prose mt-2 max-w-none text-sm text-slate-600">
+	<div class="exercise-description prose max-w-none">
 		{#each Array.isArray(question.instructions) ? question.instructions : [question.instructions] as block}
 			{@html renderMarkdown(block)}
 		{/each}
 	</div>
 	<p class="mt-2 text-xs text-slate-500">Drag to reorder or move between areas.</p>
-	{#if changed}
-		<ExerciseChangeAlert />
-	{/if}
+	<ExerciseChangeAlert {changed} />
 
 	<div class="mt-5">
 		<h4 class="mb-2 text-sm font-semibold text-slate-700">Items to place</h4>
@@ -213,8 +211,8 @@
 	<div class="mt-5 flex flex-wrap gap-2">
 		{#if saved}
 			<button class="button-secondary" disabled={dragging} onclick={tryAgain}>Try again</button>
-		{/if}
-		<button class="button-secondary" disabled={dragging} onclick={removeAll}>Remove all</button>
+			{/if}
+			<button class="button-secondary" disabled={dragging} onclick={removeAll}>Remove all</button>
 	</div>
 
 	{#if !saved}

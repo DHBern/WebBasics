@@ -6,10 +6,5 @@
 </script>
 
 {#if debug.enabled}
-	<div class="mt-4">
-		<button class="button-secondary" type="button" onclick={fill} {disabled}>Debug: fill randomly</button>
-		<p class="mt-2 text-xs text-slate-500">
-			Debug only: fill, then submit to see feedback. Submitting saves an answer to this browser.
-		</p>
-	</div>
+	<button class="button-secondary bg-blue-100" type="button" onclick={fill} {disabled}>Debug: fill randomly</button>
 {/if}
