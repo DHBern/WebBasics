@@ -417,21 +417,20 @@
 												{#each version.items as item (item.id)}
 													<li
 														class="flex flex-wrap items-center justify-between gap-3 rounded-lg p-2 text-sm"
-														class:bg-emerald-100={item.correctOption}
 													>
-														<span
-															class:font-bold={item.correctOption}
-															class:text-emerald-900={item.correctOption}
-														>
-															{item.text}
-															{#if item.correctOption}<span class="ml-1 text-xs"
-																	>(Correct answer)</span
-																>{/if}
-														</span>
+														<span>{item.text}</span>
 														{#if version.type === 'multiple-choice'}
-															<span class="font-semibold"
-																>{item.checked} checked / {item.attempts - item.checked} unchecked</span
-															>
+															<span class="font-semibold">
+																<span
+																	class={item.correctOption ? 'text-emerald-800' : 'text-rose-800'}
+																	>{item.checked} checked</span
+																>
+																/
+																<span
+																	class={item.correctOption ? 'text-rose-800' : 'text-emerald-800'}
+																	>{item.attempts - item.checked} unchecked</span
+																>
+															</span>
 														{:else}
 															<span
 																>{item.wrong} wrong · {((item.wrong / item.attempts) * 100).toFixed(
