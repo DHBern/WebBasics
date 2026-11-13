@@ -2,14 +2,28 @@ import { browser } from '$app/env';
 import { get, writable } from 'svelte/store';
 import {
 	getQuestion,
+	htmlSections,
+	questionSection,
 	legacyCommentVisibilityRevision,
 	questionRevision
 } from './content/course.js';
 import type { SavedProgress, SubmittedAnswer } from './content/types.js';
+import {
+	isExerciseComment,
+	isLearnerComment,
+	restoreComments,
+	updateComment
+} from './content/comments.js';
 
 const STORAGE_KEY = 'webbasics.progress.v1';
 
-const emptyProgress: SavedProgress = { version: 1, answers: {}, changeNotices: [] };
+const emptyProgress: SavedProgress = {
+	version: 1,
+	answers: {},
+	changeNotices: [],
+	exerciseComments: {},
+	sectionComments: {}
+};
 
 export const progress = writable<SavedProgress>(emptyProgress);
 export const progressLoaded = writable(false);
@@ -78,7 +92,9 @@ export function hydrateProgress() {
 		const restored: SavedProgress = {
 			version: 1,
 			answers: {},
-			changeNotices: [...notices]
+			changeNotices: [...notices],
+			exerciseComments: restoreComments(parsed.exerciseComments, isExerciseComment),
+			sectionComments: restoreComments(parsed.sectionComments, isLearnerComment)
 		};
 
 		for (const [id, value] of Object.entries(savedAnswers)) {
@@ -156,4 +172,42 @@ export function resetProgress() {
 	persist(emptyProgress);
 	progress.set(emptyProgress);
 	progressError.set('');
+}
+
+export function saveExerciseComment(questionId: string, text: string) {
+	const question = getQuestion(questionId);
+	const section = questionSection(questionId);
+	if (!question || !section) throw new Error('The exercise for this comment could not be found.');
+	const current = get(progress);
+	const next = {
+		...current,
+		exerciseComments: updateComment(current.exerciseComments, {
+			targetId: question.id,
+			title: question.prompt,
+			sectionId: section.id,
+			sectionTitle: section.title,
+			revision: questionRevision(question),
+			text,
+			updatedAt: new Date().toISOString()
+		})
+	};
+	persist(next);
+	progress.set(next);
+}
+
+export function saveSectionComment(sectionId: string, text: string) {
+	const section = htmlSections.find((section) => section.id === sectionId);
+	if (!section) throw new Error('The section for this comment could not be found.');
+	const current = get(progress);
+	const next = {
+		...current,
+		sectionComments: updateComment(current.sectionComments, {
+			targetId: section.id,
+			title: section.title,
+			text,
+			updatedAt: new Date().toISOString()
+		})
+	};
+	persist(next);
+	progress.set(next);
 }

@@ -86,6 +86,21 @@ export type SavedProgress = {
 	version: 1;
 	answers: Record<string, SubmittedAnswer>;
 	changeNotices: string[];
+	exerciseComments: Record<string, ExerciseComment>;
+	sectionComments: Record<string, LearnerComment>;
+};
+
+export type LearnerComment = {
+	targetId: string;
+	title: string;
+	text: string;
+	updatedAt: string;
+};
+
+export type ExerciseComment = LearnerComment & {
+	sectionId: string;
+	sectionTitle: string;
+	revision: string;
 };
 
 export type SubmissionPayload = {
@@ -94,6 +109,8 @@ export type SubmissionPayload = {
 	strandId: string;
 	strandTitle: string;
 	createdAt: string;
+	exerciseComments?: ExerciseComment[];
+	sectionComments?: LearnerComment[];
 	answers: Array<{
 		questionId: string;
 		questionRevision: string;

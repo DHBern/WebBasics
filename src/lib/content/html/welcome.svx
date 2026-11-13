@@ -1,3 +1,7 @@
+<script>
+	import ExerciseReport from '#lib/components/ExerciseReport.svelte';
+</script>
+
 # Repetitorium HTML
 
 ## Table of Content
@@ -19,5 +23,17 @@
 The following exercises are intended to repeat what you've just learnt in the introductory videos as well as deepen your knowledge about the whys of important HTML and CSS concepts.
 
 It is a deliberate choice that some of the following exercise questions go beyond what was covered in the introductory videos. But worry not! After you've answered, you will be provided with a quick explanation, which is an integral part of the curriculum of this course. So please take some time to solve the question on your own and then carefully read the explanations given.
+
+## Help improve this course
+
+We welcome bug reports and any other comments, including whether an exercise felt too easy or too difficult. Your feedback helps us improve the course for next year's students.
+
+Use the round **!** button at the bottom right of any exercise, or the comment field at the end of each section. Both are optional. Save your comment to keep it in this browser; you can edit it later, and the latest saved version is included in your JSON export. Comments are not sent immediately.
+
+<div class="exercise-card">
+	<h3>Example: reporting an issue</h3>
+	<p>For example: "I found the instructions unclear, and the task felt harder than the video examples." Try the button below; this demonstration does not save or export anything.</p>
+	<ExerciseReport demo />
+</div>
 
 <a href="/courses/html/url-structure/">Begin HTML Questions</a>

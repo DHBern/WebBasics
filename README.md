@@ -72,6 +72,18 @@ when submitted. **Edit answer** reopens a submitted input response; **Save answe
 replaces it, and JSON exports use the latest saved response. Unsaved edits do not
 change the exported answer. Previously saved comment bonus responses are migrated.
 
+Learners can leave optional improvement comments using the overlapping report
+button on every exercise (including bonuses) or `SectionReport` at each section's
+end. Comments are editable, saved locally, and exported as the latest saved
+`exerciseComments` and `sectionComments` arrays, independently of answers.
+Saving an empty comment removes it. Unsaved drafts are not exported. Comments do
+not affect completion or grading; resetting progress also clears them.
+Older saved progress and JSON exports without these fields remain supported.
+Exercise comments retain their exercise title, revision, and section metadata
+even if the question is later revised. The welcome page includes a non-saving demo.
+The dashboard separates section comments, exercise comments, and exercise results,
+and renders uploaded question Markdown/code while keeping learner comments plain text.
+
 Submitted exercises of every type show a large black tick overlapping the
 top-left corner, regardless of
 correctness. This completion marker remains while practising or editing a saved

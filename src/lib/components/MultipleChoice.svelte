@@ -6,6 +6,7 @@
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
 	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
+	import ExerciseReport from './ExerciseReport.svelte';
 
 	let { question }: { question: MultipleChoiceQuestion } = $props();
 	let draftSelectedIds = $state<string[]>([]);
@@ -53,6 +54,7 @@
 	aria-labelledby={`${question.id}-prompt`}
 >
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<ExerciseReport questionId={question.id} />
 
 	{#if question.description?.length}
 		<div class="exercise-description prose max-w-none">

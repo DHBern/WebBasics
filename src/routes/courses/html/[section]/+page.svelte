@@ -2,6 +2,7 @@
 	import { createDebugMode } from '#lib/debug.svelte.js';
 	import CourseNavigation from '#lib/components/CourseNavigation.svelte';
 	import ExercisePath from '#lib/components/ExercisePath.svelte';
+	import SectionReport from '#lib/components/SectionReport.svelte';
 	import UrlStructure from '#lib/content/html/sections/url-structure.svx';
 	import Comments from '#lib/content/html/sections/comments.svx';
 	import BasicSyntax from '#lib/content/html/sections/basic-syntax.svx';
@@ -82,6 +83,7 @@
 				navigationTitle={nextSection ? 'Next section' : 'Export your answers'}
 			>
 				<Content />
+				<SectionReport sectionId={data.section.id} />
 			</ExercisePath>
 		{/key}
 		{#if previousSection}

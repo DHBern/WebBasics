@@ -5,6 +5,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+	import ExerciseReport from './ExerciseReport.svelte';
 	import ExerciseDebug from './ExerciseDebug.svelte';
 	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
 
@@ -49,6 +50,7 @@
 	aria-labelledby={`${question.id}-prompt`}
 >
 	<ExercisePrompt id={question.id} prompt={question.prompt} />
+	<ExerciseReport questionId={question.id} />
 	<ExerciseDebug
 		disabled={Boolean(saved) && !editing}
 		fill={() => {

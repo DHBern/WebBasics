@@ -16,7 +16,8 @@ export function allQuestionsAnswered(): boolean {
 }
 
 export async function makeSubmission(): Promise<SubmissionFile> {
-	const answers = get(progress).answers;
+	const saved = get(progress);
+	const answers = saved.answers;
 	if (!requiredQuestionList.every((question) => answers[question.id])) {
 		throw new Error('Answer every interactive question before exporting.');
 	}
@@ -27,6 +28,8 @@ export async function makeSubmission(): Promise<SubmissionFile> {
 		strandId: htmlStrand.id,
 		strandTitle: htmlStrand.title,
 		createdAt: new Date().toISOString(),
+		exerciseComments: Object.values(saved.exerciseComments),
+		sectionComments: Object.values(saved.sectionComments),
 		answers: questionList
 			.filter((question) => answers[question.id])
 			.map((question) => {

@@ -7,6 +7,7 @@
 	import { clearChangeNotice, progress, saveAnswer } from '#lib/progress.js';
 	import ExerciseFeedback from './ExerciseFeedback.svelte';
 	import ExercisePrompt from './ExercisePrompt.svelte';
+	import ExerciseReport from './ExerciseReport.svelte';
 	import ExerciseHelp from './ExerciseHelp.svelte';
 	import ExerciseDebug from './ExerciseDebug.svelte';
 	import ExerciseChangeAlert from './ExerciseChangeAlert.svelte';
@@ -146,6 +147,7 @@
 	data-question-id={question.id}
 	aria-labelledby={`${question.id}-prompt`}
 >
+	<ExerciseReport questionId={question.id} />
 	<div class="flex items-start justify-between gap-3">
 		<div class="min-w-0">
 			<ExercisePrompt id={question.id} prompt={question.prompt} />

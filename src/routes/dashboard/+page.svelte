@@ -2,6 +2,8 @@
 	import { strands, questionRevision } from '#lib/content/course.js';
 	import { analyzeSubmissions } from '#lib/content/analysis.js';
 	import PlacementSubmission from '#lib/components/PlacementSubmission.svelte';
+	import { isExerciseComment, isLearnerComment } from '#lib/content/comments.js';
+	import { renderDashboardMarkdown } from '#lib/content/markdown.js';
 	import type { SubmissionFile, SubmissionPayload } from '#lib/content/types.js';
 
 	type ImportedFile = {
@@ -142,6 +144,12 @@
 			typeof payload.strandTitle === 'string' &&
 			typeof payload.createdAt === 'string' &&
 			Number.isFinite(Date.parse(payload.createdAt)) &&
+			(payload.exerciseComments === undefined ||
+				(Array.isArray(payload.exerciseComments) &&
+					payload.exerciseComments.every(isExerciseComment))) &&
+			(payload.sectionComments === undefined ||
+				(Array.isArray(payload.sectionComments) &&
+					payload.sectionComments.every(isLearnerComment))) &&
 			Array.isArray(payload.answers) &&
 			payload.answers.every(isQuestionAnswer) &&
 			value.checksum.algorithm === 'SHA-256' &&
@@ -243,6 +251,25 @@
 		});
 	});
 
+	let exerciseComments = $derived(
+		analyzableFiles.flatMap((file) =>
+			(file.payload?.exerciseComments ?? []).map((comment) => ({
+				...comment,
+				file: file.name,
+				strand: file.payload?.strandTitle
+			}))
+		)
+	);
+	let sectionComments = $derived(
+		analyzableFiles.flatMap((file) =>
+			(file.payload?.sectionComments ?? []).map((comment) => ({
+				...comment,
+				file: file.name,
+				strand: file.payload?.strandTitle
+			}))
+		)
+	);
+
 	function currentQuestion(strandId: string, questionId: string) {
 		const item = strands
 			.find((strand) => strand.id === strandId)
@@ -339,10 +366,51 @@
 			</section>
 		{/if}
 
+		<section class="mt-8" aria-labelledby="section-comments-title">
+			<h2 id="section-comments-title" class="text-2xl font-bold">Section comments</h2>
+			{#if sectionComments.length}
+				<ul class="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white px-4">
+					{#each sectionComments as comment, index (index)}
+						<li class="py-4">
+							<h3 class="font-semibold">{comment.title}</h3>
+							<p class="mt-2 whitespace-pre-wrap break-words">{comment.text}</p>
+							<p class="mt-2 text-xs text-slate-500">
+								{comment.strand} · {comment.file} · Updated: {comment.updatedAt} · ID: {comment.targetId}
+							</p>
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				<p class="mt-3 text-sm text-slate-600">No section comments in the included submissions.</p>
+			{/if}
+		</section>
+
+		<section class="mt-8" aria-labelledby="exercise-comments-title">
+			<h2 id="exercise-comments-title" class="text-2xl font-bold">Exercise comments</h2>
+			{#if exerciseComments.length}
+				<ul class="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white px-4">
+					{#each exerciseComments as comment, index (index)}
+						<li class="py-4">
+							<div class="prose max-w-none font-semibold">
+								{@html renderDashboardMarkdown(comment.title)}
+							</div>
+							<p class="mt-2 whitespace-pre-wrap break-words">{comment.text}</p>
+							<p class="mt-2 text-xs text-slate-500">
+								{comment.strand} · {comment.sectionTitle} · {comment.file} · Updated: {comment.updatedAt}
+								· ID: {comment.targetId} · Revision: {comment.revision}
+							</p>
+						</li>
+					{/each}
+				</ul>
+			{:else}
+				<p class="mt-3 text-sm text-slate-600">No exercise comments in the included submissions.</p>
+			{/if}
+		</section>
+
 		<section class="mt-8">
 			<div class="flex flex-wrap items-end justify-between gap-3">
 				<div>
-					<h2 class="text-2xl font-bold">Question results and Bonus responses</h2>
+					<h2 class="text-2xl font-bold">Exercise results</h2>
 					<p class="mt-1 text-sm text-slate-600">
 						Results are grouped by question ID within each course, with separate revision
 						breakdowns. Each revision keeps its original grading, options, and any submitted Bonus
@@ -378,13 +446,13 @@
 							<summary
 								class="grid cursor-pointer grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 p-4 text-sm"
 							>
-								<span class="min-w-0">
+								<div class="min-w-0">
 									<span class="block text-xs font-semibold text-orange-700"
 										>{latest.sectionTitle} · {latest.type}</span
 									>
-									<span class="mt-1 block font-semibold text-slate-900"
-										>{current?.prompt ?? latest.question}</span
-									>
+									<div class="prose mt-1 max-w-none font-semibold text-slate-900">
+										{@html renderDashboardMarkdown(current?.prompt ?? latest.question)}
+									</div>
 									<span class="mt-1 block text-xs text-slate-500"
 										>ID: {metric.questionId} · {metric.versions.length} revision(s)</span
 									>
@@ -393,7 +461,7 @@
 											>Includes historical or unavailable versions — expand for export dates</span
 										>
 									{/if}
-								</span>
+								</div>
 								<span class="text-right font-semibold"
 									>{metric.gradedAttempts ? `${metric.wrong} wrong subtasks` : 'Ungraded'}</span
 								>
@@ -412,11 +480,13 @@
 													: 'Question no longer available in this course'}
 										</span>
 									</h3>
-									<p class="mt-2 text-sm font-medium">{version.question}</p>
+									<div class="prose mt-2 max-w-none text-sm font-medium">
+										{@html renderDashboardMarkdown(version.question)}
+									</div>
 									{#if version.description?.length}
-										<div class="mt-2 text-sm">
+										<div class="prose mt-2 max-w-none text-sm">
 											{#each version.description as block}
-												<p class="mt-2 whitespace-pre-wrap">{block}</p>
+												{@html renderDashboardMarkdown(block)}
 											{/each}
 										</div>
 									{/if}
@@ -458,7 +528,9 @@
 													<li
 														class="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"
 													>
-														<span>{item.text}</span>
+														<div class="prose min-w-0 max-w-none">
+															{@html renderDashboardMarkdown(item.text)}
+														</div>
 														<span class="font-semibold">
 															<span
 																class={item.correctOption ? 'text-emerald-800' : 'text-rose-800'}
@@ -496,7 +568,9 @@
 										<ul class="mt-2 divide-y divide-slate-200">
 											{#each version.bonusResponses as bonus, index (`${bonus.submittedAt}-${index}`)}
 												<li class="py-3 text-sm">
-													<p class="font-semibold">{bonus.prompt}</p>
+													<div class="prose max-w-none font-semibold">
+														{@html renderDashboardMarkdown(bonus.prompt)}
+													</div>
 													<p class="mt-1 whitespace-pre-wrap">{bonus.response}</p>
 													<p class="mt-2 text-xs text-slate-600">Submitted: {bonus.submittedAt}</p>
 												</li>
