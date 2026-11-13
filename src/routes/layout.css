@@ -127,7 +127,8 @@ a {
 .exercise-feedback::before {
 	position: absolute;
 	top: -2.75rem;
-	left: 2rem;
+	left: 50%;
+	transform: translateX(-50%);
 	height: 2.75rem;
 	border-left: 2px solid black;
 	content: '';
