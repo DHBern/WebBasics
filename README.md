@@ -34,7 +34,7 @@ exports. Multiline titles remain supported. Body changes invalidate saved answer
 ```ts
 input({
 	slug: 'semantic-definition',
-	title: 'Definition with examples and motivation',
+	title: 'Define with examples',
 	question: [
 		'Give a few examples of semantic HTML elements and explain why they are important.',
 		'If unsure, read a definition and answer in your own words.'

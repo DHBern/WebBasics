@@ -383,8 +383,64 @@ export const htmlSections: CourseSection[] = [
 					),
 					option('invalid', 'This is invalid HTML.', true)
 				],
-				feedback:
+				feedback:[
+				"This is an important learning: **HTML tags must never intersect.** So `<strong>` must close before `<em>`.",
 					"Browsers indeed may repair misnested formatting elements, but the source is invalid HTML. It is better to write correct markup in the first place. Tools like [Mozilla's HTML validator](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Debugging_HTML#html_validation) can help find errors."
+				]
+			}),
+			mcq({
+				slug: 'overlapping-marks',
+				title: 'Multiple Comments',
+				question:
+					'Consider the following code snippet with two highlighted passages:\n\n```html\nLorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a <mark data-comment="1">dummy\nor placeholder text commonly used in <mark data-comment="2">graphic design</mark>,\npublishing, and web development.</mark>```',
+				options: [
+					option(
+						'g-1',
+						'The text "graphic design" is part of comment 1',
+						false
+					),
+					option(
+						'g-2',
+						'The text "graphic design" is part of comment 2',
+						false
+					),
+					option(
+						'g-both',
+						'The text "graphic design" is part of both comments',
+						true
+					),
+					option(
+						'w-1',
+						'The text "web development" is part of comment 1',
+						true
+					),
+					option(
+						'w-2',
+						'The text "web development" is part of comment 2',
+						false
+					),
+					option(
+						'w-b',
+						'The text "web development" is part of both comments',
+						false
+					),
+					option('invalid', 'This is invalid HTML.', false)
+				],
+				feedback:[
+					"This time the HTML is valid. However, the code may not do what you expect it to do, and again, this is related to the inability of HTML tags to intersect.",
+					'Since `</ANY_ELEMENT>` always closes the last opened element of the same kind (in this case `<mark>`) comment 2 closes before "web development" making it part of only comment 1.',
+					"In cases where comment 2 is fully contained within comment 1, we are just fine. **But what if the two comments would overlap?** In this case, we have to more explicit work (see the Bonus exercise).",
+					"The syntax `data-comment`, by the way, is called a **data-attribute**. Data attributes allow you to invent almost any attribute name you like, just with the condition that it starts with `'data-'`"
+			],
+			bonusId: "overlapping-marks-bonus"
+			}),
+			input({
+				slug: 'overlapping-marks-bonus',
+				title: "Find a workaround for the overlapping marks",
+				question: [
+					"**Hint 1:** You have to introduce more `<mark>` elements.",
+					"**Hint 2:** Use multiple attribute-values or data-attributes per `<mark>`."
+				]
 			}),
 			mcq({
 				slug: 'html-indentation',
@@ -413,9 +469,7 @@ export const htmlSections: CourseSection[] = [
 				feedback:
 					'Consistent formatting makes code easier to read and collaborate on. Tools such as [Prettier](https://www.youtube.com/watch?v=RIFWADZzSjM) can format code on demand or on save. Standard formatting avoids noisy diffs caused by each contributor reformatting code to personal taste.'
 			})
-		],
-		lesson:
-			'**Further Reading:** [HTML elements](https://www.w3schools.com/tags/ref_byfunc.asp) · [MDN: Attributes](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax#attributes)'
+		]
 	},
 	{
 		id: 'webpage-structure',
@@ -490,9 +544,7 @@ export const htmlSections: CourseSection[] = [
 					"**Try it yourself:** visit this [article by SRF Meteo](https://www.srf.ch/radio-srf-1/sieben-fakten-warum-nebel-hohe-toene-schluckt-und-gespenster-erscheinen-laesst) and toggle on the **Reading mode** of your browser. The ads, navigation, and asides disappear, leaving only the article — and that's thanks to `<main>`."
 				]
 			})
-		],
-		lesson:
-			'**Further Reading:** [MDN: Structuring documents](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents) · [MDN: Website metadata](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Webpage_metadata)'
+		]
 	},
 	{
 		id: 'semantic-html',
@@ -500,7 +552,7 @@ export const htmlSections: CourseSection[] = [
 		questions: [
 			input({
 				slug: 'semantic-definition',
-				title: 'Recap: Definition with examples',
+				title: 'Recap: Define with examples',
 				question: [
 					'Give a few examples of semantic HTML elements (e.g. from the previous section) and explain what distinguishes them from `<div>` and `<span>`. If you are unsure, you can [catch up here](https://developer.mozilla.org/en-US/curriculum/core/semantic-html/).',
 					"It's important for your learning, that you answer in your own words."
@@ -542,12 +594,10 @@ export const htmlSections: CourseSection[] = [
 				feedback: [
 					'So, while the first answer technically is correct, **you should never do this.** `<div>` elements are meant as structural wrappers around other elements, but not to replace semantic elements. Even if it seems to produce the same output at first glance.',
 					"It's true, that `<div>` elements can be styled to *visually (!)* resemble their semantic counter-parts. You can also do the oposite and *remove* or *overwrite* default browser styling from semantic elements. This, by the way, is a pretty common technique, if you prefer to start styling from scratch.",
-					"Lastly, it's true that `<span>` has no semantic meaning either. However, there is an important difference between `<div>` and `<span>` which we will cover later in the next section. In short: `<div>` elements are block-elements, which means they take up new vertical space, whereas `<span>` appears inline. So the given code snippet with just `<span>` would style differently. Note, however, that with CSS you can even revert this behavior, but this should be avoided by any means."
+					"Lastly, it's true that `<span>` has no semantic meaning either. However, there is an important difference between `<div>` and `<span>` which we will cover just in a bit. In short: `<div>` is a block-element, which means it behaves like a rectangular box, whereas `<span>` appears inline, able to wrap around corners. Therefore the given code snippet with just `<span>` would style very differently."
 				]
 			})
-		],
-		lesson:
-			'**Most important takeaway (especially for digital humanities students):** “HTML tags must be used for their semantic value, not their appearance. It’s always possible to totally change the look and feel of a given tag using CSS so, when using HTML, take the time to focus on the meaning rather than the appearance.” [Source: MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Cheatsheet)\n\n**Bonus: Micro-project.** With only HTML (no CSS), try to replicate a layout and compare Firefox and Chrome. Use `section`, `aside`, `ul`, `li`, headings, paragraphs, `strong`, `em`, `del`, `ins`, `a`, `form`, `input`, and `button`.\n\n**Bonus:** [Mark up dates and times](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Advanced_text_features#marking_up_times_and_dates)'
+		]
 	},
 	{
 		id: 'formatting-text',
@@ -664,32 +714,16 @@ export const htmlSections: CourseSection[] = [
 					ins: 'ins'
 				},
 				feedback: [
-					'**Meaning before appearance.** HTML describes what text means; CSS controls its presentation. Browsers have default styles, but those styles can change. Choose an element for its purpose, not simply because it looks bold, italic, or small.',
+					"As discussed in the section on semantic HTML, it is important to always choose an element for its purpose, not simply because it looks bold, italic, or small. For purely visual styling, use `<span>` with CSS as a neutral container instead.",
 					'**Importance and emphasis.** `<strong>` marks importance, seriousness, or urgency; `<em>` marks stress emphasis. Compare “Do **not** touch the manuscript” with “I said *this* manuscript, not that one.” Browsers commonly show them in bold and italic, respectively, but the meaning is the reason to use them.',
-					'**Attention and alternate voices.** `<b>` draws attention without adding importance, for example to a keyword in a summary. `<i>` marks text set apart by convention or voice, such as a technical term, a taxonomic name, or a thought. Neither is merely a request for a font style. For purely visual bold or italic styling, use CSS instead.',
-					'**Paragraphs and breaks.** `<p>` groups a paragraph. `<br>` breaks a line within text, useful for verse or an address; do not pile up line breaks to create margins. `<hr>` marks a thematic break, often displayed as a horizontal line. Both `<br>` and `<hr>` are void elements, so they have no closing tags.',
-					'**Quotations and sources.** `<q>` marks a short inline quotation; browsers normally supply quotation marks. `<blockquote>` marks a quotation in a separate block, often indented. `<cite>` identifies the **title of a work**, not the name of its author. The optional `cite` **attribute** on `<q>` or `<blockquote>` can hold a source URL, but does not create a visible reference; provide a readable citation or link as well.',
+					'**Attention and alternate voices.** `<b>` draws attention without adding importance, for example to a keyword in a summary. `<i>` marks text set apart by convention or voice, such as a technical term, a taxonomic name, or a thought. Neither is merely a request for a font style, eventhough their naming hints that they once were created for formatting, and later repurposed.',
+					'**Paragraphs and breaks.** `<p>` groups a paragraph. `<br>` breaks a line within text, useful for verse or an address; do not pile up line breaks to create paragraph margins. `<hr>` marks a thematic break, often displayed as a horizontal line. Both `<br>` and `<hr>` are void elements, so they have no closing tags.',
+					'**Quotations and sources.** `<q>` marks a short inline quotation; browsers normally supply quotation marks. `<blockquote>` marks a quotation in a separate block, often indented. `<cite>` identifies the title of a work, not the name of its author. The optional `cite` *attribute* on `<q>` or `<blockquote>` can hold a source URL, but does not create a visible reference.',
 					'**Preserving text and showing code.** `<pre>` preserves spaces and line breaks, useful when spacing matters in a transcription. `<code>` identifies computer code; combine `<pre><code>…</code></pre>` for a code block. To display literal HTML tags, escape angle brackets as `&lt;` and `&gt;` rather than letting the browser interpret them as elements.',
-					'**Neutral containers and annotations.** `<span>` has no special meaning; it groups inline text for a class, language, or style. `<mark>` highlights text relevant to the current context, such as a search match. `<small>` marks side comments or small print, not any text you happen to want in a smaller font.',
-					'**Abbreviations and raised or lowered text.** `<abbr>` marks an abbreviation; `title` can supply its expansion. Explain unfamiliar abbreviations in the visible text too, since a hover hint is not accessible to everyone. `<sub>` and `<sup>` represent conventional subscripts and superscripts, such as H₂O and x², rather than arbitrary visual positioning.',
+					'**Abbreviations and titles.** `<abbr>` marks an abbreviation; `title` can supply its expansion. Explain unfamiliar abbreviations in the visible text too, since a hover hint is not accessible to everyone.',
+					'**Raised or lowered text.** `<sub>` and `<sup>` represent conventional subscripts and superscripts, such as H₂O and x², rather than arbitrary visual positioning.',
+					'**Annotations.** `<mark>` highlights text relevant to the current context, such as a search match. `<small>` marks side comments or small print.',
 					'**Document changes.** `<del>` marks a deletion and `<ins>` an insertion. They can help communicate an editorial correction, often shown with a strike-through and an underline. For scholarly transcriptions, explain your editorial conventions: HTML alone does not distinguish every kind of correction or uncertainty.',
-					'**Rendered example.** This fictional archive entry combines the elements above. Look for changes in meaning as well as appearance; the colors, borders, and spacing are presentation, not additional HTML semantics.',
-					`<div class="text-elements-example rounded-lg border border-slate-200 bg-white p-4">
-<h4>A fictional archive entry</h4>
-<p><b>Keyword:</b> <mark>water</mark>. This note belongs to a <span style="color: #9a3412;">botanical collection</span> and mentions <i>Rosa canina</i>.</p>
-<p><strong>Handle the original with care.</strong> Read <em>this copy</em>, not the fragile manuscript. Digital humanities (<abbr title="Digital humanities">DH</abbr>) researchers can compare the text below.</p>
-<p>The note says <q>The garden is quiet</q>. The following invented passage is quoted from <cite>A Garden Notebook</cite>:</p>
-<blockquote><p>The rain has stopped.<br>The roses hold the morning light.</p></blockquote>
-<p>The formula is H<sub>2</sub>O; the plot measures 4 m<sup>2</sup>. An editorial note follows<sup>1</sup>.</p>
-<hr>
-<p>The catalogue date was corrected from <del>1890</del> to <ins>1891</ins>.</p>
-<p>Whitespace can matter in a transcription:</p>
-<pre>Line 1:  roses
-Line 2:      rain</pre>
-<p>The <code>class</code> attribute can label a passage. A code example:</p>
-<pre><code>&lt;p class="transcription"&gt;A garden note.&lt;/p&gt;</code></pre>
-<p><small>1. All quotations, dates, and collection details in this example are invented.</small></p>
-</div>`
 				]
 			}),
 			dragAndDrop({
@@ -733,7 +767,8 @@ Line 2:      rain</pre>
 					main: 'block'
 				},
 				feedback: [
-					'Note, these are the elements’ default browser display categories. CSS can change them.'
+					'Note, these are the elements’ default browser display categories. CSS can change them.',
+					'For example, `<img style="display:block" />` makes the image behave like it was a block element, eventhough it natively would flow inline with the text.'
 				]
 			})
 		]
@@ -774,7 +809,8 @@ Line 2:      rain</pre>
 				],
 				feedback:
 					['List elements include `<ul>`, `<ol>`, and `<li>`. Table elements include `<table>`, `<caption>`, `<tr>`, `<th>`, and `<td>`.',
-					"<strong>List Elements</strong>\n<table>\n  <thead>\n    <tr>\n      <th scope=\"col\">Tag</th>\n      <th scope=\"col\">What it does</th>\n      <th scope=\"col\">Example</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>ul</td>\n      <td>Unordered (bulleted) list</td>\n      <td>&lt;ul&gt;&lt;li&gt;A&lt;/li&gt;&lt;/ul&gt;</td>\n    </tr>\n    <tr>\n      <td>ol</td>\n      <td>Ordered (numbered) list</td>\n      <td>&lt;ol&gt;&lt;li&gt;First&lt;/li&gt;&lt;/ol&gt;</td>\n    </tr>\n    <tr>\n      <td>li</td>\n      <td>A single list item</td>\n      <td>&lt;li&gt;Item&lt;/li&gt;</td>\n    </tr>\n  </tbody>\n</table>\n\n<strong>Table Elements</strong>\n<table>\n  <thead>\n    <tr>\n      <th scope=\"col\">Tag</th>\n      <th scope=\"col\">What it does</th>\n      <th scope=\"col\">Example</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>table</td>\n      <td>Wraps the whole table</td>\n      <td>&lt;table&gt;...&lt;/table&gt;</td>\n    </tr>\n    <tr>\n      <td>caption</td>\n      <td>A title for the table</td>\n      <td>&lt;caption&gt;Prices&lt;/caption&gt;</td>\n    </tr>\n    <tr>\n      <td>thead / tbody / tfoot</td>\n      <td>Head, body, and footer groups</td>\n      <td>&lt;tbody&gt;...&lt;/tbody&gt;</td>\n    </tr>\n    <tr>\n      <td>tr</td>\n      <td>A table row</td>\n      <td>&lt;tr&gt;...&lt;/tr&gt;</td>\n    </tr>\n    <tr>\n      <td>th</td>\n      <td>A header cell with a scope</td>\n      <td>&lt;th scope=\"col\"&gt;Name&lt;/th&gt;</td>\n    </tr>\n    <tr>\n      <td>td</td>\n      <td>A data cell; can span cells</td>\n      <td>&lt;td colspan=\"2\" rowspan=\"2\"&gt;X&lt;/td&gt;</td>\n    </tr>\n  </tbody>\n</table>"]
+					"<h3>List Elements</h3>\n<table>\n  <thead>\n    <tr>\n      <th scope=\"col\">Tag</th>\n      <th scope=\"col\">What it does</th>\n      <th scope=\"col\">Example</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>ul</td>\n      <td>Unordered (bulleted) list</td>\n      <td>&lt;ul&gt;&lt;li&gt;A&lt;/li&gt;&lt;/ul&gt;</td>\n    </tr>\n    <tr>\n      <td>ol</td>\n      <td>Ordered (numbered) list</td>\n      <td>&lt;ol&gt;&lt;li&gt;First&lt;/li&gt;&lt;/ol&gt;</td>\n    </tr>\n    <tr>\n      <td>li</td>\n      <td>A single list item</td>\n      <td>&lt;li&gt;Item&lt;/li&gt;</td>\n    </tr>\n  </tbody>\n</table>\n\n**Nesting.** You can nest lists by inserting a full `<ul>` or `<ol>` block inside a `<li>` element. Like so you can also mix ordered and unordered lists.",
+					"<h3>Table Elements</h3>\n<table>\n  <thead>\n    <tr>\n      <th scope=\"col\">Tag</th>\n      <th scope=\"col\">What it does</th>\n      <th scope=\"col\">Example</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>table</td>\n      <td>Wraps the whole table</td>\n      <td>&lt;table&gt;...&lt;/table&gt;</td>\n    </tr>\n    <tr>\n      <td>caption</td>\n      <td>A title for the table</td>\n      <td>&lt;caption&gt;Prices&lt;/caption&gt;</td>\n    </tr>\n    <tr>\n      <td>thead / tbody / tfoot</td>\n      <td>Head, body, and footer groups</td>\n      <td>&lt;tbody&gt;...&lt;/tbody&gt;</td>\n    </tr>\n    <tr>\n      <td>tr</td>\n      <td>A table row</td>\n      <td>&lt;tr&gt;...&lt;/tr&gt;</td>\n    </tr>\n    <tr>\n      <td>th</td>\n      <td>A header cell with a scope</td>\n      <td>&lt;th scope=\"col\"&gt;Name&lt;/th&gt;</td>\n    </tr>\n    <tr>\n      <td>td</td>\n      <td>A data cell; can span cells</td>\n      <td>&lt;td colspan=\"2\" rowspan=\"2\"&gt;X&lt;/td&gt;</td>\n    </tr>\n  </tbody>\n</table>"]
 			})
 		]
 	},
@@ -784,21 +820,30 @@ Line 2:      rain</pre>
 		questions: [
 			mcq({
 				slug: 'nesting-anchors',
-				title: 'Which of the following anchors are valid HTML?',
+				title: 'Nesting anchor tags',
+				question: ["There are many ways in which anchors can be nested with other elements. Which of the following code snippets are valid HTML?",
+					'**1:**\n```html\n<p>Here is a <a href="page.html">link</a> in text.</p>',
+					'**2:**\n```html\n<span class="inline"><a href="page.html">click here</a></span>',
+					'**3:**\n```html\n<a href="page.html"><span class="highlight">styled link</span></a>',
+					'**4:**\n```html\n<h1><a href="/home">Welcome to our page!</a></h1>',
+					'**5:**\n```html\n<a href="/index.html"><img src="pic.jpg" alt="image" /></a>'
+				],
 				options: [
-					option('anchor-paragraph', 'An anchor inside a paragraph.', true),
-					option('anchor-span', 'An anchor inside a `<span>`.', true),
-					option('span-anchor', 'An anchor that contains a `<span>`.', true),
-					option('heading-anchor', 'An anchor around an `<h1>`.', true),
-					option('image-anchor', 'An anchor around an image.', true)
+					option('anchor-paragraph', "1: Anchor tag inside a paragraph", true),
+					option('anchor-span', "2: Anchor tag inside a span", true),
+					option('span-anchor', "3: Anchor tag that contains a span", true),
+					option('heading-anchor', "4: Anchor tag around a heading", true),
+					option('image-anchor', "5: Anchor tag around an image", true)
 				],
 				feedback:
-					'All five examples are valid. Wrapping an image in a link is common for a logo that links to the homepage. [MDN: Image links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#image_links)\n\nAn anchor can also identify a precise location in a page that can be jumped to. [MDN: Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links)'
+					'All five examples are valid. Wrapping an image in a link is common for a [logo that links to the homepage](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#image_links).'
 			}),
 			mcq({
 				slug: 'link-target-blank',
-				title:
-					'Where will this link open? `You can learn more about this <a href="https://en.wikipedia.org/wiki/HTML" target="_blank">here</a>.`',
+				title: "Link targets",
+				question: [
+					'Where will this link open?',
+					'```html\nPlease find the source material <a href="https://en.wikipedia.org/wiki/HTML" target="_blank">here</a>!'],
 				options: [
 					option('same-tab', 'In the existing browser tab.', false),
 					option('new-tab', 'In a new browser tab.', true),
@@ -807,19 +852,29 @@ Line 2:      rain</pre>
 						'It will not open because the attributes are in the wrong order.',
 						false
 					),
-					option('title-required', 'It will not open because it needs a `title` attribute.', false),
+					option('title-required', 'It will not open because anchors require a `title` attribute.', false),
 					option(
 						'avoid-here',
 						'Hyperlink text such as “here” or “click here” should be avoided.',
 						true
 					)
 				],
-				feedback:
-					'`target="_blank"` opens the link in a new tab or window. Attribute order does not matter, although consistent formatting helps readability. Meaningful link text is preferable. [MDN: Links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Test_your_skills/Links#links_3)'
+				feedback:[
+					'Attribute order does not matter, although consistent formatting helps readability.',
+					'&nbsp;', 
+					'Oh, and since we are talking about readability...',
+				],
+				bonusId: 'meaningful-link-bonus'
+			}),
+			input({
+				slug: 'meaningful-link-bonus',
+				title: "How would you rename the above link?",
+				question: "As a preparation you may want to solve [three short exercises by MDN](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Test_your_skills/Links#links_3)."
 			}),
 			mcq({
 				slug: 'link-title-accessibility',
-				title: 'Choose the correct statements about link titles.',
+				title: 'Link titles',
+				question: 'Choose the correct statements.',
 				options: [
 					option('title-tooltip', 'The optional `title` attribute can provide a tooltip.', true),
 					option(
@@ -828,17 +883,20 @@ Line 2:      rain</pre>
 						false
 					)
 				],
-				feedback:
-					'Do not confuse an anchor’s `title` with an image’s `alt`. A link title is often revealed only on mouse hover, making it difficult for keyboard and touch users. Put important information in the visible link text instead. [MDN](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#adding_supporting_information_with_the_title_attribute)'
+				feedback:[
+					'Do not confuse an anchor’s `title` with an image\'s `alt` attribute. While the latter indeed is intended to improve accessibility (it is read by screenreaders) a link title is only revealed as a tooltip on mouse hover.', 
+					'This means "that people relying on keyboard controls or touchscreens to navigate web pages will have difficulty accessing title information. If a title\'s information is truly important to the usability of the page, then you should present it in a manner that will be accessible to all users, for example by putting it in the regular text."<br>&mdash;[Quote: MDN](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#adding_supporting_information_with_the_title_attribute)',
+				]
 			}),
 			mcq({
 				slug: 'buttons-vs-anchors',
-				title: 'Choose the correct statements about links, buttons, and appearance.',
+				title: 'Anchors vs. Buttons',
+				question: 'Given what you\'ve just read above, choose the correct statements.',
 				options: [
-					option('anchors-style', 'Anchor elements can be styled to look like buttons.', true),
+					option('anchors-style', 'Anchor elements can be styled to look like fancy three-dimensional buttons.', true),
 					option(
 						'link-preview',
-						'A benefit of anchors is the URL preview shown by browsers on hover.',
+						'A benefit of anchors for navigation is the small URL preview in the bottom left of your browser window when you hover a hyperlink.',
 						true
 					),
 					option(
@@ -846,10 +904,11 @@ Line 2:      rain</pre>
 						'Choose HTML elements for semantic meaning rather than their default appearance.',
 						true
 					),
-					option('boring-links', 'Links must look boring because they are underlined text.', false)
 				],
 				feedback:
-					'Use anchors for navigation, such as `<a href="/foo/bar">`, and buttons for actions. CSS can make anchors look like buttons without changing their meaning. [Buttons vs. links](https://a11yphant.com/challenges/buttons-vs-links)'
+					['Use anchors for navigation, such as `<a href="/foo/bar">`, and buttons for actions. CSS can make anchors look like buttons without changing their meaning.',
+					
+					'For accessibility limitations regarding buttons and anchors, check out the [challenges on a11yphant.com](https://a11yphant.com/challenges/buttons-vs-links).']
 			})
 		]
 	},
@@ -860,19 +919,25 @@ Line 2:      rain</pre>
 			mcq({
 				slug: 'image-relative-absolute-paths',
 				title:
-					'You are linking an image from `/about/team/teachers/andrea/index.html`. Which paths work?',
+				'Relative vs. absolute paths',
+				question: 'On a deeply nested sub-route `/about/team/teachers/index.html` you want to add an image which lives in your `/img` folder. Which paths work?',
 				options: [
-					option('deep-relative', '`../../../../img/cat.webp`', true),
+					option('deep-relative', '`../../../img/cat.webp`', true),
 					option('root-relative', '`/img/cat.webp`', true),
 					option('local-relative', '`img/cat.webp`', false)
 				],
 				feedback:
-					'The long relative path works, but is easy to break. A path beginning with `/` starts at the site root. `img/cat.webp` would look for an `img` folder inside `andrea`. This also applies to stylesheets and other assets.'
+					["The long relative path works, but is easy to break. A path beginning with `/` starts at the site root. `img/cat.webp`, however, looks for an `img` folder inside `teachers`.",
+					"Please note, that all of this also applies to linking stylesheets and other assets."]
 			}),
 			mcq({
 				slug: 'image-alt-title',
 				title:
-					'For the dinosaur image with `alt`, `width`, `height`, and `title` attributes, choose the correct statement.',
+				"Image title and alt-text",
+				question:[
+					'For the dinosaur image with `alt`, `width`, `height`, and `title` attributes, choose all correct statements.',
+					'```html\n<img\n	src="images/dinosaur.jpg"\n	alt="The head and torso of a dinosaur skeleton; it has a large head with long sharp teeth"\n	width="400"\n	height="341"\n	title="A T-Rex on display in the Manchester University Museum"\n/>',
+				],
 				options: [
 					option(
 						'alt-no-title',
@@ -887,13 +952,18 @@ Line 2:      rain</pre>
 					option('title-tooltip', 'The `title` attribute can appear as a tooltip.', true)
 				],
 				feedback:
-					'The `title` attribute may appear as a tooltip; it is not a figure caption. Useful alternative text belongs in `alt`.'
+					['The `title` attribute may appear as a tooltip; for captions use `<figcaption>`.',
+					'Useful alternative text belongs in `alt`. This is the text that a screenreader would use to describe the image. The alt-text furthermore gets displayed before the image is downloaded&mdash;or in your email inbox, when you block external content to automatically load.']
 			}),
 			mcq({
 				slug: 'image-dimensions',
-				title: 'Choose the correct statements about the image `width` and `height` attributes.',
+				title: "Image Dimensions",
+				question: ['Choose the correct statements about the image `width` and `height` attributes.',
+				'```html\n<img\n  src="images/dinosaur.jpg"\n  width="400"\n  height="341"\n />\n'
+				],
 				options: [
-					option('css-properties', 'They are passed as CSS properties.', false),
+					option('pixels', 'The dimension values are in pixels.', true),
+					option('css-properties', '`width` and `height` are passed here as inline CSS style-properties.', false),
 					option(
 						'style-alternative',
 						'Dimensions could also be set with the `style` attribute.',
@@ -910,10 +980,12 @@ Line 2:      rain</pre>
 						'Changing just one of width or height always scales the image proportionally.',
 						false
 					),
-					option('pixels', 'The HTML dimension values are in pixels.', true)
 				],
-				feedback:
-					'HTML width and height values are CSS-pixel dimensions, not image resolution. They affect the displayed size; optimize the image file itself for the web. If only one dimension is set, the browser can preserve the intrinsic aspect ratio; if both are set inconsistently, the image can be distorted. WebP is one useful web image format. [MDN: Images](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_images)\n\n**Bonus:** [Audio and video](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_video_and_audio)'
+				feedback:[
+					"HTML width and height values are CSS-pixel dimensions and affect the displayed size. If only one dimension is set, the browser can preserve the intrinsic aspect ratio; if both are set inconsistently, the image can be distorted.",
+					"Width and height won\'t affect the resolution of the downloaded image. To make sure images load fast in your browser, you should optimize the image files for the web. This includes reducing its resolution to what is actually needed on the page.",
+					"Besides image resolution, there are also different formats to be considered. A useful format for the web is `.webp`.",
+			]
 			})
 		]
 	},
@@ -923,7 +995,8 @@ Line 2:      rain</pre>
 		questions: [
 			mcq({
 				slug: 'form-control-terminology',
-				title: 'Choose the correct statements.',
+				title: "Checkboxes and Radio buttons",
+				question: 'Choose the correct statements.',
 				options: [
 					option(
 						'radio-multiple',
@@ -944,14 +1017,17 @@ Line 2:      rain</pre>
 			}),
 			mcq({
 				slug: 'form-needs-server',
-				title: '“For a form to work, we need a web server.”',
+				title: "Servers",
+				question: '“For a form to work, we need a web server.”',
 				options: [option('true', 'True', false), option('false', 'False', true)],
-				feedback:
-					'For common GET and POST forms, a server usually handles the request. A form can also use a `mailto:` action to open an email client with a prefilled address, subject, and message.'
+				feedback: [
+					"If you clicked *yes* this is absolutely fine, since for common GET and POST forms, a server usually handles the request. However, a form can also use a `mailto:` action to open an email client with a prefilled address, subject, and message. This works without a server and you are going to use this in the *Mini project*."
+				]
 			}),
 			mcq({
 				slug: 'form-submit-behavior',
-				title: 'Choose the correct statements about submitting a form.',
+				title: "Form submit behavior",
+				question: 'Choose the correct statements.',
 				options: [
 					option(
 						'action-reload',
@@ -970,11 +1046,12 @@ Line 2:      rain</pre>
 					)
 				],
 				feedback:
-					'Buttons inside forms default to `type="submit"`. Set `type="button"` for a button that should not submit, and `type="reset"` only when resetting the form is intended.'
+					'Buttons inside forms default to `type="submit"`. Set `type="button"` for a button that should *not* submit. Setting `type="reset"` resets the form.'
 			}),
 			mcq({
 				slug: 'boolean-disabled',
-				title: 'Compare `<button disabled=true>` and `<button disabled>`.',
+				title: "Disabling Buttons",
+				question: 'Compare `<button disabled=true>` and `<button disabled>`. Which statements are correct?',
 				options: [
 					option('same-behavior', 'Both buttons behave the same.', true),
 					option('value-required', 'The `disabled` attribute must have a value.', false),
@@ -986,20 +1063,23 @@ Line 2:      rain</pre>
 			}),
 			mcq({
 				slug: 'label-input-association',
-				title: 'Which statement about the two label/input examples is correct?',
+				title: "Labels",
+				question: ['Compare the two code snippets. Which statements are correct?',
+					'```html\n<form>\n	<label for="uid">User ID</label>\n	<input type="text" id="uid" name="uid" />\n	<label for="pwd">Password</label>\n	<input type="password" id="pwd" name="pwd" />\n	<button>Log in</button>\n</form>```',
+					'```html\n<form>\n  <label>User ID\n    <input type="text" name="uid">\n  </label>\n  <label>Password\n    <input type="password" name="pwd">\n  </label>\n  <button>Log in</button>\n</form>'
+				],
 				options: [
 					option('first-better', 'The first snippet is better.', false),
 					option('second-better', 'The second snippet is better.', false),
-					option('only-first', 'Only the first snippet works as written.', true),
+					option('only-first', 'Only the first snippet works as written.', false),
 					option('only-second', 'Only the second snippet works.', false),
-					option('neither', 'Nothing of the above.', false)
+					option('neither', 'Nothing of the above.', true)
 				],
-				feedback:
-					'Explicit `for`/`id` association and wrapping an input in a label can both work. The supplied second example has an extra `</label>` and its password input has no matching `id="pwd"` even though its label has a `for` attribute, so the example does not associate that label with the input. Label structure also affects layout and styling.'
+				feedback:[
+					'Both variants work, but they have their own advantages and disadvantages. While wrapping a input inside its label spares you to set an id (which must be unique over the full page), it changes the relative hierarchy in which the label and the input stand to each other. This heavily influences how you have to position and style the labels with CSS.'
+				]
 			})
-		],
-		lesson:
-			'**Further Reading:** [MDN: Forms and buttons](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_forms)'
+		]
 	},
 	{
 		id: 'embeddings',
@@ -1007,7 +1087,8 @@ Line 2:      rain</pre>
 		questions: [
 			mcq({
 				slug: 'iframe-css-and-tracking',
-				title: '“An `<iframe>` inherits the CSS of its parent page.”',
+				title: '`<iframe>`',
+				question: '“An `<iframe>` inherits the CSS of its parent page.”',
 				options: [
 					option('inherits-css', 'Yes.', false),
 					option(
@@ -1021,12 +1102,10 @@ Line 2:      rain</pre>
 						true
 					)
 				],
-				feedback:
-					'An iframe is a separate document, so styles do not mix. An iframe is not automatically “completely sandboxed”: the `sandbox` attribute adds restrictions. Embedded third-party content may track visitors when it loads. [SRF article reference in source: TODO]'
+				feedback:""
+					// 'An iframe is a separate document, so styles do not mix. An iframe is not automatically “completely sandboxed”: the `sandbox` attribute adds restrictions. Embedded third-party content may track visitors when it loads. [SRF article reference in source: TODO]'
 			})
-		],
-		lesson:
-			'**Further Reading:** [MDN: Embedding technologies](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/General_embedding_technologies#using_iframes_to_embed_webpages) (do not read the full article).'
+		]
 	}
 ];
 

@@ -16,11 +16,11 @@ Headings, paragraphs, and emphasis give text a readable structure. In HTML, thes
 
 <ExerciseCard question={getQuestion('text-elements')} />
 
-<ExerciseBridge title="Flow" size="wide">
+<ExerciseBridge title="Recap: Flow" size="wide">
 
-An important aspect of semantic elements in HTML is their flow-behavior. We separate between **block elements** and **inline elements.**
+Flow is an important behavioral aspect of HTML elements. We distinguish between **block elements** and **inline elements.**
 
-For a great summary, watch this short [MDN video on Flow](https://youtu.be/4Clyc38U-MA?si=txw4S-nfiT_yXZL8&t=59) (relevant are just minutes 1:00 to 2:30). Then return to the following exercise.
+For a quick summary, watch this short [MDN video on "Normal Flow"](https://youtu.be/4Clyc38U-MA?si=txw4S-nfiT_yXZL8&t=59) (please, **only watch minutes 1'00&ndash;2'30!**, otherwise you risk to be confused!). Then return to the following exercise.
 
 </ExerciseBridge>
 

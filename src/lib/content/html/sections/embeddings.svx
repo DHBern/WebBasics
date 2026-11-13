@@ -10,14 +10,12 @@
 
 A page can display content from another page using an `<iframe>`. This brings outside material into your document, but it does not make the two pages one.
 
-Consider what stays separate and what information might be exchanged.
-
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('iframe-css-and-tracking')} />
 
 <ExerciseBridge title="Further reading">
 
-[MDN: Embedding technologies](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/General_embedding_technologies#using_iframes_to_embed_webpages) (do not read the full article).
+[MDN: Embedding technologies](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/General_embedding_technologies#using_iframes_to_embed_webpages).
 
 </ExerciseBridge>

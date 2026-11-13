@@ -8,9 +8,7 @@
 
 # Forms and Buttons
 
-Forms let readers take part: search a collection, enter information, or send a request. Inputs, labels, and buttons each have a role in that interaction.
-
-Explore how these controls work together and what happens when a form is submitted.
+Forms let users take part: search a collection, enter information, or send a request. Inputs, labels, and buttons each have a role in that interaction.
 
 </ExerciseBridge>
 
@@ -20,41 +18,7 @@ Explore how these controls work together and what happens when a form is submitt
 
 <ExerciseCard question={getQuestion('form-submit-behavior')} />
 
-<ExerciseBridge title="Attribute without value">
-
-Compare `<button disabled=true>` and `<button disabled>`.
-
-</ExerciseBridge>
-
 <ExerciseCard question={getQuestion('boolean-disabled')} />
-
-<ExerciseBridge title="Labels and inputs">
-
-Which of the two codes is better?
-
-```html
-<form>
-	<label for="uid">User ID</label>
-	<input type="text" id="uid" name="uid" />
-	<label for="pwd">Password</label>
-	<input type="password" id="pwd" name="pwd" />
-	<button>Log in</button>
-</form>
-```
-
-```html
-<form>
-  <label>User ID
-    <input type="text" name="uid"></label>
-  </label>
-  <label for="pwd">Password
-    <input type="password" name="pwd">
-  </label>
-  <button>Log in</button>
-</form>
-```
-
-</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('label-input-association')} />
 

@@ -8,35 +8,12 @@
 
 # Images
 
-Images can document objects, illustrate an argument, or bring a digital collection to life. A browser needs to know where an image is and how it should be described.
-
-Explore image paths, alternative text, and dimensions.
+Images can illustrate an argument or bring a digital collection to life. A browser needs to know where an image is and how it should be described.
 
 </ExerciseBridge>
 
-<ExerciseBridge title="Relative vs. absolute paths">
-
-You are linking an image from `/about/team/teachers/andrea/index.html`. Which paths work?
-
-</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('image-relative-absolute-paths')} />
-
-<ExerciseBridge title="Image title and alt text">
-
-Inspect the image attributes before answering.
-
-```html
-<img
-	src="images/dinosaur.jpg"
-	alt="The head and torso of a dinosaur skeleton; it has a large head with long sharp teeth"
-	width="400"
-	height="341"
-	title="A T-Rex on display in the Manchester University Museum"
-/>
-```
-
-</ExerciseBridge>
 
 <ExerciseCard question={getQuestion('image-alt-title')} />
 

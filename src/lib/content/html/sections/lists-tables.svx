@@ -13,3 +13,10 @@ Some information is easier to understand as a group of items or a grid of relate
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('list-table-elements')} />
+
+<ExerciseBridge title="Further reading:" size="wide">
+
+- [Learning Ressources on Lists](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Lists) by MDN.
+- [Learning Ressources on Tables](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_table_basics) by MDN.
+
+</ExerciseBridge>

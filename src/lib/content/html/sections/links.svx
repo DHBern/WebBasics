@@ -8,40 +8,56 @@
 
 # Links and Anchors
 
-Links connect documents, sources, and places within a page. The `<a>` element turns part of your content into a destination readers can follow.
-
-The term **anchor** specifically refers to the `<a>` element's ability to mark a precise location in a webpage that can be jumped to, like bookmarking a spot within the same document. [MDN: Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links)
+Links connect sources and places within a page. The `<a>` element turns part of your content into a hyperlink readers can follow.
 
 </ExerciseBridge>
 
-<ExerciseBridge title="Nesting anchors">
+<ExerciseBridge title="Why Anchor?" size="wide">
 
-Which of these are valid HTML?
+The term **anchor** specifically refers to the `<a>` element's ability to mark a precise location in a webpage that can be jumped to, like bookmarking a spot within the same document. This is related with the `#`-fragment as part of the URL in an earlier exercise.
 
-```html
-<p>Here is a <a href="page.html">link</a> in text.</p>
-<span class="inline"><a href="page.html">click here</a></span>
-<a href="page.html"><span class="highlight">styled link</span></a>
-<h1><a href="/home">Welcome to our page!</a></h1>
-<a href="/index.html"><img src="pic.jpg" alt="image" /></a>
-```
+Learn more about anchors and fragments in the [MDN Leraning Center](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links#document_fragments), since you will use this in the *Mini project*.
 
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('nesting-anchors')} />
 
-<ExerciseBridge title="Hyperlinks and tabs">
+<ExerciseBridge title="Now, let's follow a link!">
 
-Where will this link open?
-
-```html
-<a href="https://en.wikipedia.org/wiki/HTML" target="_blank">here</a>
-```
+But first some theory: Check out the [target attribute for anchors](https://www.w3schools.com/tags/att_a_target.asp).
 
 </ExerciseBridge>
 
 <ExerciseCard question={getQuestion('link-target-blank')} />
 
+<ExerciseBridge title="Pause!">
+
+How was this again with this title attribute?
+
+</ExerciseBridge>
+
+
+
 <ExerciseCard question={getQuestion('link-title-accessibility')} />
 
+<ExerciseBridge title="Anchors vs. Buttons" size="wide">
+
+There is an important distinction to make between anchors (`<a>`) and buttons (`<button>`): Anchors should be used for *navigation* whereas buttons are intended for *actions*, like e.g. opening an accordion or submitting a form.
+
+Unfortunately, buttons are often misused as anchors, and it's important to know this distinction early. Later, when you will learn Svelte or javascript it's very tempting to use a button for navigation, like so: 
+
+```html
+<button onclick={goto("/foo/bar")}>
+```
+
+**This is problematic,** since a button does not carry the same semantic meaning. Accordingly, this misuse comes with major accessibility issues.
+
+</ExerciseBridge>
+
 <ExerciseCard question={getQuestion('buttons-vs-anchors')} />
+
+<ExerciseBridge title="Further reading">
+
+- [Creating links](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links) by MDN
+
+</ExerciseBridge>

@@ -33,6 +33,14 @@ Start by identifying the parts of an element, then explore how elements fit toge
 
 <ExerciseCard question={getQuestion('overlapping-tags')} />
 
+<ExerciseBridge title="Another trap is ahead!">
+
+The next one is very similar. But this time we have **only one element-type**&mdash;but twice in a row.
+
+</ExerciseBridge>
+
+<ExerciseCard question={getQuestion('overlapping-marks')} />
+
 <ExerciseBridge title="Readable code">
 	
 	Finally, consider how formatting helps people read HTML.

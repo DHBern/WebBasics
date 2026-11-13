@@ -13,11 +13,6 @@ No image files need to be located or added. The original embeds were diagram-sha
 
 - **URL Structure → “URL Encoding”** says “Link a URI-Converter” but provides no link or answer. It is shown as lesson text, not an interactive question.
 - **Basic Syntax → “Closing Tags and Self-closing Elements ==TODO==”** contains placeholder choices (`==...==`) and an unfinished answer. It is omitted from the student exercises.
-- **Semantic HTML → “Divs vs. semantic HTML”** has `==[TODO]==`; the two promised code blocks are absent. It is omitted rather than reconstructing an unknown comparison.
-- **Webpage Structure → “Sort Elements inside body” → Answer** contains `==Explain the difference between section and article==`. Add the intended explanation when ready.
-- **Semantic HTML → “Definition with examples and motivation”** has an empty reference link (`[here]()`); the prompt is retained as lesson content.
-- **Semantic HTML → “Bonus: Micro-Project”** begins with `==Improve this==`. The task is presented as an optional lesson activity; its title/intent may need clarification.
-- **Formatting Text → “Block elements and inline elements” → Answer** ends with an incomplete lookup link (`[here](...)`); that dangling reference was not rendered.
 - **Images → “Image dimensions” → Further Reading** has an empty image-formats link (`[here]()`); the surrounding explanation and other links are retained.
 - **Embeddings (iframe) → Answer** cites an unfinished `[SRF article](TODO)` reference. It remains identified as TODO in the feedback.
 - **Comments → “Visibility of Comments” → Report your findings** contains only `[...]`; no Wikipedia findings were supplied.
@@ -42,3 +37,7 @@ No image files need to be located or added. The original embeds were diagram-sha
 - Editable course sections are `.svx` files in `src/lib/content/html/sections/`; question keys, options, feedback, and sorting targets are in `src/lib/content/course.ts`.
 - Each question has a stable ID. A change to its prompt, choices/items, answer key, or sorting targets changes its revision; the browser clears that question's old answer and shows a one-sentence notice. Reordering questions does not change their IDs.
 - Questions with no source explanation show grading results only. Add a `feedback` string to the question in `course.ts` when an explanation becomes available.
+
+
+## Other
+- Hide "hint"
