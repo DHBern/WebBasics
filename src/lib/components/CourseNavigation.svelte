@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { createDebugMode } from '#lib/debug.svelte.js';
 	import { resetProgress, progress, progressError } from '#lib/progress.js';
 	import { htmlSections, requiredQuestionList, bonusQuestionIds } from '#lib/content/course.js';
@@ -26,7 +27,7 @@
 
 <aside class="course-sidebar">
 	<div class="flex items-center justify-between gap-3">
-		<a class="font-bold text-slate-950" href="/">WebBasics</a>
+		<a class="font-bold text-slate-950" href={resolve('/')}>WebBasics</a>
 		<button
 			class="mobile-nav-toggle"
 			type="button"
@@ -40,7 +41,7 @@
 	<div class="mt-5 flex items-center justify-between gap-2">
 		<a
 			class="text-sm font-semibold text-slate-700 hover:text-orange-700"
-			href="/courses/html/welcome/"
+			href={resolve('courses/html/welcome/')}
 		>
 			HTML Questions
 		</a>
@@ -58,7 +59,7 @@
 			<a
 				class="section-link"
 				class:section-link-active={activeSection === ''}
-				href="/courses/html/welcome/"
+				href={resolve('courses/html/welcome/')}
 				aria-current={activeSection === '' ? 'page' : undefined}
 			>
 				<span>Welcome</span>
@@ -76,7 +77,7 @@
 				<a
 					class="section-link"
 					class:section-link-active={activeSection === section.id}
-					href={`/courses/html/${section.id}/${debug.query}`}
+					href={`${resolve('/courses/html/[section]', { section: section.id })}/${debug.query}`}
 					aria-current={activeSection === section.id ? 'page' : undefined}
 				>
 					<span class="min-w-0 flex-1">
@@ -90,7 +91,7 @@
 		</nav>
 		<a
 			class="mt-5 block text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950"
-			href="/dashboard/"
+			href={resolve('dashboard/')}
 		>
 			Instructor analysis
 		</a>

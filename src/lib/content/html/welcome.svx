@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from '$app/paths';
 	import ExerciseReport from '#lib/components/ExerciseReport.svelte';
 </script>
 
@@ -36,4 +37,4 @@ Use the round **!** button at the bottom right of any exercise, or the comment f
 	<ExerciseReport demo />
 </div>
 
-<a href="/courses/html/url-structure/">Begin HTML Questions</a>
+<a href={`${resolve('/courses/html/[section]', { section: 'url-structure' })}/`}>Begin HTML Questions</a>

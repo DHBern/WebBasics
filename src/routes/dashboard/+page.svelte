@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { strands, questionRevision } from '#lib/content/course.js';
 	import { analyzeSubmissions } from '#lib/content/analysis.js';
 	import PlacementSubmission from '#lib/components/PlacementSubmission.svelte';
@@ -298,10 +299,10 @@
 <main class="min-h-screen bg-slate-50 text-slate-900">
 	<header class="border-b border-slate-200 bg-white">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-			<a href="/" class="text-lg font-bold tracking-tight">WebBasics</a>
+			<a href={resolve('/')} class="text-lg font-bold tracking-tight">WebBasics</a>
 			<a
 				class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950"
-				href="/"
+				href={resolve('/')}
 			>
 				← Courses
 			</a>

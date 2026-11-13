@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { strands } from '#lib/content/course.js';
 </script>
 
@@ -10,10 +11,10 @@
 <main class="min-h-screen bg-slate-50 text-slate-900">
 	<header class="border-b border-slate-200 bg-white">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-			<a href="/" class="text-lg font-bold tracking-tight">WebBasics</a>
+			<a href={resolve('/')} class="text-lg font-bold tracking-tight">WebBasics</a>
 			<a
 				class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950"
-				href="/dashboard/"
+				href={resolve('dashboard/')}
 			>
 				Instructor analysis
 			</a>
@@ -39,7 +40,9 @@
 					<h2 class="mt-3 text-xl font-bold">{strand.title}</h2>
 					<p class="mt-3 text-sm leading-relaxed text-slate-600">{strand.description}</p>
 					{#if strand.id === 'html'}
-						<a class="button-primary mt-6 inline-flex" href="/courses/html/welcome/">Open course</a>
+						<a class="button-primary mt-6 inline-flex" href={resolve('courses/html/welcome/')}
+							>Open course</a
+						>
 					{:else}
 						<span class="mt-6 inline-block text-sm font-medium text-slate-500"
 							>Not available yet</span

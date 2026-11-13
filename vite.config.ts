@@ -2,8 +2,10 @@ import tailwindcss from '@tailwindcss/vite';
 import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import markdownLinks from './src/lib/content/markdown-links.js';
+
+const base = loadEnv('production', false, 'GITHUB_').GITHUB_PAGES === 'true' ? '/WebBasics' : '';
 
 export default defineConfig({
 	plugins: [
@@ -12,7 +14,7 @@ export default defineConfig({
 			extensions: ['.svelte', '.svx'],
 			preprocess: mdsvex({
 				extensions: ['.svx'],
-				rehypePlugins: [markdownLinks],
+				rehypePlugins: [[markdownLinks, { base }]],
 				highlight: { alias: { html: 'markup' } }
 			}),
 			compilerOptions: {
@@ -20,7 +22,10 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter()
+			adapter: adapter(),
+			paths: {
+				base
+			}
 		})
 	]
 });

@@ -204,5 +204,11 @@ with trailing slashes so nested routes produce directory-based `index.html` file
 Dynamic routes must provide prerender entries.
 
 The static adapter and Tailwind Vite plugin are configured in `vite.config.ts`.
-For deployment under a subpath, configure SvelteKit's `paths.base` there before
-building.
+For GitHub Pages, select **Settings > Pages > Source > GitHub Actions**.
+The `Deploy GitHub Pages` workflow publishes pushes to `main` and can also be
+started manually once the workflow is on the default branch.
+It builds with `GITHUB_PAGES=true`, setting the `/WebBasics` base path for
+assets, navigation, and Markdown course links. The published address is
+`https://dhbern.github.io/WebBasics/`.
+Local builds keep the root path; use `GITHUB_PAGES=true npm run build` to
+build the Pages version locally.

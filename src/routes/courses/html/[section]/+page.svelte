@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { createDebugMode } from '#lib/debug.svelte.js';
 	import CourseNavigation from '#lib/components/CourseNavigation.svelte';
 	import ExercisePath from '#lib/components/ExercisePath.svelte';
@@ -69,7 +70,7 @@
 		<div class="mb-8 flex items-center justify-between gap-4">
 			<a
 				class="text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-950"
-				href="/courses/html/welcome/"
+				href={resolve('courses/html/welcome/')}
 			>
 				← Course introduction
 			</a>
@@ -88,7 +89,9 @@
 		{/key}
 		{#if previousSection}
 			<div class="mt-10 border-t border-slate-200 pt-6">
-				<a class="button-secondary" href={`/courses/html/${previousSection.id}/${debug.query}`}
+				<a
+					class="button-secondary"
+					href={`${resolve('/courses/html/[section]', { section: previousSection.id })}/${debug.query}`}
 					>← Previous section</a
 				>
 			</div>
@@ -98,7 +101,9 @@
 
 {#snippet sectionNavigation()}
 	{#if nextSection}
-		<a class="button-primary" href={`/courses/html/${nextSection.id}/${debug.query}`}
+		<a
+			class="button-primary"
+			href={`${resolve('/courses/html/[section]', { section: nextSection.id })}/${debug.query}`}
 			>Next section →</a
 		>
 	{:else}
